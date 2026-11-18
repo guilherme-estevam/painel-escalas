@@ -88,5 +88,6 @@ function apiBatida(token, vis, quer) {
   if (quer.logados) { try { out.apiLogadosPendentes = apiLogadosPendentes(token); } catch (e) { } }
   try { repEntTalvez_(); } catch (e) { } /* report de atrasos: gera o dia anterior uma vez por dia */
   /* (módulo de RH não incluído nesta versão) máximo a cada 10 minutos */
+  try { hcTalvez_(); } catch (e) { } /* Headcount: confere a planilha no máximo a cada 10 minutos e espera a edição terminar */
   return out;
 }
