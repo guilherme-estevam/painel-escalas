@@ -1,0 +1,150 @@
+<style>
+/* ===== campo de data ===== */
+.dt-campo{display:inline-flex;align-items:center;gap:8px;border:1.5px solid var(--c3);background:var(--sup,#fff);color:var(--preto);border-radius:12px;padding:9px 12px;font:inherit;font-weight:700;cursor:pointer;min-width:170px;text-align:left}
+.dt-campo:hover,.dt-campo.aberto{border-color:var(--rosa)}
+.dt-campo svg{flex:none;color:var(--rosa)}
+.dt-campo .vz{color:var(--c4);font-weight:600}
+.campo .dt-campo,.dois .dt-campo{width:100%}
+/* ===== janela do calendário ===== */
+.dt-pop{position:absolute;z-index:200;background:var(--sup,#fff);border:1px solid var(--c2);border-radius:18px;box-shadow:0 18px 50px rgba(0,0,0,.18);padding:14px;width:300px}
+html[data-tema="escuro"] .dt-pop{box-shadow:0 18px 50px rgba(0,0,0,.6)}
+.dt-cab{display:flex;align-items:center;justify-content:space-between;margin-bottom:10px}
+.dt-cab b{font-size:15px}
+.dt-cab button{width:32px;height:32px;border-radius:50%;border:0;background:var(--c1);color:var(--preto);font-size:16px;font-weight:800;cursor:pointer}
+.dt-cab button:hover{background:var(--rosa-bg);color:var(--rosa)}
+.dt-sem{display:grid;grid-template-columns:repeat(7,1fr);gap:2px;margin-bottom:4px}
+.dt-sem span{text-align:center;font-size:11px;font-weight:800;color:var(--c4);text-transform:uppercase}
+.dt-dias{display:grid;grid-template-columns:repeat(7,1fr);grid-auto-rows:36px;gap:2px}
+.dt-per .dt-dias{grid-auto-rows:34px;gap:2px 0}
+.dt-d.vazio{display:block}
+.dt-d{position:relative;height:36px;border:0;background:transparent;border-radius:10px;font:inherit;font-size:13.5px;font-weight:700;color:var(--preto);cursor:pointer}
+.dt-d:hover{background:var(--rosa-bg);color:var(--rosa)}
+.dt-d.fds{color:var(--c4)}
+.dt-d.hoje{box-shadow:inset 0 0 0 2px var(--rosa)}
+.dt-d.fer::after{content:"";position:absolute;bottom:4px;left:50%;width:5px;height:5px;margin-left:-2.5px;border-radius:50%;background:var(--pink)}
+.dt-d.sel{background:var(--rosa);color:#fff}
+.dt-d.vazio{visibility:hidden;pointer-events:none}
+.dt-pe{display:flex;justify-content:space-between;align-items:center;margin-top:10px;padding-top:10px;border-top:1px solid var(--c2)}
+.dt-pe button{border:0;background:none;font:inherit;font-weight:800;font-size:13px;color:var(--rosa);cursor:pointer;padding:4px 6px}
+.dt-pe button.lim{color:var(--c4)}
+.dt-pe small{font-size:11.5px;color:var(--c4);display:flex;align-items:center;gap:5px}
+.dt-pe small i{width:6px;height:6px;border-radius:50%;background:var(--pink);display:inline-block}
+/* ===== período (férias e licenças) ===== */
+.dt-per{border:1px solid var(--c2);border-radius:16px;padding:14px;margin:4px 0 12px;background:var(--sup,#fff)}
+.dt-per-topo{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:12px}
+.dt-per-topo button{border:1.5px solid var(--c3);background:var(--c1);border-radius:12px;padding:8px 12px;text-align:left;cursor:pointer;font:inherit;color:var(--preto)}
+.dt-per-topo button small{display:block;font-size:11.5px;font-weight:800;color:var(--c4);text-transform:uppercase;letter-spacing:.04em}
+.dt-per-topo button b{font-size:15px}
+.dt-per-topo button.ativo{border-color:var(--rosa);background:var(--rosa-bg)}
+.dt-per-topo button.ativo small{color:var(--rosa)}
+.dt-per-meses{display:grid;grid-template-columns:1fr 1fr;gap:18px;position:relative}
+.dt-per-meses .nav{position:absolute;top:-2px;width:32px;height:32px;border-radius:50%;border:0;background:var(--c1);color:var(--preto);font-size:16px;font-weight:800;cursor:pointer}
+.dt-per-meses .nav:hover{background:var(--rosa-bg);color:var(--rosa)}
+.dt-per-meses .nav.ant{left:0} .dt-per-meses .nav.prox{right:0}
+.dt-per-meses h5{margin:4px 0 10px;text-align:center;font-size:14px}
+.dt-per .dt-d{height:34px;border-radius:0}
+.dt-per .dt-d.dentro{background:var(--rosa-bg);color:var(--vinho)}
+.dt-per .dt-d.ini,.dt-per .dt-d.fim{background:var(--rosa);color:#fff;border-radius:10px}
+.dt-per .dt-d.ini.temfim{border-radius:10px 0 0 10px} .dt-per .dt-d.fim.temini{border-radius:0 10px 10px 0}
+.dt-per .dt-d.prev{background:var(--rosa-bg);opacity:.7}
+.dt-per .dica{margin-top:8px;text-align:center}
+@media (max-width:900px){ .dt-per-meses{grid-template-columns:1fr} .dt-per-meses .m2{display:none} .dt-pop{width:290px} }
+</style>
+<script>
+/* ===================== calendário próprio do painel ===================== */
+var DT_ICO='<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="4" width="18" height="18" rx="3"/><path d="M16 2v4M8 2v4M3 10h18"/></svg>';
+var DT_SEMS=['Dom','Seg','Ter','Qua','Qui','Sex','Sáb'];
+function dtMes(m,a){ var n=MESES_LONGO[m-1]; return n.charAt(0).toUpperCase()+n.slice(1)+' de '+a; }
+function dtIso(a,m,d){ return a+'-'+('0'+m).slice(-2)+'-'+('0'+d).slice(-2); }
+function dtTexto(iso){ if(!/^\d{4}-\d\d-\d\d$/.test(iso||'')) return ''; var x=new Date(iso+'T12:00:00Z'); return SEM[x.getUTCDay()].toLowerCase()+', '+iso.slice(8)+'/'+iso.slice(5,7)+'/'+iso.slice(0,4); }
+function dtFeriados(ano){ estado.ferCal=estado.ferCal||{}; if(estado.ferCal[ano]!==undefined) return estado.ferCal[ano]; estado.ferCal[ano]=null;
+  chamar('apiFeriados', estado.token, String(ano)).then(function(r){ var m={}; (r.feriados||[]).forEach(function(f){ if(f.ativo) m[f.data]=f.nome; }); estado.ferCal[ano]=m; document.querySelectorAll('[data-dt-redraw]').forEach(function(el){ if(el._redesenhar) el._redesenhar(); }); }).catch(function(){ estado.ferCal[ano]={}; });
+  return null; }
+function dtGrade(ano, mes, opts){ // opts: {sel, ini, fim, prev, onDia}
+  var n=new Date(Date.UTC(ano,mes,0)).getUTCDate(), w=new Date(Date.UTC(ano,mes-1,1)).getUTCDay(), hoje=hojeLocal(), fer=dtFeriados(ano)||{}, h='';
+  for(var i=0;i<w;i++) h+='<span class="dt-d vazio"></span>';
+  for(var d=1; d<=n; d++){ var iso=dtIso(ano,mes,d), wd=(w+d-1)%7, c=['dt-d'];
+    if(wd===0||wd===6) c.push('fds'); if(iso===hoje) c.push('hoje'); if(fer[iso]) c.push('fer'); if(opts.sel===iso) c.push('sel');
+    if(opts.ini && opts.fim){ if(iso===opts.ini) c.push('ini', opts.fim!==opts.ini?'temfim':''); if(iso===opts.fim) c.push('fim', opts.fim!==opts.ini?'temini':''); if(iso>opts.ini && iso<opts.fim) c.push('dentro'); }
+    else if(opts.ini && iso===opts.ini) c.push('ini');
+    if(opts.prev && opts.ini && !opts.fim && ((iso>opts.ini && iso<=opts.prev) || (iso<opts.ini && iso>=opts.prev))) c.push('prev');
+    h+='<button type="button" class="'+c.join(' ')+'" data-iso="'+iso+'" title="'+dtTexto(iso)+(fer[iso]?' · '+esc(fer[iso]):'')+'">'+d+'</button>'; }
+  return '<div class="dt-sem">'+DT_SEMS.map(function(s){ return '<span>'+s.charAt(0)+'</span>'; }).join('')+'</div><div class="dt-dias">'+h+'</div>';
+}
+var DT_NATIVO=Object.getOwnPropertyDescriptor(HTMLInputElement.prototype,'value');
+/* --- campo único: troca o calendário nativo por uma janelinha --- */
+function dtMelhorar(inp){
+  if(inp._dt) return; inp._dt=true;
+  var bt=document.createElement('button'); bt.type='button'; bt.className='dt-campo'; bt.setAttribute('aria-label', inp.getAttribute('aria-label')||'Escolher data');
+  inp.style.display='none'; inp.parentNode.insertBefore(bt, inp.nextSibling);
+  if(inp.id){ var lb=document.querySelector('label[for="'+inp.id+'"]'); if(lb) lb.setAttribute('for',''); }
+  function mostrar(){ var v=DT_NATIVO.get.call(inp); bt.innerHTML=DT_ICO+(v?'<span>'+dtTexto(v)+'</span>':'<span class="vz">Escolher data</span>'); }
+  Object.defineProperty(inp,'value',{configurable:true, get:function(){ return DT_NATIVO.get.call(this); }, set:function(v){ DT_NATIVO.set.call(this,v); mostrar(); }});
+  mostrar();
+  bt.onclick=function(ev){ ev.stopPropagation(); dtAbrir(inp, bt); };
+}
+function dtFechar(){ var p=document.querySelector('.dt-pop'); if(p){ if(p._bt) p._bt.classList.remove('aberto'); p.remove(); } }
+function dtAbrir(inp, bt){
+  var aberto=document.querySelector('.dt-pop'); dtFechar(); if(aberto && aberto._bt===bt) return;
+  var v=DT_NATIVO.get.call(inp), base=v||hojeLocal(), ano=+base.slice(0,4), mes=+base.slice(5,7);
+  var pop=document.createElement('div'); pop.className='dt-pop'; pop._bt=bt; pop.setAttribute('data-dt-redraw',''); bt.classList.add('aberto');
+  function escolher(iso){ DT_NATIVO.set.call(inp, iso); inp.value=iso; dtFechar(); inp.dispatchEvent(new Event('change',{bubbles:true})); }
+  function desenhar(){
+    pop.innerHTML='<div class="dt-cab"><button type="button" data-n="-1" aria-label="Mês anterior">‹</button><b>'+dtMes(mes,ano)+'</b><button type="button" data-n="1" aria-label="Próximo mês">›</button></div>'+dtGrade(ano, mes, {sel:DT_NATIVO.get.call(inp)})+
+      '<div class="dt-pe"><button type="button" class="lim" data-x="limpar">Limpar</button><small><i></i>feriado</small><button type="button" data-x="hoje">Hoje</button></div>';
+    pop.querySelectorAll('[data-n]').forEach(function(b){ b.onclick=function(e){ e.stopPropagation(); mes+=+b.dataset.n; if(mes<1){ mes=12; ano--; } if(mes>12){ mes=1; ano++; } desenhar(); }; });
+    pop.querySelectorAll('[data-iso]').forEach(function(b){ b.onclick=function(e){ e.stopPropagation(); escolher(b.dataset.iso); }; });
+    pop.querySelector('[data-x="hoje"]').onclick=function(e){ e.stopPropagation(); escolher(hojeLocal()); };
+    pop.querySelector('[data-x="limpar"]').onclick=function(e){ e.stopPropagation(); escolher(''); };
+  }
+  pop._redesenhar=desenhar; desenhar();
+  document.body.appendChild(pop);
+  var r=bt.getBoundingClientRect(), top=r.bottom+window.scrollY+6, left=r.left+window.scrollX;
+  if(left+pop.offsetWidth>window.scrollX+document.documentElement.clientWidth-8) left=window.scrollX+document.documentElement.clientWidth-pop.offsetWidth-8;
+  if(r.bottom+pop.offsetHeight+10>window.innerHeight && r.top>pop.offsetHeight+10) top=r.top+window.scrollY-pop.offsetHeight-6;
+  pop.style.top=top+'px'; pop.style.left=Math.max(8,left)+'px';
+  pop.onclick=function(e){ e.stopPropagation(); };
+}
+document.addEventListener('click', function(){ dtFechar(); });
+document.addEventListener('keydown', function(e){ if(e.key==='Escape') dtFechar(); });
+window.addEventListener('scroll', function(e){ if(!(e.target && e.target.closest && e.target.closest('.dt-pop'))) dtFechar(); }, true);
+
+/* --- período: primeiro e último dia num calendário só (férias e licenças) --- */
+function dtPeriodo(ini, fim){
+  if(ini._dt) return; ini._dt=fim._dt=true;
+  var caixa=ini.closest('.dois'); if(!caixa) return;
+  var box=document.createElement('div'); box.className='dt-per'; box.setAttribute('data-dt-redraw','');
+  caixa.style.display='none'; caixa.parentNode.insertBefore(box, caixa);
+  var base=DT_NATIVO.get.call(ini)||hojeLocal(), ano=+base.slice(0,4), mes=+base.slice(5,7), foco=DT_NATIVO.get.call(ini)?'fim':'ini', prev='';
+  [ini,fim].forEach(function(inp){ Object.defineProperty(inp,'value',{configurable:true, get:function(){ return DT_NATIVO.get.call(this); }, set:function(v){ DT_NATIVO.set.call(this,v); desenhar(); }}); });
+  function marcar(iso){
+    var a=DT_NATIVO.get.call(ini);
+    if(foco==='ini' || !a){ DT_NATIVO.set.call(ini, iso); DT_NATIVO.set.call(fim, iso); box._soIni=true; foco='fim'; }
+    else { if(iso<a){ DT_NATIVO.set.call(fim, a); DT_NATIVO.set.call(ini, iso); } else DT_NATIVO.set.call(fim, iso); box._soIni=false; foco='ini'; }
+    prev=''; fim.dispatchEvent(new Event('change',{bubbles:true})); desenhar();
+  }
+  function desenhar(){
+    var a=DT_NATIVO.get.call(ini), b=DT_NATIVO.get.call(fim), ano2=mes===12?ano+1:ano, mes2=mes===12?1:mes+1;
+    var opts={ini:a, fim:box._soIni?'':b, prev:prev};
+    var n = a&&b&&!box._soIni ? Math.round((Date.parse(b)-Date.parse(a))/864e5)+1 : 0;
+    box.innerHTML='<div class="dt-per-topo"><button type="button" data-f="ini" class="'+(foco==='ini'?'ativo':'')+'"><small>Primeiro dia</small><b>'+(a?dtTexto(a):'Escolha no calendário')+'</b></button><button type="button" data-f="fim" class="'+(foco==='fim'?'ativo':'')+'"><small>Último dia</small><b>'+(b&&!box._soIni?dtTexto(b):'Escolha no calendário')+'</b></button></div>'+
+      '<div class="dt-per-meses"><button type="button" class="nav ant" aria-label="Mês anterior">‹</button><button type="button" class="nav prox" aria-label="Próximo mês">›</button>'+
+      '<div><h5>'+dtMes(mes,ano)+'</h5>'+dtGrade(ano,mes,opts)+'</div><div class="m2"><h5>'+dtMes(mes2,ano2)+'</h5>'+dtGrade(ano2,mes2,opts)+'</div></div>'+
+      '<div class="dica">'+(foco==='fim'&&a?'Agora clique no último dia'+(n?'':' (ou no mesmo dia, se for um dia só)')+'.':(n?n+' dia'+(n>1?'s':'')+' selecionado'+(n>1?'s':'')+'. Clique em outro dia para começar de novo.':'Clique no primeiro dia e depois no último.'))+'</div>';
+    box.querySelector('.ant').onclick=function(){ mes--; if(mes<1){ mes=12; ano--; } desenhar(); };
+    box.querySelector('.prox').onclick=function(){ mes++; if(mes>12){ mes=1; ano++; } desenhar(); };
+    box.querySelectorAll('[data-f]').forEach(function(b2){ b2.onclick=function(){ foco=b2.dataset.f; desenhar(); }; });
+    box.querySelectorAll('[data-iso]').forEach(function(d){ d.onclick=function(){ marcar(d.dataset.iso); }; d.onmouseenter=function(){ if(foco==='fim' && DT_NATIVO.get.call(ini)){ prev=d.dataset.iso; box.querySelectorAll('[data-iso]').forEach(function(x){ var iso=x.dataset.iso, a2=DT_NATIVO.get.call(ini); x.classList.toggle('prev', (iso>a2 && iso<=prev) || (iso<a2 && iso>=prev)); }); } }; });
+  }
+  box._redesenhar=desenhar; desenhar();
+}
+
+/* --- aplica em todo campo de data que aparecer no painel --- */
+function dtVarrer(raiz){
+  var ini=raiz.querySelector && raiz.querySelector('#mfIni'), fim=raiz.querySelector && raiz.querySelector('#mfFim');
+  if(ini && fim && !ini._dt) dtPeriodo(ini, fim);
+  (raiz.querySelectorAll ? raiz.querySelectorAll('input[type=date]') : []).forEach(function(inp){ if(!inp._dt) dtMelhorar(inp); });
+}
+new MutationObserver(function(ms){ ms.forEach(function(m){ m.addedNodes.forEach(function(n){ if(n.nodeType===1) dtVarrer(n.parentNode||n); }); }); }).observe(document.body, {childList:true, subtree:true});
+dtVarrer(document);
+</script>

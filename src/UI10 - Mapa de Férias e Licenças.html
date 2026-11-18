@@ -1,0 +1,106 @@
+<style>
+/* ===== mapa de calor de férias e licenças ===== */
+.mc{background:var(--sup,#fff);border:1px solid var(--c2);border-radius:18px;padding:18px 20px;margin-bottom:16px}
+.mc-cab{display:flex;justify-content:space-between;align-items:flex-end;gap:14px;flex-wrap:wrap;margin-bottom:14px}
+.mc-cab h2{margin:0;font-size:18px}
+.mc-cab p{margin:2px 0 0;color:var(--c4);font-size:13.5px}
+.mc-filtros{display:flex;gap:8px;flex-wrap:wrap}
+.mc-cab select{width:auto;min-width:180px}
+.mc-corpo{display:grid;grid-template-columns:minmax(0,1fr) 300px;gap:20px;align-items:start}
+.mc-sem{display:grid;grid-template-columns:repeat(7,minmax(0,1fr));gap:6px;margin-bottom:6px}
+.mc-sem span{text-align:center;font-size:11.5px;font-weight:800;color:var(--c4);text-transform:uppercase;letter-spacing:.04em}
+.mc-grade{display:grid;grid-template-columns:repeat(7,minmax(0,1fr));gap:6px}
+.mc-d{position:relative;border:0;border-radius:12px;min-height:76px;padding:8px 9px;text-align:left;cursor:pointer;font:inherit;display:flex;flex-direction:column;justify-content:space-between;transition:transform .12s ease, box-shadow .12s ease;color:var(--preto)}
+.mc-d:hover{transform:translateY(-2px);box-shadow:0 6px 16px rgba(0,0,0,.12)}
+.mc-d.vz{visibility:hidden;pointer-events:none}
+.mc-d .n{font-size:13px;font-weight:800;opacity:.75}
+.mc-d .q{font-size:22px;font-weight:800;line-height:1}
+.mc-d .q small{font-size:11px;font-weight:700;opacity:.8;margin-left:3px}
+.mc-d .pt{display:flex;gap:3px;flex-wrap:wrap;margin-top:4px}
+.mc-d .pt i{width:7px;height:7px;border-radius:50%;display:block}
+.mc-d .pt i.f{background:var(--rosa)} .mc-d .pt i.l{background:#e09a6b}
+.mc-d.l3 .pt i.f,.mc-d.l4 .pt i.f{background:#fff} .mc-d.l3 .pt i.l,.mc-d.l4 .pt i.l{background:#ffd8bf}
+.mc-d.l0{background:var(--c1)} .mc-d.l0 .q{color:var(--c4);font-size:15px}
+.mc-d.l1{background:#FFE5F3} .mc-d.l2{background:#F5A4C7} .mc-d.l3{background:#E2489A;color:#fff} .mc-d.l4{background:#A51E5B;color:#fff}
+html[data-tema="escuro"] .mc-d.l1{background:#3b1630;color:#f3d6e6} html[data-tema="escuro"] .mc-d.l2{background:#6b2350;color:#fff} html[data-tema="escuro"] .mc-d.l3{background:#a32a72} html[data-tema="escuro"] .mc-d.l4{background:#d80073}
+.mc-d.hoje{box-shadow:inset 0 0 0 2px var(--roxo)}
+.mc-d.sel{outline:3px solid var(--preto);outline-offset:2px}
+html[data-tema="escuro"] .mc-d.sel{outline-color:#fff}
+.mc-d .fer{position:absolute;top:8px;right:8px;width:8px;height:8px;border-radius:50%;background:var(--pink);box-shadow:0 0 0 2px rgba(255,255,255,.7)}
+.mc-leg{display:flex;align-items:center;gap:6px;justify-content:flex-end;margin-top:12px;font-size:12px;color:var(--c4);font-weight:700;flex-wrap:wrap}
+.mc-leg i{width:22px;height:14px;border-radius:4px;display:inline-block}
+.mc-leg .sep{width:12px}
+.mc-leg .bol{width:8px;height:8px;border-radius:50%}
+.mc-lado{display:grid;gap:12px}
+.mc-res{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.mc-res div{background:var(--c1);border-radius:12px;padding:10px 12px}
+.mc-res b{display:block;font-size:20px;font-weight:800}
+.mc-res span{font-size:12px;color:var(--c4);font-weight:700}
+.mc-res .pico{grid-column:span 2;background:var(--rosa-bg)}
+.mc-res .pico b{color:var(--vinho)}
+.mc-dia{border:1px solid var(--c2);border-radius:14px;padding:12px 14px}
+.mc-dia h3{margin:0 0 2px;font-size:15px}
+.mc-dia p{margin:0 0 8px;font-size:12.5px;color:var(--c4)}
+.mc-dia .lst{display:grid;gap:6px;max-height:300px;overflow:auto}
+.mc-dia button{display:grid;grid-template-columns:1fr auto;gap:6px;align-items:center;width:100%;border:0;background:var(--c1);border-radius:10px;padding:8px 10px;text-align:left;cursor:pointer;font:inherit;color:var(--preto)}
+.mc-dia button:hover{background:var(--rosa-bg)}
+.mc-dia button b{font-size:13px;display:block}
+.mc-dia button small{font-size:11.5px;color:var(--c4)}
+.mc-dia .vazio-mini{padding:12px}
+@media (max-width:1000px){ .mc-corpo{grid-template-columns:1fr} }
+@media (max-width:700px){ .mc-d{min-height:54px;padding:6px} .mc-d .q{font-size:16px} .mc-d .q small,.mc-d .pt{display:none} .mc-grade,.mc-sem{gap:3px} }
+</style>
+<script>
+/* ===================== Férias e licenças com mapa de calor ===================== */
+telaAfast = function(){
+  gCarregando();
+  Promise.all([chamar('apiAfastamentos', estado.token, estado.mes), estado.pessoas?Promise.resolve(null):chamar('apiPessoas', estado.token)]).then(function(r){
+    if(r[1]) estado.pessoas=r[1].pessoas;
+    estado.afastDados=r[0].itens; desenharAfast();
+  }).catch(falhaGeral);
+};
+function desenharAfast(){
+  var mes=estado.mes, todos=estado.afastDados||[], coordDe={}, perfilDe={}, fpf=estado.afastPerfil||'', pessoas=estado.pessoas||[];
+  pessoas.forEach(function(p){ coordDe[p.email]=p.coord; perfilDe[p.email]=p.perfil; });
+  var fc=estado.afastCoord||'', coords=uniq(pessoas.map(function(p){ return p.coord; }));
+  var it=todos.filter(function(a){ return (!fc || coordDe[a.email]===fc) && (!fpf || perfilDe[a.email]===fpf); }), mapa={}; it.forEach(function(a){ mapa[a.id]=a; });
+  var base=pessoas.filter(function(p){ return (!fc || p.coord===fc) && (!fpf || p.perfil===fpf); }).length||1;
+  var fer=it.filter(function(a){ return a.tipo==='FERIAS'; }).length, lic=it.length-fer;
+  // contagem por dia
+  var n=diasMes(mes), dias=[], max=0, soma=0, comGente=0, pico=null;
+  for(var dd=1; dd<=n; dd++){ var id=dataDe(mes,dd), fora=it.filter(function(a){ return id>=a.inicio && id<=a.fim; });
+    var o={dd:dd, id:id, fora:fora, f:fora.filter(function(a){ return a.tipo==='FERIAS'; }).length}; o.l=fora.length-o.f; dias.push(o);
+    if(fora.length>max) max=fora.length; soma+=fora.length; if(fora.length) comGente++; if(!pico||fora.length>pico.fora.length) pico=o; }
+  var nivel=function(q){ return !q?0:Math.max(1,Math.min(4,Math.ceil(q/max*4))); };
+  if(!estado.afastDia || estado.afastDia.slice(0,7)!==mes) estado.afastDia = (hojeLocal().slice(0,7)===mes ? hojeLocal() : (pico&&pico.fora.length?pico.id:dataDe(mes,1)));
+  var fers=(typeof dtFeriados==='function'?dtFeriados(+mes.slice(0,4)):null)||{}, hoje=hojeLocal(), ini=wdDe(mes,1);
+  var cel=''; for(var i=0;i<ini;i++) cel+='<span class="mc-d vz"></span>';
+  dias.forEach(function(o){ var q=o.fora.length, wd=wdDe(mes,o.dd), pts='';
+    for(var k=0;k<Math.min(o.f,6);k++) pts+='<i class="f"></i>'; for(var k2=0;k2<Math.min(o.l,6);k2++) pts+='<i class="l"></i>';
+    cel+='<button type="button" class="mc-d l'+nivel(q)+((wd===0||wd===6)?' fds':'')+(o.id===hoje?' hoje':'')+(o.id===estado.afastDia?' sel':'')+'" data-dia="'+o.id+'" title="'+dSem(o.id)+': '+(q?q+' fora ('+o.f+' de férias, '+o.l+' de licença)':'ninguém fora')+(fers[o.id]?' · '+esc(fers[o.id]):'')+'">'+
+      (fers[o.id]?'<span class="fer"></span>':'')+'<span class="n">'+o.dd+'</span><span><span class="q">'+(q?q+'<small>fora</small>':'—')+'</span><span class="pt">'+pts+'</span></span></button>'; });
+  var sel=dias.filter(function(o){ return o.id===estado.afastDia; })[0]||dias[0];
+  var lado='<div class="mc-res"><div class="pico"><b>'+(pico&&pico.fora.length?dSem(pico.id):'—')+'</b><span>'+(pico&&pico.fora.length?'Dia com mais gente fora: '+pico.fora.length+' pessoa'+(pico.fora.length>1?'s':'')+' ('+Math.round(pico.fora.length/base*100)+'% do time)':'Ninguém fora neste mês')+'</span></div>'+
+    '<div><b>'+(soma/n).toFixed(1).replace('.',',')+'</b><span>Média de pessoas fora por dia</span></div><div><b>'+comGente+'</b><span>Dias com alguém fora</span></div></div>'+
+    '<div class="mc-dia"><h3>'+dSem(sel.id).replace(/^./,function(c){ return c.toUpperCase(); })+'</h3><p>'+(sel.fora.length?sel.fora.length+' pessoa'+(sel.fora.length>1?'s':'')+' fora · '+Math.round(sel.fora.length/base*100)+'% do time':'Ninguém de férias ou licença neste dia.')+'</p><div class="lst">'+
+    (sel.fora.length?sel.fora.slice().sort(function(a,b){ return a.nome.localeCompare(b.nome,'pt-BR'); }).map(function(a){ return '<button type="button" data-ed="'+esc(a.id)+'"><span><b>'+esc(a.nome)+'</b><small>'+esc(coordDe[a.email]||'')+' · '+dBr(a.inicio).slice(0,5)+' a '+dBr(a.fim).slice(0,5)+'</small></span><span class="selo '+(a.tipo==='FERIAS'?'alt':'ras')+'">'+(a.tipo==='FERIAS'?'Férias':'Licença')+'</span></button>'; }).join(''):'<div class="vazio-mini">Clique em outro dia do mapa para ver quem está fora.</div>')+'</div></div>';
+  var tons=document.documentElement.getAttribute('data-tema')==='escuro'?['#3b1630','#6b2350','#a32a72','#d80073']:['#FFE5F3','#F5A4C7','#E2489A','#A51E5B'];
+  gc().innerHTML='<div class="cab"><div><h1>Férias e Licenças</h1><p>Nesses dias, as regras de 5x2 e de domingo de folga não se aplicam à pessoa.</p></div><div class="acoes"><select id="aMes" class="sel-mes" aria-label="Mês">'+opcoesMes(mes)+'</select><button class="btn" id="aNovo">Cadastrar férias ou licença</button></div></div>'+
+    '<div class="numeros" style="--cols:3"><div class="numero"><b>'+it.length+'</b><span>Afastamentos em '+rotuloMes(mes).toLowerCase()+'</span></div><div class="numero"><b>'+fer+'</b><span>Férias</span></div><div class="numero"><b>'+lic+'</b><span>Licenças</span></div></div>'+
+    '<div class="mc" id="mcMapa" data-dt-redraw><div class="mc-cab"><div><h2>Mapa do Mês</h2><p>Quanto mais escuro o dia, mais gente de férias ou licença. Clique num dia para ver quem está fora.</p></div><div class="mc-filtros"><select id="aPerfil" aria-label="Perfil"><option value="">Agentes e gestão</option><option value="AGENTE"'+(fpf==='AGENTE'?' selected':'')+'>Só agentes</option><option value="GESTAO"'+(fpf==='GESTAO'?' selected':'')+'>Só gestão</option></select><select id="aCoord" aria-label="Coordenação">'+opts(coords, fc, 'Todas as coordenações')+'</select></div></div>'+
+    '<div class="mc-corpo"><div><div class="mc-sem">'+SEM.map(function(s){ return '<span>'+s+'</span>'; }).join('')+'</div><div class="mc-grade">'+cel+'</div>'+
+    '<div class="mc-leg"><span>Menos</span>'+['var(--c1)'].concat(tons).map(function(c){ return '<i style="background:'+c+'"></i>'; }).join('')+'<span>Mais</span><span class="sep"></span><i class="bol" style="background:var(--rosa)"></i><span>férias</span><i class="bol" style="background:#e09a6b"></i><span>licença</span><i class="bol" style="background:var(--pink)"></i><span>feriado</span></div></div>'+
+    '<div class="mc-lado">'+lado+'</div></div></div>'+
+    '<div class="tabela"><table><thead><tr><th class="esq">Colaborador</th><th>Tipo</th><th>Período</th><th>Dias</th><th class="esq">Observação</th><th>Ações</th></tr></thead><tbody>'+
+    (it.length?it.map(function(a){ var nd=Math.round((Date.parse(a.fim)-Date.parse(a.inicio))/864e5)+1; return '<tr><td class="esq"><b>'+esc(a.nome)+'</b><br><small style="color:var(--c4)">'+esc(coordDe[a.email]||'')+'</small></td><td><span class="selo '+(a.tipo==='FERIAS'?'alt':'ras')+'">'+(a.tipo==='FERIAS'?'Férias':'Licença')+'</span></td><td>'+dBr(a.inicio)+' a '+dBr(a.fim)+'</td><td><b>'+nd+'</b></td><td class="esq">'+esc(a.obs||'—')+'</td><td><button class="btn sec peq" data-ed="'+esc(a.id)+'">Editar</button> <button class="btn sec peq" data-rem="'+esc(a.id)+'">Remover</button></td></tr>'; }).join(''):'<tr><td colspan="6" style="padding:28px;color:#6D6D6D">Nenhuma férias ou licença em '+rotuloMes(mes).toLowerCase()+(fpf?(fpf==='AGENTE'?' para agentes':' para a gestão'):'')+(fc?' em '+esc(fc):'')+'. Use o botão "Cadastrar férias ou licença".</td></tr>')+
+    '</tbody></table></div>';
+  $('mcMapa')._redesenhar=desenharAfast;
+  $('aMes').onchange=function(){ estado.mes=this.value; estado.afastDia=''; telaAfast(); };
+  $('aCoord').onchange=function(){ estado.afastCoord=this.value; desenharAfast(); };
+  $('aPerfil').onchange=function(){ estado.afastPerfil=this.value; desenharAfast(); };
+  $('aNovo').onclick=function(){ modalAfast(null); };
+  gc().querySelectorAll('.mc-d[data-dia]').forEach(function(b){ b.onclick=function(){ estado.afastDia=b.dataset.dia; desenharAfast(); }; });
+  gc().querySelectorAll('[data-ed]').forEach(function(b){ b.onclick=function(){ modalAfast(mapa[b.dataset.ed]); }; });
+  gc().querySelectorAll('[data-rem]').forEach(function(b){ b.onclick=function(){ modalRemoverAfast(mapa[b.dataset.rem]); }; });
+}
+</script>

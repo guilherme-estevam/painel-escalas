@@ -1,0 +1,307 @@
+<style>
+/* notificações */
+.painel-notif li{cursor:pointer;transition:background .15s;padding-left:24px!important}
+.painel-notif li:hover{background:var(--c1)}
+.painel-notif li.nova{position:relative}
+.painel-notif li.nova::before{content:"";position:absolute;left:6px;top:16px;width:8px;height:8px;border-radius:50%;background:var(--rosa)}
+.painel-notif .n-dica{font-size:12px;color:var(--c4);padding:8px 14px;border-top:1px solid var(--c2)}
+/* visão do dia */
+.vd-agora{background:linear-gradient(135deg,var(--roxo),var(--rosa));color:#fff;border-radius:16px;padding:14px 18px;display:flex;align-items:center;gap:18px;flex-wrap:wrap;margin-bottom:16px;cursor:pointer;border:0;width:100%;text-align:left}
+.vd-agora .hora{font-size:30px;font-weight:800;line-height:1}
+.vd-agora .hora small{display:block;font-size:12px;font-weight:700;opacity:.85}
+.vd-agora .it{background:rgba(255,255,255,.16);border-radius:12px;padding:6px 12px;font-weight:800}
+.vd-agora .it small{display:block;font-weight:600;font-size:11.5px;opacity:.9}
+.vd-agora .ver{margin-left:auto;font-weight:800;font-size:13px}
+.vd-area{position:relative}
+.vd-graf2{display:grid;grid-template-columns:repeat(28,minmax(0,1fr));gap:3px;align-items:end;height:170px;border-bottom:2px solid var(--c3);position:relative}
+.vd-c{position:relative;height:100%;display:flex;flex-direction:column-reverse;cursor:pointer;border-radius:4px 4px 0 0}
+.vd-c.h{box-shadow:-2px 0 0 -1px var(--c2)}
+.vd-c i{display:block;width:100%}
+.vd-c i:last-child{border-radius:4px 4px 0 0}
+.vd-c i.f0800{background:var(--rosa)} .vd-c i.fchat{background:var(--roxo)} .vd-c i.fass{background:var(--vinho)} .vd-c i.pad{background:#8a8a8a} .vd-c i.alm{background:#f1d5bd}
+.vd-c:hover{background:var(--c1)} .vd-c:hover i{filter:brightness(1.1)}
+.vd-c .num{position:absolute;left:0;right:0;text-align:center;font-size:10px;font-weight:800;color:var(--c4)}
+.vd-c.sel{outline:2px solid var(--pink);outline-offset:1px}
+.vd-agoral{position:absolute;top:-6px;bottom:-4px;width:2px;background:var(--pink);z-index:2;pointer-events:none}
+.vd-agoral::after{content:"agora";position:absolute;top:-14px;left:-14px;font-size:10px;font-weight:800;color:var(--pink)}
+.vd-horas{display:grid;grid-template-columns:repeat(28,minmax(0,1fr));gap:3px;margin-top:4px}
+.vd-horas span{grid-column:span 2;font-size:11.5px;font-weight:800;color:var(--preto);border-left:2px solid var(--c3);padding-left:4px}
+.vd-ges2{display:grid;grid-template-columns:repeat(28,minmax(0,1fr));gap:3px;margin-top:6px}
+.vd-ges2 span{height:18px;border-radius:4px;background:var(--c2);font-size:10px;font-weight:800;display:flex;align-items:center;justify-content:center;color:var(--c4)}
+.vd-ges2 span.on{background:#55556a;color:#fff}
+.vd-rotulo{font-size:12px;font-weight:700;color:var(--c4);margin-top:10px}
+.vd-alertas{display:flex;gap:8px;flex-wrap:wrap;margin-top:12px}
+.vd-alertas span{background:var(--salmao);color:var(--vinho);border-radius:10px;padding:5px 10px;font-size:12.5px;font-weight:700}
+.vd-alertas span.ok{background:var(--roxo-bg);color:var(--roxo)}
+.vd-coord{width:100%;border-collapse:collapse;font-size:13.5px}
+.vd-coord th{position:sticky;top:0;background:var(--sup,#fff);font-size:12px;color:var(--c4);text-align:center;padding:8px 6px;border-bottom:1px solid var(--c2)}
+.vd-coord td{text-align:center;padding:8px 6px;border-bottom:1px solid var(--c2)}
+.vd-coord td:first-child,.vd-coord th:first-child{text-align:left}
+.vd-coord tr.cl{cursor:pointer} .vd-coord tr.cl:hover td{background:var(--c1)}
+.vd-lin.cl{cursor:pointer;border-radius:10px} .vd-lin.cl:hover{background:var(--c1)}
+.vd-lin .mais{font-size:12px;font-weight:800;color:var(--rosa)}
+.vd-lin2{display:grid;grid-template-columns:230px 150px 1fr 70px;gap:14px;align-items:center;padding:8px 6px;border-top:1px solid var(--c2)}
+.vd-cab2{display:grid;grid-template-columns:230px 150px 1fr 70px;gap:14px;font-size:11px;color:var(--c4);font-weight:700;padding:6px 6px;position:sticky;top:0;background:var(--sup,#fff);z-index:1}
+.vd-cab2 .regua{position:relative;height:14px} .vd-cab2 .regua span{position:absolute;transform:translateX(-50%)}
+.vd-fora button{display:inline-block;background:var(--sup,#fff);border:1px solid var(--c2);border-radius:14px;padding:2px 10px;font-size:12.5px;margin:0 4px 4px 0;cursor:pointer;color:var(--preto)}
+.vd-fora button:hover{border-color:var(--rosa)}
+/* modal da meia hora */
+.slot-nav{display:flex;align-items:center;gap:10px;justify-content:space-between;margin-bottom:12px}
+.slot-nav h3{margin:0;font-size:20px}
+.slot-nav .seta{width:36px;height:36px;border-radius:50%;border:1.5px solid var(--c3);background:var(--sup,#fff);cursor:pointer;font-size:18px;font-weight:800;color:var(--preto)}
+.slot-res{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:14px}
+.slot-res span{border-radius:10px;padding:6px 12px;font-weight:800;font-size:13px}
+.slot-grupos{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:12px}
+.slot-g{border:1px solid var(--c2);border-radius:12px;padding:10px 12px}
+.slot-g h4{margin:0 0 8px;font-size:14px;display:flex;gap:8px;align-items:center}
+.slot-g h4 i{width:10px;height:10px;border-radius:3px;display:inline-block}
+.slot-g button{display:flex;justify-content:space-between;gap:8px;width:100%;border:0;background:transparent;padding:6px 4px;border-bottom:1px solid var(--c2);cursor:pointer;text-align:left;color:var(--preto);font-size:13px}
+.slot-g button:hover{background:var(--c1)}
+.slot-g button small{color:var(--c4);white-space:nowrap}
+.slot-g .nada{font-size:12.5px;color:var(--c4)}
+.slot-mov{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-top:12px}
+.slot-mov div{background:var(--c1);border-radius:12px;padding:10px 12px;font-size:13px}
+/* modal do agente */
+.ag-top{display:flex;gap:14px;align-items:center;justify-content:space-between;flex-wrap:wrap;margin-bottom:14px}
+.ag-top h3{margin:0;font-size:21px} .ag-top p{margin:2px 0 0;color:var(--c4);font-size:13.5px}
+.ag-hoje{border:1px solid var(--c2);border-radius:14px;padding:14px 16px;margin-bottom:14px}
+.ag-hoje .tt{display:flex;justify-content:space-between;align-items:baseline;flex-wrap:wrap;gap:8px}
+.ag-hoje .tt b{font-size:18px}
+.ag-bl{display:grid;gap:6px;margin-top:10px}
+.ag-bl div{display:flex;justify-content:space-between;align-items:center;border-radius:10px;padding:7px 12px;font-weight:700;font-size:13.5px}
+.ag-bl .f0800{background:var(--rosa-bg);color:var(--vinho)} .ag-bl .fchat{background:var(--roxo-bg);color:var(--roxo)} .ag-bl .fass{background:var(--creme);color:var(--vinho)} .ag-bl .alm{background:var(--c1);color:var(--c4)} .ag-bl .fges{background:var(--c1)}
+.ag-sem{border:1px solid var(--c2);border-radius:14px;padding:6px 14px 10px;margin-bottom:14px}
+.ag-sem h4,.ag-mes h4{margin:10px 0 6px;font-size:14px}
+.ag-sd{display:grid;grid-template-columns:110px 1fr 120px;gap:10px;align-items:center;padding:5px 0;border-top:1px solid var(--c2);font-size:13px}
+.ag-sd.atual b{color:var(--rosa)}
+.ag-mes .numeros .numero b{font-size:22px}
+/* acessos */
+.ac-hoje{background:var(--sup,#fff);border:1px solid var(--c2);border-radius:14px;padding:12px 16px;margin-bottom:14px}
+.ac-hoje h3{margin:0 0 8px;font-size:15px}
+.ac-hoje .fila{display:flex;flex-wrap:wrap;gap:6px}
+.ac-hoje .fila .av{width:36px;height:36px;font-size:13px}
+.ac-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(290px,1fr));gap:10px}
+.ac-card{background:var(--sup,#fff);border:1px solid var(--c2);border-left:4px solid var(--c3);border-radius:14px;padding:12px 14px;display:grid;grid-template-columns:44px 1fr;gap:12px}
+.ac-card.hoje{border-left-color:#2e9e6a} .ac-card.recente{border-left-color:var(--roxo)} .ac-card.nunca{border-left-color:var(--c3)} .ac-card.sem{border-left-color:var(--rosa)}
+.ac-card b{display:block;font-size:14px} .ac-card small{color:var(--c4);font-size:12px}
+.ac-card .st{display:inline-block;margin-top:6px;border-radius:20px;padding:2px 10px;font-size:12px;font-weight:800}
+.st.hoje{background:#dff3ea;color:#1e7a4f} .st.recente{background:var(--roxo-bg);color:var(--roxo)} .st.nunca{background:var(--c2);color:var(--c4)} .st.sem{background:var(--rosa-bg);color:var(--vinho)}
+html[data-tema="escuro"] .st.hoje{background:#163b2b;color:#6fd3a5}
+.ac-card .lin{font-size:12.5px;color:var(--c4);margin-top:4px}
+.ac-ev{background:var(--sup,#fff);border:1px solid var(--c2);border-radius:12px;padding:10px 14px;display:grid;grid-template-columns:40px 1fr auto;gap:12px;align-items:center;margin-bottom:6px}
+.ac-ev .av{width:36px;height:36px;font-size:13px}
+.ac-ev .t{font-size:13px;color:var(--c4);font-weight:700}
+/* minha escala: próximo turno */
+.turno{background:linear-gradient(135deg,var(--roxo),var(--rosa));color:#fff;border-radius:18px;padding:18px 20px;margin-bottom:16px}
+.turno .rot{font-size:12.5px;font-weight:800;text-transform:uppercase;letter-spacing:.08em;opacity:.85}
+.turno .tit{font-size:22px;font-weight:800;margin:2px 0 6px}
+.turno .sub{font-size:14px;opacity:.95}
+.turno .barra{background:rgba(255,255,255,.18);margin-top:12px}
+.turno .barra .grade{background:rgba(255,255,255,.12)}
+.turno .chips2{display:flex;gap:6px;flex-wrap:wrap;margin-top:10px}
+.turno .chips2 span{background:rgba(255,255,255,.18);border-radius:10px;padding:4px 10px;font-size:12.5px;font-weight:800}
+@media (max-width:900px){
+  .vd-lin2,.vd-cab2{grid-template-columns:1fr} .vd-cab2{display:none}
+  .ag-sd{grid-template-columns:90px 1fr}
+  .ag-sd > :last-child{display:none}
+  .slot-mov{grid-template-columns:1fr}
+  .vd-graf2,.vd-horas,.vd-ges2{gap:1px} .vd-c .num{display:none} .vd-horas span:nth-child(even){visibility:hidden}
+}
+</style>
+<script>
+/* ===================== notificações: clique marca como lida ===================== */
+(function(){
+  var b=$('bSino'); if(!b) return; var nb=b.cloneNode(true); b.parentNode.replaceChild(nb,b);
+  nb.addEventListener('click', function(ev){ ev.stopPropagation(); var p=$('painelNotif'); var m=$('menuEu'); if(m) m.classList.add('oculto');
+    if(!p.classList.contains('oculto')){ p.classList.add('oculto'); return; } desenharNotif(); p.classList.remove('oculto'); });
+})();
+function contadorSino(){ var r=estado.notif||{naoLidas:0}, b=$('sinoN'); if(!b) return; b.textContent=r.naoLidas>9?'9+':r.naoLidas; b.classList.toggle('oculto', !r.naoLidas); }
+function desenharNotif(){
+  var p=$('painelNotif'), r=estado.notif||{itens:[],naoLidas:0};
+  p.innerHTML='<header><b>Notificações</b>'+(r.naoLidas?'<button class="link" id="nLer">Marcar todas como lidas</button>':'')+'</header>'+
+    (r.itens.length?'<ul>'+r.itens.map(function(n){ return '<li class="'+(n.lida?'':'nova')+'" data-n="'+esc(n.id)+'" role="button" tabindex="0" title="'+(n.lida?'':'Clique para marcar como lida')+'"><b>'+esc(n.titulo)+'</b><span>'+esc(n.msg)+'</span><small>'+dhBr(n.em)+(n.setor?' · gestão':'')+'</small></li>'; }).join('')+'</ul>'+(r.naoLidas?'<div class="n-dica">Clique numa notificação para marcar como lida.</div>':''):'<div class="vaz">Nenhuma notificação por enquanto.</div>');
+  p.querySelectorAll('[data-n]').forEach(function(li){ var ler=function(){ var n=r.itens.filter(function(x){ return String(x.id)===li.dataset.n; })[0]; if(!n||n.lida) return; n.lida=true; r.naoLidas=Math.max(0,r.naoLidas-1); li.classList.remove('nova'); li.title=''; contadorSino(); if(!r.naoLidas){ var bt=$('nLer'); if(bt) bt.remove(); var dc=p.querySelector('.n-dica'); if(dc) dc.remove(); } chamar('apiMarcarLidas', estado.token, [n.id]).catch(function(){}); };
+    li.onclick=ler; li.onkeydown=function(e){ if(e.key==='Enter'||e.key===' '){ e.preventDefault(); ler(); } }; });
+  var nl=$('nLer'); if(nl) nl.onclick=function(e2){ e2.stopPropagation(); var ids=r.itens.filter(function(i){ return !i.lida; }).map(function(i){ return i.id; }); r.itens.forEach(function(i){ i.lida=true; }); r.naoLidas=0; contadorSino(); desenharNotif(); chamar('apiMarcarLidas', estado.token, ids).catch(falhaGeral); };
+}
+
+/* ===================== visão do dia ===================== */
+var VD_I=7*60, VD_F=21*60, VD_SLOT=30, VD_N=(VD_F-VD_I)/VD_SLOT;
+function vdOnde(x, mid){ // onde o colaborador está num minuto do dia
+  if(x.sit!=='T') return null;
+  if(x.a && mid>=aMin(x.a) && mid<aMin(x.a)+60) return {k:'alm', ate:hm(aMin(x.a)+60)};
+  if(x.blocos){ for(var i=0;i<x.blocos.length;i++){ var b=x.blocos[i]; if(mid>=aMin(b[1]) && mid<aMin(b[2])) return {k:b[0], ate:b[2]}; } return null; }
+  if(mid>=aMin(x.i) && mid<aMin(x.f)) return {k: x.perfil==='GESTAO'?'ges':'pad', ate:x.f};
+  return null;
+}
+var VD_GRUPOS=[['0800','0800','#D80073'],['chat','Chat (Digital)','#4F3F91'],['ass','Assíncrono','#A51E5B'],['pad','Atuação a Definir','#8a8a8a'],['alm','Almoço','#f1d5bd'],['ges','Gestão','#55556a']];
+telaVisaoDia = function(){
+  if(!estado.vd) estado.vd={data: (hojeLocal().slice(0,7)===estado.mes ? hojeLocal() : estado.mes+'-01'), coord:'', frente:'', q:''};
+  gCarregando();
+  chamar('apiVisaoDia', estado.token, estado.vd.data, false).then(desenharVisaoDia).catch(falhaGeral);
+};
+/* filtro por horário de entrada: os horários do dia, com quantos agentes entram em cada um */
+function vdEntradaSel(agT, sel){
+  var n={}; agT.forEach(function(x){ if(x.i) n[x.i]=(n[x.i]||0)+1; });
+  var hs=Object.keys(n).sort(); if(sel && !n[sel]) hs.push(sel);
+  return '<select id="vdEnt" aria-label="Horário de entrada"><option value="">Todos os horários de entrada</option>'+hs.map(function(h){ return '<option value="'+h+'"'+(h===sel?' selected':'')+'>Entrada às '+h+(n[h]?' · '+n[h]+' agente'+(n[h]>1?'s':''):'')+'</option>'; }).join('')+'</select>';
+}
+desenharVisaoDia = function(r){
+  estado.vdUlt=r; var vd=estado.vd, it=r.itens, I=VD_I, F=VD_F, SLOT=VD_SLOT, N=VD_N;
+  var agT=it.filter(function(x){ return x.perfil==='AGENTE' && x.sit==='T'; }), geT=it.filter(function(x){ return x.perfil==='GESTAO' && x.sit==='T'; });
+  var folga=it.filter(function(x){ return x.sit==='F'; }), afs=it.filter(function(x){ return x.sit==='FERIAS'||x.sit==='LICENCA'; }), sem=it.filter(function(x){ return x.sit==='V'||x.sit==='SEM'; });
+  var cob=[]; for(var k=0;k<N;k++){ var mid=I+k*SLOT+15, c={'0800':0,chat:0,ass:0,pad:0,alm:0,ges:0}; agT.concat(geT).forEach(function(x){ var o=vdOnde(x,mid); if(!o) return; if(x.perfil==='GESTAO'){ if(o.k!=='alm') c.ges++; } else c[o.k]++; }); cob.push(c); }
+  var tot=function(c){ return c['0800']+c.chat+c.ass+c.pad; };
+  var max=Math.max(1, Math.max.apply(null, cob.map(function(c){ return tot(c)+c.alm; })));
+  var hhmm=function(k){ return hm(I+k*SLOT); };
+  var agora=null; if(vd.data===hojeLocal()){ var dn=new Date(), m=dn.getHours()*60+dn.getMinutes(); if(m>=I && m<F) agora={m:m, k:Math.floor((m-I)/SLOT)}; }
+  var graf=cob.map(function(c,k){ var t=tot(c), alt=(t+c.alm)/max*100;
+    var seg=function(cl,v){ return v?'<i class="'+cl+'" style="height:'+(v/max*100)+'%"></i>':''; };
+    return '<div class="vd-c'+(k%2===0?' h':'')+'" data-k="'+k+'" role="button" tabindex="0" title="'+hhmm(k)+'–'+hm(I+(k+1)*SLOT)+': '+t+' agente(s) atendendo · 0800 '+c['0800']+' · chat '+c.chat+' · assíncrono '+c.ass+' · almoço '+c.alm+'. Clique para ver quem.">'+seg('f0800',c['0800'])+seg('fchat',c.chat)+seg('fass',c.ass)+seg('pad',c.pad)+seg('alm',c.alm)+(t?'<span class="num" style="bottom:calc('+alt+'% + 2px)">'+t+'</span>':'')+'</div>'; }).join('');
+  var horas=''; for(var h=7; h<21; h++) horas+='<span>'+h+'h</span>';
+  var gesL=cob.map(function(c,k){ return '<span class="'+(c.ges?'on':'')+'" title="'+hhmm(k)+': '+c.ges+' da gestão">'+(c.ges||'')+'</span>'; }).join('');
+  // horários sem cobertura (08h–20h) no 0800 e no chat
+  var temFr={}; agT.forEach(function(x){ (x.blocos||[]).forEach(function(b){ temFr[b[0]]=1; }); });
+  var buracos=[]; ['0800','chat'].forEach(function(fr){ if(!temFr[fr]) return; var ini=null; for(var k=2;k<=26;k++){ var vazio=k<26 && cob[k][fr]===0; if(vazio && ini===null) ini=k; if(!vazio && ini!==null){ buracos.push((fr==='0800'?'0800':'Chat')+' sem ninguém das '+hhmm(ini)+' às '+hhmm(k)); ini=null; } } });
+  // por coordenação
+  var porC={}; it.forEach(function(x){ if(x.perfil!=='AGENTE') return; var o=porC[x.coord]||(porC[x.coord]={t:0,'0800':0,chat:0,ass:0,f:0,a:0}); if(x.sit==='T'){ o.t++; var fr={}; (x.blocos||[]).forEach(function(b){ fr[b[0]]=1; }); ['0800','chat','ass'].forEach(function(k){ if(fr[k]) o[k]++; }); } else if(x.sit==='F') o.f++; else if(x.sit==='FERIAS'||x.sit==='LICENCA') o.a++; });
+  var coords=Object.keys(porC).sort();
+  var passa=function(x){ if(vd.coord && x.coord!==vd.coord) return false; if(vd.q && (x.nome+' '+x.email).toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g,'').indexOf(vd.q.toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g,''))<0) return false; if(vd.frente && x.perfil==='AGENTE' && !(x.blocos||[]).some(function(b){ return b[0]===vd.frente; })) return false; if(vd.ent && x.sit==='T' && x.i!==vd.ent) return false; return true; };
+  var pct=function(v){ return ((v-I)/(F-I)*100).toFixed(2)+'%'; }; var regua=''; for(var hh=8; hh<=20; hh+=2) regua+='<span style="left:'+pct(hh*60)+'">'+hh+'h</span>';
+  var linha=function(x){ var barra = x.blocos ? barraDia([x.i,x.a,x.f,x.blocos], null, false) : '<div class="barra"><span class="seg pad" style="left:'+pct(aMin(x.i))+';width:calc('+pct(aMin(x.f))+' - '+pct(aMin(x.i))+')">Atuação a Definir</span></div>';
+    return '<div class="vd-lin2 vd-lin cl" data-ag="'+esc(x.email)+'" role="button" tabindex="0"><div class="nm vd-nm-av">'+avatarHtml(x.email, x.nome, '')+'<div class="vd-id"><b title="'+esc(x.nome)+'">'+esc(typeof nomeCurto2==='function'?nomeCurto2(x.nome):x.nome)+'</b><small>'+esc(x.coord)+(x.perfil==='GESTAO'?' · '+esc(x.cargo):'')+'</small>'+(typeof vdEmailHtml==='function'?vdEmailHtml(x):'')+'</div></div><div class="hr">'+x.i+' às '+x.f+'<small>'+(x.a?'almoço '+x.a+'–'+hm(aMin(x.a)+60):'almoço a definir')+'</small></div>'+barra+'<span class="mais">Detalhes ›</span></div>'; };
+  var ord=function(a,b){ return aMin(a.i)-aMin(b.i) || a.nome.localeCompare(b.nome,'pt-BR'); };
+  var agL=agT.filter(passa).sort(ord), geL=geT.filter(passa).sort(ord);
+  var cab='<div class="vd-cab2"><span>Colaborador</span><span>Horário</span><div class="regua">'+regua+'</div><span></span></div>';
+  var lista=function(arr){ return arr.length?arr.map(function(x){ return '<button data-ag="'+esc(x.email)+'">'+esc(x.nome)+'</button>'; }).join(''):'<small style="color:var(--c4)">Ninguém</small>'; };
+  var fer=r.feriado, agoraHtml='';
+  if(agora){ var cA=cob[agora.k]; agoraHtml='<button class="vd-agora" id="vdAgora"><div class="hora">'+hm(agora.m)+'<small>agora</small></div><div class="it">'+cA['0800']+'<small>no 0800</small></div><div class="it">'+cA.chat+'<small>no chat</small></div><div class="it">'+cA.ass+'<small>assíncrono</small></div><div class="it">'+cA.alm+'<small>em almoço</small></div><div class="it">'+cA.ges+'<small>da gestão</small></div><span class="ver">Ver quem está agora ›</span></button>'; }
+  gc().innerHTML='<div class="pl-cab"><div><h1>Visão do Dia</h1><p>Quem trabalha, em qual atuação e em qual horário. Clique no gráfico ou num nome para ver detalhes.</p></div><div class="vd-nav"><button class="seta" id="vdAnt" aria-label="Dia anterior">‹</button><input type="date" id="vdData" value="'+vd.data+'" aria-label="Data"><button class="seta" id="vdProx" aria-label="Próximo dia">›</button><button class="btn sec" id="vdHoje">Hoje</button></div></div>'+
+    '<div class="vd-data">'+dataLonga(vd.data)+(fer?'<span class="fer-chip'+(fer.trabalhado===false?' off':'')+'">'+esc(fer.nome)+(fer.trabalhado===false?' · não trabalhado':' · trabalhado')+'</span>':'')+'</div>'+agoraHtml+
+    '<div class="numeros" style="--cols:5"><div class="numero"><b>'+agT.length+'</b><span>Agentes trabalhando</span></div><div class="numero"><b>'+geT.length+'</b><span>Gestão trabalhando</span></div><div class="numero"><b>'+folga.length+'</b><span>De folga</span></div><div class="numero"><b>'+afs.length+'</b><span>Férias ou licença</span></div><div class="numero'+(sem.length?' alerta':'')+'"><b>'+sem.length+'</b><span>Sem escala publicada</span></div></div>'+
+    '<div class="vd-cob"><h2>Agentes por Horário</h2><p>Cada barra é meia hora. O número em cima é quantos agentes estão atendendo. <b>Clique numa barra</b> para ver a atuação de cada agente e quem está no almoço.</p>'+legendaFrentes()+
+    '<div class="vd-area"><div class="vd-graf2" id="vdGraf">'+graf+'</div>'+(agora?'<div class="vd-agoral" style="left:'+((agora.m-I)/(F-I)*100)+'%"></div>':'')+'</div><div class="vd-horas">'+horas+'</div>'+
+    '<div class="vd-rotulo">Gestão Presente em Cada Meia Hora</div><div class="vd-ges2">'+gesL+'</div>'+
+    '<div class="vd-alertas">'+(buracos.length?buracos.map(function(b){ return '<span>'+esc(b)+'</span>'; }).join(''):(agT.length?'<span class="ok">0800 e chat com gente entre 8h e 20h</span>':''))+'</div></div>'+
+    '<div class="vd-sec"><h2>Por Coordenação</h2><div class="tabela" style="border:0;margin:0"><table class="vd-coord"><thead><tr><th>Coordenação</th><th>Trabalhando</th><th>Passam pelo 0800</th><th>Passam pelo chat</th><th>Assíncrono</th><th>De folga</th><th>Férias ou licença</th></tr></thead><tbody>'+coords.slice().sort(function(x,y){ return porC[y].t-porC[x].t || x.localeCompare(y,'pt-BR'); }).map(function(c){ var o=porC[c]; return '<tr class="cl" data-coord="'+esc(c)+'"><td><div class="vd-cn">'+(r.coordResp&&r.coordResp[c]?avatarHtml(r.coordResp[c], c, ''):'')+'<b>'+esc(c)+'</b></div></td><td>'+o.t+'</td><td>'+o['0800']+'</td><td>'+o.chat+'</td><td>'+o.ass+'</td><td>'+o.f+'</td><td>'+o.a+'</td></tr>'; }).join('')+'</tbody></table></div></div>'+
+    '<div class="vd-filtros"><select id="vdCoord" aria-label="Coordenação">'+opts(coords, vd.coord, 'Todas as coordenações')+'</select><select id="vdFrente" aria-label="Atuação"><option value="">Todas as atuações</option><option value="0800"'+(vd.frente==='0800'?' selected':'')+'>Só quem passa pelo 0800</option><option value="chat"'+(vd.frente==='chat'?' selected':'')+'>Só quem passa pelo chat</option><option value="ass"'+(vd.frente==='ass'?' selected':'')+'>Só assíncrono</option></select>'+vdEntradaSel(agT, vd.ent)+'<input id="vdQ" type="text" placeholder="Buscar colaborador" value="'+esc(vd.q)+'"></div>'+
+    '<div class="vd-sec"><h2>Agentes Trabalhando <span class="n">'+agL.length+'</span></h2>'+(agL.length?cab+agL.map(linha).join(''):'<div class="vazio-mini">Nenhum agente com esses filtros.</div>')+'</div>'+
+    '<div class="vd-sec"><h2>Gestão Trabalhando <span class="n">'+geL.length+'</span></h2>'+(geL.length?cab+geL.map(linha).join(''):'<div class="vazio-mini">Ninguém da gestão com esses filtros.</div>')+'</div>'+
+    '<div class="vd-sec"><h2>Fora Neste Dia</h2><div class="vd-fora"><div><b>De folga ('+folga.filter(passa).length+')</b>'+lista(folga.filter(passa))+'</div><div><b>Férias ou licença ('+afs.filter(passa).length+')</b>'+lista(afs.filter(passa))+'</div><div><b>Sem escala publicada ('+sem.filter(passa).length+')</b>'+lista(sem.filter(passa))+'</div></div></div>';
+  var ir=function(d){ vd.data=d; telaVisaoDia(); };
+  $('vdAnt').onclick=function(){ ir(somaDia(vd.data,-1)); }; $('vdProx').onclick=function(){ ir(somaDia(vd.data,1)); }; $('vdHoje').onclick=function(){ ir(hojeLocal()); };
+  $('vdData').onchange=function(){ if(this.value) ir(this.value); };
+  if($('vdAgora')) $('vdAgora').onclick=function(){ modalSlot(agora.k); };
+  gc().querySelectorAll('.vd-c').forEach(function(c){ var f=function(){ modalSlot(+c.dataset.k); }; c.onclick=f; c.onkeydown=function(e){ if(e.key==='Enter'||e.key===' '){ e.preventDefault(); f(); } }; });
+  gc().querySelectorAll('[data-ag]').forEach(function(b){ var f=function(){ modalAgente(b.dataset.ag); }; b.onclick=f; b.onkeydown=function(e){ if(e.key==='Enter'){ f(); } }; });
+  gc().querySelectorAll('[data-coord]').forEach(function(tr){ tr.onclick=function(){ vd.coord = vd.coord===tr.dataset.coord ? '' : tr.dataset.coord; desenharVisaoDia(r); var s=gc().querySelector('.vd-filtros'); if(s) s.scrollIntoView({behavior:'smooth',block:'start'}); }; });
+  $('vdCoord').onchange=function(){ vd.coord=this.value; desenharVisaoDia(r); };
+  $('vdFrente').onchange=function(){ vd.frente=this.value; desenharVisaoDia(r); };
+  if($('vdEnt')) $('vdEnt').onchange=function(){ vd.ent=this.value; desenharVisaoDia(r); };
+  $('vdQ').oninput=function(){ vd.q=this.value; clearTimeout(estado.vdT); estado.vdT=setTimeout(function(){ desenharVisaoDia(r); var q=$('vdQ'); q.focus(); q.setSelectionRange(q.value.length,q.value.length); }, 250); };
+};
+function modalSlot(k){
+  var r=estado.vdUlt; if(!r) return;
+  var w=abrirModal('<div id="slCorpo"></div>', true); w.querySelector('.modal').classList.add('xl');
+  function desenhar(){
+    var mid=VD_I+k*VD_SLOT+15, ini=VD_I+k*VD_SLOT, fim=ini+VD_SLOT, g={}; VD_GRUPOS.forEach(function(x){ g[x[0]]=[]; });
+    var entram=[], saem=[];
+    r.itens.forEach(function(x){ if(x.sit!=='T') return; var o=vdOnde(x, mid); if(o){ var chave = x.perfil==='GESTAO' ? (o.k==='alm'?'alm':'ges') : o.k; g[chave].push({x:x, ate:o.ate}); }
+      if(aMin(x.i)>=ini && aMin(x.i)<fim) entram.push(x); if(aMin(x.f)>ini && aMin(x.f)<=fim) saem.push(x); });
+    var bloco=function(gr){ var l=g[gr[0]].sort(function(a,b){ return a.x.nome.localeCompare(b.x.nome,'pt-BR'); });
+      return '<div class="slot-g"><h4><i style="background:'+gr[2]+'"></i>'+gr[1]+' <span style="color:var(--c4)">('+l.length+')</span></h4>'+(l.length?l.map(function(o){ return '<button data-ag="'+esc(o.x.email)+'"><span>'+esc(o.x.nome)+'</span><small>até '+o.ate+'</small></button>'; }).join(''):'<div class="nada">Ninguém</div>')+'</div>'; };
+    var cor={'0800':'background:var(--rosa-bg);color:var(--vinho)',chat:'background:var(--roxo-bg);color:var(--roxo)',ass:'background:var(--creme);color:var(--vinho)',alm:'background:var(--c1);color:var(--c4)',ges:'background:var(--c1)',pad:'background:var(--c1)'};
+    w.querySelector('#slCorpo').innerHTML='<div class="slot-nav"><button class="seta" id="slAnt" aria-label="Meia hora anterior"'+(k<=0?' disabled':'')+'>‹</button><div style="text-align:center"><h3>Das '+hm(ini)+' às '+hm(fim)+'</h3><div class="dica">'+dataLonga(r.data)+'</div></div><button class="seta" id="slProx" aria-label="Próxima meia hora"'+(k>=VD_N-1?' disabled':'')+'>›</button></div>'+
+      '<div class="slot-res">'+VD_GRUPOS.filter(function(x){ return g[x[0]].length; }).map(function(x){ return '<span style="'+cor[x[0]]+'">'+g[x[0]].length+' · '+x[1]+'</span>'; }).join('')+'</div>'+
+      '<div class="slot-grupos">'+VD_GRUPOS.filter(function(x){ return x[0]!=='pad' || g.pad.length; }).map(bloco).join('')+'</div>'+
+      '<div class="slot-mov"><div><b>Entram nesta meia hora ('+entram.length+')</b><br>'+(entram.map(function(x){ return esc(primeiro(x.nome))+' ('+x.i+')'; }).join(', ')||'Ninguém')+'</div><div><b>Saem nesta meia hora ('+saem.length+')</b><br>'+(saem.map(function(x){ return esc(primeiro(x.nome))+' ('+x.f+')'; }).join(', ')||'Ninguém')+'</div></div>'+
+      '<div class="acoes"><button class="btn sec" data-fechar>Fechar</button></div>';
+    w.querySelector('#slAnt').onclick=function(){ if(k>0){ k--; desenhar(); } }; w.querySelector('#slProx').onclick=function(){ if(k<VD_N-1){ k++; desenhar(); } };
+    w.querySelectorAll('[data-ag]').forEach(function(b){ b.onclick=function(){ modalAgente(b.dataset.ag); }; });
+    gc().querySelectorAll('.vd-c').forEach(function(c){ c.classList.toggle('sel', +c.dataset.k===k); });
+  }
+  desenhar();
+}
+function modalAgente(email){
+  var data=(estado.vd&&estado.vd.data)||hojeLocal();
+  var w=abrirModal('<div class="carregando" style="min-height:160px"><div class="giro"></div> Carregando…</div>', true); var md=w.querySelector('.modal'); md.classList.add('xl');
+  chamar('apiAgenteDia', estado.token, email, data).then(function(r){
+    var p=r.pessoa, d=r.dia, rs=r.resumo, ges=p.perfil==='GESTAO';
+    var sitTxt={T:'Trabalha', F:'Folga', FERIAS:'Férias', LICENCA:'Licença', FERIADO:'Feriado não trabalhado', SEM:'Sem escala publicada'};
+    var blocos=d.blocos||[], linhas=[];
+    blocos.forEach(function(b){ linhas.push({cl:FRENTES[b[0]]?FRENTES[b[0]][1]:'pad', nome:FRENTES[b[0]]?FRENTES[b[0]][0]:'Horário', i:b[1], f:b[2]}); });
+    if(d.a) linhas.push({cl:'alm', nome:'Almoço', i:d.a, f:hm(aMin(d.a)+60)});
+    linhas.sort(function(a,b){ return aMin(a.i)-aMin(b.i); });
+    var hoje='<div class="ag-hoje"><div class="tt"><b>'+dataLonga(d.data).replace(/ de \d{4}$/,'')+'</b><span class="selo '+(d.sit==='T'?'pub':'sem')+'">'+sitTxt[d.sit]+'</span></div>'+
+      (d.sit==='T'?'<div class="dica" style="margin-top:4px">'+d.i+' às '+d.f+(d.a?' · almoço '+d.a+'–'+hm(aMin(d.a)+60):'')+(d.porDia?'':' · horário do cadastro')+'</div>'+(blocos.length?barraDia([d.i,d.a,d.f,blocos],null,false):'')+
+        '<div class="ag-bl">'+linhas.map(function(l){ return '<div class="'+l.cl+'"><span>'+l.nome+'</span><span>'+l.i+' às '+l.f+' · '+dur(aMin(l.f)-aMin(l.i))+'</span></div>'; }).join('')+'</div>':'')+'</div>';
+    var sem='<div class="ag-sem"><h4>Semana</h4>'+r.semana.map(function(s){ var cur=s.data===d.data;
+      return '<div class="ag-sd'+(cur?' atual':'')+'"><b>'+dSem(s.data)+'</b>'+(s.sit==='T'?(s.blocos?barraDia([s.i,s.a,s.f,s.blocos],null,true):'<div class="dica">Atuação a Definir</div>'):'<div class="dica">'+sitTxt[s.sit]+'</div>')+'<span class="dica">'+(s.sit==='T'?s.i+'–'+s.f:'')+'</span></div>'; }).join('')+'</div>';
+    var mes='<div class="ag-mes"><h4>No mês</h4><div class="numeros" style="--cols:'+(ges?3:(vdEhAss(d, rs, r.semana)?4:5))+'"><div class="numero"><b>'+rs.trabalho+'</b><span>Dias de trabalho</span></div><div class="numero"><b>'+rs.folga+'</b><span>Folgas</span></div><div class="numero"><b>'+rs.domingosFolga+'</b><span>Domingos de folga</span></div>'+(ges?'':(vdEhAss(d, rs, r.semana) ? '<div class="numero"><b>'+dur(rs.min.ass)+'</b><span>No assíncrono</span></div>' : '<div class="numero"><b>'+dur(rs.min['0800']||0)+'</b><span>No 0800</span></div><div class="numero"><b>'+dur(rs.min.chat||0)+'</b><span>No chat</span></div>'))+'</div></div>';
+    md.innerHTML='<div class="ag-top"><div class="ola2">'+avatarHtml(p.email,p.nome,'g')+'<div><h3>'+esc(p.nome)+'</h3><p>'+esc(p.cargo)+' · '+esc(p.coord)+' · '+esc(p.email)+'</p></div></div></div>'+(ges?'':legendaFrentes())+hoje+sem+mes+
+      '<div class="acoes"><span class="dica" style="margin-right:auto">'+(r.publicadaEm?'Escala publicada em '+dhBr(r.publicadaEm)+(r.publicadaPor?' por '+esc(nomeDe(r.publicadaPor)):''):'Escala ainda não publicada')+'</span><button class="btn sec" data-fechar>Fechar</button><button class="btn roxo" id="agMes">Ver o mês completo</button></div>';
+    md.querySelector('#agMes').onclick=function(){ w.remove(); modalJornadaDe(p.email); };
+    atualizarAvatares();
+  }).catch(function(e){ w.remove(); falhaGeral(e); });
+}
+
+/* ===================== histórico de acessos ===================== */
+var FRASE_ACESSO={LOGIN:['entrou no painel','ok'],LOGOUT:['saiu do painel','neutro'],LOGIN_FALHOU:['errou a senha','ruim'],LINK_SENHA_ENVIADO:['pediu um link para criar ou trocar a senha','link'],LINK_SENHA_NEGADO:['pediu link de senha sem ter acesso','ruim'],SENHA_DEFINIDA_POR_LINK:['criou ou redefiniu a senha','ok'],SENHA_ALTERADA:['alterou a senha','ok'],TROCA_SENHA_FALHOU:['errou a senha atual ao tentar trocar','ruim']};
+telaAcessos = function(filtro){
+  gCarregando(); filtro=filtro||estado.fAcessos||{}; estado.fAcessos=filtro; var visao=estado.visaoAcessos||'pessoas';
+  chamar('apiAcessos', estado.token, filtro).then(function(r){
+    var s=r.resumo, hoje=hojeLocal(), d7=somaDia(hoje,-6);
+    var hojeLista=r.pessoas.filter(function(p){ return p.ultimo && p.ultimo.slice(0,10)===hoje; }).sort(function(a,b){ return b.ultimo<a.ultimo?-1:1; });
+    var h='<div class="pl-cab"><div><h1>Histórico de Acessos</h1><p>Quem entrou no painel, quando, e quem ainda não criou a senha. Visível só para a gestão.</p></div></div>'+
+      '<div class="numeros" style="--cols:5"><div class="numero"><b>'+s.acessosHoje+'</b><span>Logins hoje</span></div><div class="numero"><b>'+s.pessoasHoje+'</b><span>Pessoas que entraram hoje</span></div><div class="numero"><b>'+s.pessoas7+'</b><span>Pessoas nos últimos 7 dias</span></div><div class="numero"><b>'+s.comSenha+' de '+s.total+'</b><span>Já criaram a senha</span></div><div class="numero'+(s.semSenha?' alerta':'')+'"><b>'+s.semSenha+'</b><span>Ainda sem senha</span></div></div>'+
+      '<div class="ac-hoje"><h3>Entraram hoje ('+hojeLista.length+')</h3><div class="fila">'+(hojeLista.length?hojeLista.map(function(p){ return '<span title="'+esc(p.nome)+' · '+p.ultimo.slice(11,16)+'">'+avatarHtml(p.email,p.nome,'')+'</span>'; }).join(''):'<span class="dica">Ninguém entrou hoje ainda.</span>')+'</div></div>'+
+      '<div class="chips"><button data-v="pessoas" class="'+(visao==='pessoas'?'ativa':'')+'">Por pessoa</button><button data-v="eventos" class="'+(visao==='eventos'?'ativa':'')+'">Linha do tempo</button></div><div id="acCorpo"></div>';
+    gc().innerHTML=h; atualizarAvatares();
+    gc().querySelectorAll('[data-v]').forEach(function(b){ b.onclick=function(){ estado.visaoAcessos=b.dataset.v; telaAcessos(filtro); }; });
+    if(visao==='pessoas'){
+      var fp=estado.fAcPessoa||'', fpe=estado.fAcPerfil||'', q=estado.qAcPessoa||'';
+      var st=function(p){ if(!p.senhaEm) return ['sem','Ainda não criou a senha']; if(!p.ultimo) return ['nunca','Nunca entrou']; if(p.ultimo.slice(0,10)===hoje) return ['hoje','Usou hoje · última atividade às '+p.ultimo.slice(11,16)]; var dd=Math.round((new Date(hoje+'T12:00:00')-new Date(p.ultimo.slice(0,10)+'T12:00:00'))/864e5); if(dd===1) return ['recente','Entrou ontem às '+p.ultimo.slice(11,16)]; return ['recente','Último acesso em '+dBr(p.ultimo.slice(0,10))+' às '+p.ultimo.slice(11,16)+' · há '+dd+' dias']; };
+      var desenhar=function(){
+        var lista=r.pessoas.filter(function(p){ var e=st(p)[0];
+          if(fp==='hoje' && e!=='hoje') return false; if(fp==='semana' && !(p.ultimo && p.ultimo.slice(0,10)>=d7)) return false; if(fp==='nunca' && e!=='nunca') return false; if(fp==='sem' && e!=='sem') return false;
+          if(fpe && p.perfil!==fpe) return false; if(q && (p.nome+' '+p.email).toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g,'').indexOf(q.toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g,''))<0) return false; return true; });
+        $('acGrid').innerHTML=lista.length?lista.map(function(p){ var e=st(p); return '<div class="ac-card '+e[0]+'">'+avatarHtml(p.email,p.nome,'')+'<div><b>'+esc(p.nome)+'</b><small>'+esc(p.coord)+' · '+papelChip(p.email, p.perfil)+'</small><br><span class="st '+e[0]+'">'+e[1]+'</span><div class="lin">'+(p.senhaEm?'Senha criada em '+dhBr(p.senhaEm):'Senha ainda não criada')+' · usou o painel em '+p.n30+' dia'+(p.n30===1?'':'s')+' dos últimos 30</div></div></div>'; }).join(''):'<div class="vazio-mini">Ninguém com esse filtro.</div>';
+        $('acConta').textContent=lista.length+' de '+r.pessoas.length+' pessoas'; atualizarAvatares();
+      };
+      $('acCorpo').innerHTML='<div class="pl-ferr"><select id="acF"><option value="">Todas as pessoas</option><option value="hoje">Entraram hoje</option><option value="semana">Entraram nos últimos 7 dias</option><option value="nunca">Criaram a senha, mas nunca entraram</option><option value="sem">Ainda sem senha</option></select><select id="acP"><option value="">Agentes e gestão</option><option value="AGENTE">Só agentes</option><option value="GESTAO">Só gestão</option></select><input id="acQ" type="text" placeholder="Buscar por nome ou e-mail" value="'+esc(q)+'"><span class="contador" id="acConta"></span></div><div class="ac-grid" id="acGrid"></div>';
+      $('acF').value=fp; $('acP').value=fpe;
+      $('acF').onchange=function(){ fp=estado.fAcPessoa=this.value; desenhar(); }; $('acP').onchange=function(){ fpe=estado.fAcPerfil=this.value; desenhar(); }; $('acQ').oninput=function(){ q=estado.qAcPessoa=this.value; desenhar(); }; desenhar();
+    } else {
+      var grupos={}, ordem=[]; r.eventos.forEach(function(ev){ var d=ev.em.slice(0,10); if(!grupos[d]){ grupos[d]=[]; ordem.push(d); } grupos[d].push(ev); });
+      var ontem=somaDia(hoje,-1), rot=function(d){ return (d===hoje?'Hoje · ':d===ontem?'Ontem · ':'')+dataLonga(d).replace(/ de \d{4}$/,''); };
+      $('acCorpo').innerHTML='<div class="pl-ferr"><input id="eDe" type="date" value="'+(filtro.de||'')+'" aria-label="De"><input id="eAte" type="date" value="'+(filtro.ate||'')+'" aria-label="Até"><select id="eTipo"><option value="">Todos os eventos</option>'+Object.keys(FRASE_ACESSO).map(function(k){ return '<option value="'+k+'"'+(k===filtro.tipo?' selected':'')+'>'+(EVENTOS_ACESSO[k]||[k])[0]+'</option>'; }).join('')+'</select><input id="eQ" type="text" placeholder="Nome ou e-mail" value="'+esc(filtro.texto||'')+'"><button class="btn sec" id="eOk">Filtrar</button><span class="contador">'+(r.totalEventos>300?'Mostrando 300 de '+r.totalEventos:r.totalEventos+' evento(s)')+'</span></div>'+
+        (ordem.length?ordem.map(function(d){ return '<div class="hist-dia">'+rot(d)+'</div>'+grupos[d].map(function(ev){ var f=FRASE_ACESSO[ev.acao]||[ev.acao,'neutro'], nome=ev.nome||nomeDoEmail(ev.email);
+          return '<div class="ac-ev">'+avatarHtml(ev.email,nome,'')+'<div><b>'+esc(nome)+'</b> '+esc(f[0])+(ev.nome?'':' <span class="ev ruim">fora do painel</span>')+'<br><small class="dica">'+esc(ev.email)+'</small></div><div style="text-align:right"><span class="t">'+ev.em.slice(11,16)+'</span><br><span class="ev '+f[1]+'">'+(EVENTOS_ACESSO[ev.acao]||[ev.acao])[0]+'</span></div></div>'; }).join(''); }).join(''):'<div class="vazio"><strong>Nenhum evento no período.</strong></div>');
+      $('eOk').onclick=function(){ telaAcessos({de:$('eDe').value, ate:$('eAte').value, tipo:$('eTipo').value, texto:$('eQ').value}); };
+      atualizarAvatares();
+    }
+  }).catch(falhaGeral);
+};
+
+/* ===================== Minha escala: próximo turno ===================== */
+var _desenharMinhaEscalaUI3 = desenharMinhaEscala;
+desenharMinhaEscala = function(d){ _desenharMinhaEscalaUI3(d); try{ cartaoTurno(d); }catch(e){} };
+function cartaoTurno(d){
+  var p=d.pessoas[0]; if(!p) return; var e=d.escalas[p.email]; if(!e||!e.dias) return;
+  var hoje=d.hoje||hojeLocal(), n=diasMes(d.mes); if(hoje.slice(0,7)>d.mes) return;
+  var ini=hoje.slice(0,7)===d.mes ? +hoje.slice(8) : 1, af=d.afast[p.email]||[], alvo=null;
+  for(var dd=ini; dd<=n; dd++){ var id=dataDe(d.mes,dd); if(e.dias.charAt(dd-1)==='T' && !tipoAfast(af,id)){ alvo=dd; break; } }
+  var hojeId=hoje, ehHoje=alvo && dataDe(d.mes,alvo)===hojeId, hojeSit=hoje.slice(0,7)===d.mes ? e.dias.charAt(+hoje.slice(8)-1) : '';
+  var rot, tit, sub='', barra='', chips='';
+  if(!alvo){ rot='Seu mês'; tit='Não há mais dias de trabalho em '+rotuloMes(d.mes).toLowerCase(); }
+  else {
+    var id=dataDe(d.mes,alvo), x=d.atuacao&&d.atuacao.d?d.atuacao.d[String(alvo)]:null, i=x?x[0]:p.entrada, a=x?(x[1]||''):'', f=x?x[2]:p.saida;
+    rot = ehHoje ? 'Hoje' : (hoje.slice(0,7)===d.mes ? (tipoAfast(af,hojeId)?'Hoje você está de '+(tipoAfast(af,hojeId)==='FERIAS'?'férias':'licença'):hojeSit==='F'?'Hoje é sua folga':'Próximo turno')+' · próximo turno' : 'Primeiro turno do mês');
+    tit = (ehHoje?'Você trabalha das ':dSem(id).replace(/^./,function(c){return c.toUpperCase();})+' · das ')+i+' às '+f;
+    sub = a ? 'Almoço das '+a+' às '+hm(aMin(a)+60) : '';
+    if(x){ var bl=blocosPadrao_(x, d.atuacao.m); barra=barraDia(x, d.atuacao, false); chips='<div class="chips2">'+bl.map(function(b){ var fr=FRENTES[b[0]]||['',''];  return '<span>'+fr[0]+' '+b[1]+'–'+b[2]+'</span>'; }).join('')+'</div>'; }
+  }
+  var el=document.createElement('div'); el.className='turno'; el.innerHTML='<div class="rot">'+esc(rot)+'</div><div class="tit">'+esc(tit)+'</div>'+(sub?'<div class="sub">'+esc(sub)+'</div>':'')+barra+chips;
+  var ficha=$('conteudo').querySelector('.ficha'); if(ficha) ficha.parentNode.insertBefore(el, ficha);
+}
+</script>

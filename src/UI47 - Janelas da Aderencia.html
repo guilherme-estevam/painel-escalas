@@ -1,0 +1,22 @@
+<script>
+/* ===================== Aderência: janelas com o fundo uniforme e centralizadas na tela (11/11/2026) =====================
+   A página da Aderência fica num quadro transparente. Ao abrir uma janela, o Portal escurece a tela inteira e o quadro
+   escurece de novo a sua área, deixando um retângulo mais escuro ("cortado"). Agora, com a janela aberta, o quadro ganha
+   o mesmo fundo do Portal: o escurecimento fica igual em toda a tela. A janela também passa a ficar no meio da área visível, e o quadro não passa mais por cima do cabeçalho do Portal. */
+(function () {
+  function corPortal() { var b = getComputedStyle(document.body).backgroundColor; if (!b || b === 'transparent' || b === 'rgba(0, 0, 0, 0)') b = getComputedStyle(document.documentElement).backgroundColor; return b; }
+  function posicionar(fr) { var d = fr.contentDocument, m = d && d.querySelector('.ap-mdl'); if (!m) return;
+    var r = fr.getBoundingClientRect(), H = window.innerHeight, topo = 0; ['header', '.topo', '#topo'].some(function (s) { var h = document.querySelector(s); if (h && /sticky|fixed/.test(getComputedStyle(h).position)) { topo = h.getBoundingClientRect().bottom; return true; } return false; });
+    var minTela = Math.max(topo + 16, r.top + 8); m.style.maxHeight = Math.max(320, H - minTela - 20) + 'px';
+    var alvo = Math.max(minTela, (H - m.offsetHeight) / 2); m.style.top = Math.round(alvo - r.top) + 'px'; recortar(fr); }
+  /* o quadro fica acima do fundo escuro; sem o recorte, a parte dele que passa por baixo do cabeçalho do Portal aparecia por cima do cabeçalho */
+  function altCab() { var h = document.querySelector('header.topo') || document.querySelector('header'); return h && /sticky|fixed/.test(getComputedStyle(h).position) ? Math.max(0, h.getBoundingClientRect().bottom) : 0; }
+  function recortar(fr) { var corte = Math.max(0, altCab() - fr.getBoundingClientRect().top); fr.style.clipPath = corte ? 'inset(' + Math.ceil(corte) + 'px 0 0 0)' : ''; }
+  var rolar = null;
+  function preparar(fr) { var w = fr.contentWindow; if (!w || w.__ap47 || typeof w.apModal !== 'function') return; w.__ap47 = 1;
+    var _m = w.apModal, _f = w.apModalFechar;
+    w.apModal = function () { var x = _m.apply(this, arguments); try { w.document.documentElement.style.setProperty('background', corPortal(), 'important'); w.document.body.style.setProperty('background', 'transparent', 'important'); posicionar(fr); if (!rolar) { rolar = function () { recortar(fr); }; window.addEventListener('scroll', rolar, { passive: true }); window.addEventListener('resize', rolar); } } catch (e) { } return x; };
+    if (typeof _f === 'function') w.apModalFechar = function () { var x = _f.apply(this, arguments); try { w.document.documentElement.style.removeProperty('background'); w.document.body.style.removeProperty('background'); fr.style.clipPath = ''; if (rolar) { window.removeEventListener('scroll', rolar); window.removeEventListener('resize', rolar); rolar = null; } } catch (e) { } return x; }; }
+  new MutationObserver(function () { var fr = document.getElementById('apFrame'); if (!fr) return; if (!fr.__ap47) { fr.__ap47 = 1; fr.addEventListener('load', function () { try { preparar(fr); } catch (e) { } }); } try { preparar(fr); } catch (e) { } }).observe(document.body, { childList: true, subtree: true });
+})();
+</script>

@@ -1,0 +1,262 @@
+<style>
+/* ===================== troca de horário ===================== */
+.esc2{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-top:6px}
+.esc2 button{display:flex;flex-direction:column;align-items:flex-start;gap:6px;text-align:left;border:1.5px solid var(--c2);background:var(--sup,#fff);border-radius:16px;padding:16px;cursor:pointer;font:inherit;color:var(--preto)}
+.esc2 button:hover{border-color:var(--rosa);box-shadow:0 8px 20px rgba(216,0,115,.10)}
+.esc2 button .ic{width:42px;height:42px;border-radius:12px;display:flex;align-items:center;justify-content:center;background:var(--roxo-bg);color:var(--roxo)}
+.esc2 button.h .ic{background:var(--rosa-bg);color:var(--rosa)}
+.esc2 button > b{font-size:16px}
+.esc2 button span b{font-size:inherit;color:var(--preto)}
+.esc2 button span{font-size:13px;color:var(--c4);line-height:1.45}
+.esc2 button:disabled{opacity:.45;cursor:not-allowed;box-shadow:none;border-color:var(--c2)}
+.esc-dia{display:inline-flex;align-items:center;gap:8px;background:var(--c1);border-radius:10px;padding:6px 10px;font-size:13px;margin-top:4px}
+.th-dias{display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:8px}
+.th-dias button{border:1.5px solid var(--c2);background:var(--sup,#fff);border-radius:12px;padding:9px 10px;text-align:left;cursor:pointer;font:inherit;color:var(--preto)}
+.th-dias button b{display:block;font-size:13.5px}
+.th-dias button small{font-size:12px;color:var(--c4)}
+.th-dias button:hover{border-color:var(--rosa)}
+.th-dias button.on{border-color:var(--rosa);background:var(--rosa-bg)}
+.th-meu{display:flex;align-items:center;gap:12px;flex-wrap:wrap;background:var(--c1);border-radius:12px;padding:10px 12px;margin-bottom:10px;font-size:13px}
+.th-meu b{font-size:14px}
+.th-gr{border:1px solid var(--c2);border-radius:14px;padding:10px 12px;margin-bottom:8px}
+.th-gr .cab{display:flex;align-items:center;justify-content:space-between;gap:8px;flex-wrap:wrap}
+.th-gr .cab b{font-size:15px}
+.th-gr .cab .n{background:var(--roxo);color:#fff;border-radius:20px;padding:2px 10px;font-size:12px;font-weight:800}
+.th-gr .hx-ch{margin:6px 0 8px}
+.th-cmp{display:grid;grid-template-columns:1fr auto 1fr;gap:10px;align-items:stretch}
+.th-cmp .lado{border-radius:14px;padding:12px 14px;background:var(--c1);color:var(--preto)}
+.th-cmp .lado .grande{color:var(--preto)}
+.th-cmp .lado.novo{background:var(--roxo-bg);box-shadow:inset 0 0 0 2px var(--roxo)}
+.th-cmp .lado .rot{font-size:11.5px;font-weight:800;text-transform:uppercase;letter-spacing:.05em;color:var(--c4)}
+.th-cmp .lado.novo .rot{color:var(--roxo)}
+.th-cmp .lado .grande{font-size:21px;font-weight:800;margin:4px 0 2px}
+.th-cmp .seta{display:flex;align-items:center;color:var(--rosa)}
+.th-pess{display:grid;gap:8px}
+.th-pess .lin{display:grid;grid-template-columns:minmax(150px,200px) 1fr auto 1fr;gap:10px;align-items:center;border:1px solid var(--c2);border-radius:12px;padding:10px 12px}
+.th-pess .lin .quem{display:flex;align-items:center;gap:8px;font-weight:800;font-size:13.5px}
+.th-pess .lin .quem .av{width:32px;height:32px;font-size:11px}
+.th-pess .lin .de{color:var(--c4);font-size:13px} .th-pess .lin .para{font-weight:800;font-size:13.5px}
+.frase .chip.hr{background:var(--rosa-bg);color:var(--rosa);display:inline-flex;align-items:center;gap:6px}
+.th-alvo{margin:4px 0 12px 30px}
+.th-alvo .tit{font-weight:800;font-size:13.5px;margin-bottom:8px}
+.th-alvo{display:grid;grid-template-columns:repeat(auto-fill,minmax(260px,1fr));gap:10px}
+.th-alvo .tit{grid-column:1/-1;margin-bottom:0}
+.th-op{text-align:left;border:1.5px solid var(--c2);background:var(--sup,#fff);border-radius:14px;padding:10px 12px;cursor:pointer;font:inherit;color:var(--preto)}
+.th-op:hover{border-color:var(--rosa)}
+.th-op.on{border-color:var(--rosa);background:var(--rosa-bg);box-shadow:0 6px 14px rgba(216,0,115,.15)}
+.th-op .cab{display:flex;align-items:center;justify-content:space-between;gap:8px}
+.th-op .cab b{font-size:16px}
+.th-op .cab .n{background:var(--roxo);color:#fff;border-radius:20px;padding:2px 10px;font-size:12px;font-weight:800}
+.th-op .pilha{display:flex;align-items:center;margin-top:8px}
+.th-op .pilha .av{width:28px;height:28px;font-size:10px;margin-left:-7px;box-shadow:0 0 0 2px var(--sup,#fff)}
+.th-op .pilha .av:first-child{margin-left:0}
+.th-op .pilha .mais{margin-left:6px;font-size:12px;font-weight:800;color:var(--c4)}
+.tq #thCol .opcard{margin-top:10px}
+#thAberta .como,#thColega{margin-left:30px}
+#thAberta .como{margin-top:0;margin-bottom:12px}
+/* modal da troca de horário maior, para ver mais sem rolar */
+.modal.modal-xl{max-width:1120px;max-height:94vh;padding:28px 32px}
+.modal-xl .tq .rgx-g{grid-template-columns:repeat(3,1fr)}
+.modal-xl .th-dias{grid-template-columns:repeat(auto-fill,minmax(170px,1fr))}
+.modal-xl .colgrid{grid-template-columns:repeat(auto-fill,minmax(210px,1fr))}
+@media (max-width:700px){ .esc2,.th-cmp{grid-template-columns:1fr} .th-cmp .seta{justify-content:center;transform:rotate(90deg)} .th-pess .lin{grid-template-columns:1fr} }
+</style>
+<script>
+/* ===================== troca de horário ===================== */
+var TH_IC={
+  dia:'<svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="5" width="18" height="16" rx="2"/><path d="M3 10h18M8 3v4M16 3v4"/></svg>',
+  hora:'<svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></svg>',
+  seta:'<svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6"/></svg>',
+  troca:'<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M7 7h12l-3-3M17 17H5l3 3"/></svg>'
+};
+var REGRAS_HORARIO=[
+  {ic:'relogio', t:'72 horas de antecedência', p:'O pedido e o aceite do colega precisam acontecer até 72 horas antes do turno que começa primeiro (o seu ou o do colega).', destaque:true},
+  {ic:'pessoas', t:'Com a mesma atuação', p:'Quem atua no 0800 e no chat troca com quem atua no 0800 e no chat. Assíncrono troca com assíncrono.'},
+  {ic:'troca', t:'Você assume tudo do colega', p:'Você passa a trabalhar no horário do colega, com o almoço e as atuações (0800, chat ou assíncrono) desse horário. O colega assume os seus.'},
+  {ic:'semana', t:'Seus dias não mudam', p:'Você continua trabalhando nesse dia, só muda o horário. Os dias de trabalho e as folgas da semana ficam iguais.'},
+  {ic:'escudo', t:'A coordenação aprova', p:'Depois que o colega aceita, a coordenação confere e aprova. Só então o seu horário muda. Até lá, vale o horário de hoje.'}
+];
+function ehHorarioT(t){ return t && t.dataSolicitante && t.dataSolicitante===t.dataColega; }
+function thHorarioDoDia(d, dd){ var p=d.pessoas[0], x=d.atuacao&&d.atuacao.d?d.atuacao.d[String(dd)]:null; return x ? {i:x[0], a:x[1]||'', f:x[2], blocos:blocosPadrao_(x, d.atuacao.m)} : {i:p.entrada, a:'', f:p.saida, blocos:null}; }
+
+/* frase da troca nas listas: troca de horário tem o mesmo dia dos dois lados */
+var _fraseTroca_18 = fraseTroca;
+fraseTroca = function(t, eu){
+  if(!ehHorarioT(t)) return _fraseTroca_18(t, eu);
+  return '<div class="frase"><span class="chip hr">'+TH_IC.troca+'Troca de horário · <b>'+dSem(t.dataSolicitante)+'</b>'+(t.horarioAlvo?' · pedido: <b>'+t.horarioAlvo.replace('-',' às ')+'</b>':'')+'</span></div>';
+};
+
+/* comparação de horários: visão de quem participa (antes → depois) ou da gestão (as duas pessoas) */
+function cardTrocaHorario(r, eu){
+  var d0=r.dias[0], d1=r.dias[1], data=d0.data; // d0: sai o solicitante (horário dele); d1: sai o colega (horário dele)
+  var topo='<div class="hx-top"><span class="hx-ic">'+HX_IC+'</span><div><b>Como ficam os horários em '+dSem(data)+'</b><span>Cada um assume o horário, o almoço e as atuações do outro. Os dias de trabalho e as folgas não mudam.</span></div></div>';
+  var lado=function(rot, h, novo, extra){ return '<div class="lado'+(novo?' novo':'')+'"><div class="rot">'+rot+'</div><div class="grande">'+(h?hxHora(h):'Horário de quem aceitar')+'</div>'+hxChips(h)+(extra?'<div class="txt" style="font-size:13px;color:var(--c4);margin-top:6px">'+extra+'</div>':'')+'</div>'; };
+  if(eu && (d0.sai&&d0.sai.email===eu || d1.sai&&d1.sai.email===eu)){
+    var meu = d0.sai.email===eu ? d0 : d1, outro = meu===d0 ? d1 : d0, nomeO = outro.sai ? (outro.sai.email ? primeiro(outro.sai.nome) : 'quem aceitar') : 'o colega';
+    var igual = meu.h && outro.h && meu.h.i===outro.h.i && meu.h.f===outro.h.f;
+    return '<div class="hx">'+topo+'<div class="th-cmp">'+lado('Seu horário hoje', meu.h, false, '<b>'+esc(nomeO.charAt(0).toUpperCase()+nomeO.slice(1))+'</b> passa a trabalhar neste horário.')+'<div class="seta">'+TH_IC.seta+'</div>'+
+      lado('Seu novo horário', outro.h, true, 'Horário que estava planejado para <b>'+esc(nomeO)+'</b>.'+(igual?'':' <span class="hx-pill dif">Diferente do seu de hoje</span>'))+'</div></div>';
+  }
+  var lin=function(quem, de, para){ return '<div class="lin"><div class="quem">'+avatarHtml(quem.email, quem.nome, '')+esc(quem.nome)+'</div><div class="de">'+hxHora(de)+hxChips(de)+'</div><div class="seta" style="color:var(--rosa)">'+TH_IC.seta+'</div><div class="para">'+hxHora(para)+hxChips(para)+'</div></div>'; };
+  return '<div class="hx">'+topo+'<div class="th-pess">'+lin(d0.sai, d0.h, d1.h)+(d1.sai?lin(d1.sai, d1.h, d0.h):'')+'</div></div>';
+}
+
+/* 1) escolha: trocar o dia ou o horário */
+function escolherTipoTroca(dia){
+  var d=estado.jor, p=d.pessoas[0], dd=dia?+dia.slice(8):0, h=dia?thHorarioDoDia(d, dd):null;
+  var foraPrazo = dia && !prazoOk(dia, h.i);
+  var w=abrirModal('<div class="tq"><h3>O que você quer trocar?</h3><p class="sub">Escolha o tipo de troca. Nas duas, um colega com a mesma atuação aceita e a gestão aprova.</p>'+
+    (dia?'<div class="esc-dia">'+TH_IC.dia.replace(/22/g,'16')+'<span><b>'+dSem(dia)+'</b> · seu horário: '+hxHora(h)+'</span></div>':'')+
+    (foraPrazo?'<div class="ax48" style="margin-top:12px"><span class="ic">'+RG_IC.relogio+'</span><div><b>Este dia começa em menos de 72 horas</b><span>A troca precisa ser pedida até 72 horas antes do início do turno. Escolha um dia mais à frente.</span></div></div>':'')+
+    '<div class="esc2" style="margin-top:14px"><button type="button" id="eDia"'+(foraPrazo?' disabled':'')+'><span class="ic">'+TH_IC.dia+'</span><b>Trocar o dia</b><span>Você <b>folga</b> '+(dia?'neste dia':'num dia de trabalho')+' e <b>trabalha numa folga</b> da mesma semana. Um colega cobre o seu dia.</span></button>'+
+    '<button type="button" class="h" id="eHora"'+(foraPrazo?' disabled':'')+'><span class="ic">'+TH_IC.hora+'</span><b>Trocar o horário</b><span>Você <b>continua trabalhando</b> '+(dia?'neste dia':'no dia')+', mas <b>no horário de um colega</b>, com as atuações desse horário. O colega assume o seu.</span></button></div>'+
+    '<div class="acoes"><button class="btn sec" data-fechar>Voltar</button></div></div>', true);
+  w.querySelector('#eDia').onclick=function(){ w.remove(); modalNovaTroca(dia||''); };
+  w.querySelector('#eHora').onclick=function(){ w.remove(); modalTrocaHorario(dia||''); };
+}
+
+/* 2) pedir troca de horário: em aberto (escolhe o horário) ou com um colega */
+function modalTrocaHorario(dia){
+  var d=estado.jor, p=d.pessoas[0], e=d.escalas[p.email], af=d.afast[p.email]||[], pend=d.trocasPendentes||[], n=diasMes(d.mes), dias=[];
+  for(var dd=1; dd<=n; dd++){ var id=dataDe(d.mes,dd), h=thHorarioDoDia(d, dd); if(e.dias.charAt(dd-1)==='T' && id>=d.hoje && !tipoAfast(af,id) && pend.indexOf(id)<0 && prazoOk(id, h.i)) dias.push({id:id, h:h}); }
+  if(!dias.length){ toast('Você não tem dias de trabalho disponíveis para trocar de horário neste mês. Lembre: só dá para trocar turnos que começam daqui a mais de 72 horas.', true); return; }
+  var st={dia: dias.some(function(x){ return x.id===dia; }) ? dia : '', op:null, modo:'aberta', alvo:'', colega:'', busca:''};
+  var regras='<div class="rgx" style="display:none"><div class="rgx-cab"><b>Regras da troca de horário</b></div><div class="rgx-g">'+REGRAS_HORARIO.map(function(r){ return '<div class="rgx-i'+(r.destaque?' destaque':'')+'"><span class="ic">'+RG_IC[r.ic]+'</span><div><b>'+r.t+'</b><p>'+r.p+'</p></div></div>'; }).join('')+'</div></div>';
+  var w=abrirModal('<div class="tq"><h3>Trocar de horário</h3><p class="sub">Você continua trabalhando no dia, mas assume o horário de um colega com a mesma atuação. Em troca, o colega assume o seu.</p>'+
+    '<div class="ax48"><span class="ic">'+RG_IC.relogio+'</span><div><b>Peça com pelo menos 72 horas de antecedência</b><span>O pedido e o aceite precisam acontecer até 72 horas antes do turno que começa primeiro.</span><br><button type="button" class="ax-ver">Ver todas as regras da troca de horário</button></div></div>'+regras+
+    '<div class="passo"><h4><i>1</i>Em qual dia você quer trocar de horário?</h4><div class="th-dias" id="thDias"></div></div>'+
+    '<div class="passo" id="thPasso2" style="display:none"><h4><i>2</i>Como você quer trocar?</h4><div id="thCol"></div></div>'+
+    '<div id="thPrev"></div>'+
+    '<div class="campo" id="thMotW" style="display:none"><label for="thMot">Motivo <small style="font-weight:600;color:var(--c4)">(opcional)</small></label><textarea id="thMot" maxlength="200" placeholder="Ex.: consulta médica pela manhã"></textarea></div>'+
+    '<div class="acoes"><button class="btn sec" data-fechar>Cancelar</button><button class="btn" id="thEnviar" disabled>Escolha o dia</button></div></div>', true);
+  var q=function(s){ return w.querySelector(s); };
+  w.querySelector('.modal').classList.add('modal-xl');
+  q('.ax-ver').onclick=function(){ var box=q('.rgx'), ab=box.style.display==='none'; box.style.display=ab?'':'none'; this.textContent=ab?'Esconder as regras':'Ver todas as regras da troca de horário'; };
+  function grupos(){ var g={}, ordem=[]; (st.op&&st.op.colegas||[]).forEach(function(c){ var k=c.h.i+'-'+c.h.f; if(!g[k]){ g[k]={k:k, h:c.h, pessoas:[]}; ordem.push(k); } g[k].pessoas.push(c); });
+    ordem.sort(function(a,b){ return aMin(g[a].h.i)-aMin(g[b].h.i) || aMin(g[a].h.f)-aMin(g[b].h.f); }); return ordem.map(function(k){ return g[k]; }); }
+  function desenharDias(){
+    q('#thDias').innerHTML=dias.map(function(x){ return '<button type="button" data-th="'+x.id+'"'+(x.id===st.dia?' class="on"':'')+'><b>'+dSem(x.id)+'</b><small>'+hxHora(x.h)+'</small></button>'; }).join('');
+    w.querySelectorAll('[data-th]').forEach(function(b){ b.onclick=function(){ st.dia=b.dataset.th; st.colega=''; st.alvo=''; st.op=null; st.busca=''; desenharDias(); carregar(); }; });
+  }
+  function rodape(){
+    var bt=q('#thEnviar'), gs=grupos(), g=gs.filter(function(x){ return x.k===st.alvo; })[0];
+    var pronto = st.modo==='aberta' ? !!g : !!st.colega;
+    bt.disabled=!pronto;
+    bt.textContent = !st.dia ? 'Escolha o dia' : st.modo==='aberta' ? (g ? 'Enviar para '+(g.pessoas.length>1?'as '+g.pessoas.length+' pessoas':'1 pessoa') : 'Escolha o horário que você quer') : (st.colega ? 'Enviar pedido para '+primeiro(nomeDe(st.colega)) : 'Escolha com quem trocar');
+    q('#thMotW').style.display=pronto?'':'none';
+  }
+  function carregar(){
+    q('#thPasso2').style.display=''; q('#thPrev').innerHTML=''; rodape();
+    q('#thCol').innerHTML='<div class="carregando" style="min-height:70px"><div class="giro"></div> Procurando colegas que podem trocar…</div>';
+    chamar('apiTrocaHorarioOpcoes', estado.token, st.dia).then(function(r){ st.op=r; desenharCom(); }).catch(function(e){ q('#thCol').innerHTML=''; falhaGeral(e); });
+  }
+  function desenharCom(){
+    var r=st.op; if(!r) return;
+    if(!r.ok){ q('#thCol').innerHTML='<div class="alertas"><div class="a">'+esc((r.motivos||[]).join(' '))+'</div></div>'; return; }
+    var gs=grupos(), nn=r.colegas.length;
+    var meu='<div class="th-meu"><span>Seu horário em <b>'+dSem(r.data)+'</b>:</span><b>'+hxHora(r.meu)+'</b>'+hxChips(r.meu)+'</div>';
+    var expl='<div class="apto-info"><b>Quem pode trocar:</b> colegas com a mesma atuação que você, que trabalham nesse dia em outro horário, não estão de férias ou licença, não têm outra troca pendente no dia e cujo turno começa daqui a mais de 72 horas.</div>';
+    if(!nn){ q('#thCol').innerHTML=meu+expl+'<div class="vazio-mini">Nenhum colega pode trocar de horário com você nesse dia. Tente outro dia.</div>'; rodape(); return; }
+    var h=meu+expl+
+      '<label class="opcard'+(st.modo==='aberta'?' on':'')+'" data-modo="aberta"><input type="radio" name="thModo"'+(st.modo==='aberta'?' checked':'')+'><div style="flex:1"><div class="cab-op"><b>Pedir um horário (em aberto)</b><span class="cnt">'+gs.length+' horário'+(gs.length>1?'s':'')+' disponíve'+(gs.length>1?'is':'l')+'</span></div>'+
+        '<span>Você escolhe o horário que quer. Avisamos <strong>todas as pessoas aptas que trabalham nesse horário</strong>. A primeira que aceitar fica com a troca.</span></div></label>'+
+      '<div id="thAberta"></div>'+
+      '<label class="opcard'+(st.modo==='colega'?' on':'')+'" data-modo="colega"><input type="radio" name="thModo"'+(st.modo==='colega'?' checked':'')+'><div><div class="cab-op"><b>Escolher um colega</b><span class="cnt">'+nn+' pessoa'+(nn>1?'s':'')+' apta'+(nn>1?'s':'')+'</span></div><span>Você escolhe com quem trocar. Só essa pessoa recebe o pedido.</span></div></label>'+
+      '<div id="thColega"></div>';
+    q('#thCol').innerHTML=h;
+    w.querySelectorAll('[data-modo]').forEach(function(l){ l.onclick=function(ev){ ev.preventDefault(); st.modo=l.dataset.modo; if(st.modo==='aberta') st.colega=''; else st.alvo=''; desenharCom(); }; });
+    if(st.modo==='aberta') desenharHorarios(); else desenharColegas();
+    previa();
+  }
+  function desenharHorarios(){
+    var gs=grupos();
+    q('#thAberta').innerHTML='<div class="th-alvo"><div class="tit">Qual horário você quer?</div>'+gs.map(function(g){ var nn=g.pessoas.length;
+      return '<button type="button" class="th-op'+(g.k===st.alvo?' on':'')+'" data-alvo="'+g.k+'"><div class="cab"><b>'+hxHora(g.h)+'</b><span class="n">'+nn+(nn>1?' pessoas':' pessoa')+'</span></div>'+hxChips(g.h)+
+        '<div class="pilha">'+g.pessoas.slice(0,7).map(function(x){ return avatarHtml(x.email, x.nome, ''); }).join('')+(nn>7?'<span class="mais">+'+(nn-7)+'</span>':'')+'</div></button>'; }).join('')+'</div>'+
+      (st.alvo?'<div class="como"><div><b>1</b>Avisamos '+(function(){ var g=gs.filter(function(x){ return x.k===st.alvo; })[0]; return g.pessoas.length>1?'as '+g.pessoas.length+' pessoas':'a pessoa'; })()+' que trabalham das '+st.alvo.replace('-',' às ')+' no sino do painel.</div><div><b>2</b>A primeira que aceitar fica com a troca. As outras deixam de ver o pedido.</div><div><b>3</b>A coordenação confere as regras e aprova. Só então o seu horário muda.</div></div>':'');
+    atualizarAvatares();
+    w.querySelectorAll('[data-alvo]').forEach(function(b){ b.onclick=function(){ st.alvo=b.dataset.alvo; desenharHorarios(); previa(); }; });
+    rodape();
+  }
+  function desenharColegas(){
+    var gs=grupos(), filtro=function(c){ return !st.busca || (c.nome+' '+c.coord).toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g,'').indexOf(st.busca.toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g,''))>=0; };
+    q('#thColega').innerHTML=(st.op.colegas.length>6?'<input class="colbusca" id="thBusca" type="text" placeholder="Buscar colega pelo nome" value="'+esc(st.busca)+'">':'')+
+      gs.map(function(g){ var ps=g.pessoas.filter(filtro); if(!ps.length) return '';
+        return '<div class="th-gr"><div class="cab"><b>'+hxHora(g.h)+'</b><span class="n">'+g.pessoas.length+(g.pessoas.length>1?' pessoas':' pessoa')+'</span></div>'+hxChips(g.h)+
+          '<div class="colgrid" style="max-height:none">'+ps.map(function(c){ return '<button type="button" class="colcard'+(c.email===st.colega?' on':'')+'" data-tc="'+esc(c.email)+'" style="position:relative">'+avatarHtml(c.email, c.nome, '')+'<span><b>'+esc(c.nome)+'</b><small>'+esc(c.coord)+'</small></span></button>'; }).join('')+'</div></div>'; }).join('');
+    atualizarAvatares();
+    var b=q('#thBusca'); if(b) b.oninput=function(){ st.busca=this.value; var pos=this.selectionStart; desenharColegas(); var nb=q('#thBusca'); nb.focus(); nb.setSelectionRange(pos,pos); };
+    w.querySelectorAll('[data-tc]').forEach(function(c){ c.onclick=function(){ st.colega=c.dataset.tc; desenharColegas(); previa(); }; });
+    rodape();
+  }
+  function previa(){
+    var eu=estado.dados.eu, novo=null, quem=null;
+    if(st.modo==='aberta'){ var g=grupos().filter(function(x){ return x.k===st.alvo; })[0]; if(g){ novo=g.h; quem={email:'', nome:'quem aceitar'}; } }
+    else { var c=(st.op&&st.op.colegas||[]).filter(function(x){ return x.email===st.colega; })[0]; if(c){ novo=c.h; quem={email:c.email, nome:c.nome}; } }
+    q('#thPrev').innerHTML = novo ? cardTrocaHorario({dias:[{data:st.dia, sai:{email:eu.email, nome:eu.nome}, h:st.op.meu}, {data:st.dia, sai:quem, h:novo}]}, eu.email) : '';
+    rodape();
+  }
+  q('#thEnviar').onclick=function(){ var bt=this, txt=bt.textContent; ocupado(bt,true,'Enviando…');
+    var mot=q('#thMot').value.trim(), cham = st.modo==='aberta' ? chamar('apiTrocaHorarioAbrir', estado.token, st.dia, st.alvo, mot) : chamar('apiTrocaHorarioCriar', estado.token, st.dia, st.colega, mot);
+    cham.then(function(r){
+      if(!r.ok){ ocupado(bt,false,txt); toast((r.motivos||[r.msg]).join(' '), true); return; }
+      w.remove(); toast(st.modo==='aberta' ? 'Pedido enviado para '+r.avisados+' pessoa'+(r.avisados>1?'s':'')+'. A primeira que aceitar fica com a troca.' : 'Pedido enviado. '+primeiro(nomeDe(st.colega))+' recebe o aviso no sino e no e-mail.'); recarregarJornada(); }).catch(function(e){ ocupado(bt,false,txt); falhaGeral(e); }); };
+  desenharDias(); if(st.dia) carregar();
+}
+
+/* 3) aceitar (quem recebe o pedido) */
+function modalAceitarHorario(t, oferta){
+  var eu=estado.dados.eu.email, pn=primeiro(t.nomeSolicitante);
+  var w=abrirModal('<div class="tq"><h3>Troca de horário</h3><p class="sub"><b>'+esc(t.nomeSolicitante)+'</b> quer trocar de horário com você em <b>'+dSem(t.dataSolicitante)+'</b>. Pedido feito em '+dhBr(t.criadaEm)+'.</p>'+
+    (t.motivo?'<div class="motivo-box"><b>Motivo de '+esc(pn)+'</b>“'+esc(t.motivo)+'”</div>':'')+
+    '<div id="ahCard"><div class="hx"><div class="carregando" style="min-height:60px"><div class="giro"></div> Conferindo os horários…</div></div></div>'+
+    '<div class="mx-info" style="display:flex;gap:8px;font-size:13px;color:var(--c4);background:var(--c1);border-radius:12px;padding:10px 12px;margin-top:12px">'+MX_I+'<span>Você continua trabalhando nesse dia. Só muda o horário e as atuações. Depois do seu aceite, a coordenação confere e aprova; até lá, vale o seu horário de hoje.</span></div>'+
+    '<div class="acoes">'+(oferta?'<button class="btn sec" data-fechar>Voltar</button>':'<button class="btn sec" id="ahRec">Recusar</button>')+'<button class="btn" id="ahOk" disabled>Aceitar troca de horário</button></div></div>', true);
+  chamar('apiTrocaHorariosPorId', estado.token, t.id).then(function(r){
+    var box=w.querySelector('#ahCard'); box.innerHTML=cardTrocaHorario(r, eu); atualizarAvatares();
+    var cedo=r.dias.filter(function(x){ return x.h && !prazoOk(x.data, x.h.i); })[0], bt=w.querySelector('#ahOk');
+    if(cedo){ var hx=box.querySelector('.hx'), av=document.createElement('div'); av.className='hx-bloq'; av.innerHTML=MX_X.replace(/22/g,'20')+'<span><b>Prazo encerrado</b>A troca precisa ser aceita até 72 horas antes do turno que começa primeiro ('+cedo.h.i+' de '+dSem(cedo.data)+').</span>'; hx.insertBefore(av, hx.firstChild); bt.textContent='Prazo encerrado'; return; }
+    bt.disabled=false;
+  }).catch(function(e){ w.remove(); falhaGeral(e); });
+  if(!oferta) w.querySelector('#ahRec').onclick=function(){ w.remove(); modalRecusarTroca(t); };
+  w.querySelector('#ahOk').onclick=function(){ var bt=this; ocupado(bt,true,'Aceitando…');
+    (oferta ? chamar('apiTrocaAceitarOferta', estado.token, t.id) : chamar('apiTrocaResponder', estado.token, t.id, true, '')).then(function(r){ if(!r.ok){ ocupado(bt,false,'Aceitar troca de horário'); toast(r.msg,true); return; } w.remove(); toast('Troca de horário aceita. Agora falta a aprovação da coordenação.'); recarregarJornada(); }).catch(function(e){ w.remove(); falhaGeral(e); }); };
+}
+var _modalAceitarOferta_18 = modalAceitarOferta;
+modalAceitarOferta = function(t){ return ehHorarioT(t) ? modalAceitarHorario(t, true) : _modalAceitarOferta_18(t); };
+var _acaoTrocaAgenteV2_18 = acaoTrocaAgenteV2;
+acaoTrocaAgenteV2 = function(acao, id, lista){
+  var t=lista.filter(function(x){ return x.id===id; })[0];
+  if(t && ehHorarioT(t) && acao==='aceitar') return modalAceitarHorario(t);
+  return _acaoTrocaAgenteV2_18(acao, id, lista);
+};
+
+/* 4) aprovação da gestão */
+function modalDecidirHorario(t){
+  var et=etapasTroca(t);
+  var etapas='<div class="etapas">'+et.map(function(p,i){ return '<div class="e '+p.est+'"><span class="c">'+(p.est==='ok'?CHK.replace(/10/g,'14'):(i+1))+'</span><b>'+esc(p.est==='agora'&&i===2?'Sua decisão':p.rot)+'</b><small>'+(p.quando||(p.est==='agora'?'agora':''))+'</small></div>'; }).join('')+'</div>';
+  var w=abrirModal('<h3>Aprovar troca de horário</h3><p class="sub" style="margin:0 0 10px;color:var(--c4)"><b>'+esc(t.nomeSolicitante)+'</b> e <b>'+esc(t.nomeColega)+'</b> trocam de horário em <b>'+dSem(t.dataSolicitante)+'</b>. Os dias de trabalho e as folgas dos dois não mudam.</p>'+etapas+
+    (t.motivo?'<div class="motivo-box"><b>Motivo de '+esc(primeiro(t.nomeSolicitante))+'</b>“'+esc(t.motivo)+'”</div>':'')+
+    '<div id="dhCard"><div class="hx"><div class="carregando" style="min-height:60px"><div class="giro"></div> Conferindo os horários…</div></div></div>'+
+    '<div class="campo"><label for="dObs">Observação <small style="font-weight:600;color:var(--c4)">(opcional)</small></label><textarea id="dObs" maxlength="200" placeholder="Aparece para as duas pessoas"></textarea></div>'+
+    '<div class="acoes"><button class="btn perigo" id="dRej">Rejeitar</button><button class="btn" id="dApr">Aprovar e aplicar</button></div>', true);
+  chamar('apiTrocaHorariosPorId', estado.token, t.id).then(function(r){ w.querySelector('#dhCard').innerHTML=cardTrocaHorario(r, null); atualizarAvatares(); }).catch(function(){ w.querySelector('#dhCard').innerHTML=''; });
+  var decidir=function(apr, bt){ ocupado(bt,true,apr?'Aplicando…':'Rejeitando…'); chamar('apiTrocaDecidir', estado.token, t.id, apr, w.querySelector('#dObs').value.trim()).then(function(r){ w.remove(); toast(r.ok?(apr?'Troca de horário aprovada. Os novos horários já estão na escala das duas pessoas.':'Troca de horário rejeitada.'):r.msg, !r.ok); telaTrocasGestao(); atualizarSino(); }).catch(function(e){ w.remove(); falhaGeral(e); }); };
+  w.querySelector('#dApr').onclick=function(){ decidir(true, this); };
+  w.querySelector('#dRej').onclick=function(){ decidir(false, this); };
+}
+var _modalDecidirTroca_18 = modalDecidirTroca;
+modalDecidirTroca = function(t){ return ehHorarioT(t) ? modalDecidirHorario(t) : _modalDecidirTroca_18(t); };
+
+/* 5) Minha escala: clique no dia e botão "Pedir troca" abrem a escolha do tipo */
+var _desenharMinhaEscala_18 = desenharMinhaEscala;
+desenharMinhaEscala = function(d){
+  _desenharMinhaEscala_18(d);
+  var main=$('conteudo');
+  var dica=main.querySelector('.dica-cal'); if(dica) dica.innerHTML='Quer trocar? <b>Clique num dia de trabalho</b> no calendário para trocar com um colega do mesmo horário.';
+  main.querySelectorAll('[data-dia]').forEach(function(c){ var f=function(){ escolherTipoTroca(c.dataset.dia); }; c.onclick=f; c.onkeydown=function(ev){ if(ev.key==='Enter'||ev.key===' '){ ev.preventDefault(); f(); } }; });
+  var el=$('secTrocas'); if(!el) return;
+  var liga=function(){ var b=el.querySelector('#bNovaTroca'); if(!b || b.dataset.th) return !!b; b.dataset.th='1'; b.onclick=function(){ escolherTipoTroca(''); }; return true; };
+  if(!liga()){ var ob=new MutationObserver(function(){ if(liga()) ob.disconnect(); }); ob.observe(el,{childList:true,subtree:true}); }
+};
+</script>

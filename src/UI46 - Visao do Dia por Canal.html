@@ -1,0 +1,233 @@
+<style>
+/* ===================== Visão do Dia: 0800, Chat e Assíncrono separados, e filas do chat ao longo do dia ===================== */
+.cn-aviso{display:flex;gap:10px;align-items:flex-start;margin:4px 0 14px;padding:11px 14px;border-radius:12px;background:#F4F1FB;border:1px solid #E3DCF5;font-size:13px;line-height:1.45;color:var(--c5,#4a4458)}
+.cn-aviso svg{width:18px;height:18px;flex:none;margin-top:1px;color:#4F3F91}
+.cn-aviso b{color:var(--preto)}
+html[data-tema="escuro"] .cn-aviso{background:#1f1b2b;border-color:#3a3150;color:#cfc8dc}
+html[data-tema="escuro"] .cn-aviso svg{color:#c9bdf5}
+.cn-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:14px}
+.cn-seg{display:flex;flex-direction:column;min-width:0;border-radius:16px;background:var(--sup,#fff);border:1px solid var(--c2,#E6DFEE);overflow:hidden}
+html[data-tema="escuro"] .cn-seg{border-color:#2c2636}
+.cn-hd{position:relative;display:grid;grid-template-columns:auto 1fr auto;gap:12px;align-items:center;padding:14px 16px;color:#fff;background:var(--g)}
+.cn-hd .ic{width:38px;height:38px;border-radius:11px;display:grid;place-items:center;background:rgba(255,255,255,.18)}
+.cn-hd .ic svg{width:20px;height:20px}
+.cn-hd h3{margin:0;font-size:16px;font-weight:800;color:#fff}
+.cn-hd small{display:block;margin-top:2px;font-size:12px;opacity:.88;font-weight:600}
+.cn-hd .n{text-align:right;line-height:1}
+.cn-hd .n b{display:block;font-size:30px;font-weight:800;font-variant-numeric:tabular-nums}
+.cn-hd .n span{font-size:11.5px;font-weight:700;opacity:.88}
+.cn-0800{--g:linear-gradient(135deg,#D80073,#B0005E)}
+.cn-chat{--g:linear-gradient(135deg,#6D4FB8,#4F3F91)}
+.cn-ass{--g:linear-gradient(135deg,#B8256A,#8A1450)}
+.cn-bd{flex:1;padding:12px 14px 6px;display:flex;flex-direction:column;gap:2px}
+.cn-rot{font-size:11px;font-weight:800;letter-spacing:.06em;text-transform:uppercase;color:var(--c4);margin:0 0 6px}
+.cn-li{display:grid;grid-template-columns:10px minmax(0,1fr) auto;gap:9px;align-items:center;padding:6px 2px}
+.cn-li i{width:10px;height:10px;border-radius:3px;background:var(--c)}
+.cn-li span{font-size:13.5px;font-weight:700;color:var(--preto);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.cn-li b{font-size:15px;font-weight:800;color:var(--preto);font-variant-numeric:tabular-nums}
+.cn-li em{grid-column:2/-1;display:block;height:5px;border-radius:999px;background:var(--c1,#F1EDF5);overflow:hidden;margin-top:-1px}
+html[data-tema="escuro"] .cn-li em{background:#2a2333}
+.cn-li em u{display:block;height:100%;width:var(--w);background:var(--c);border-radius:999px;transform-origin:left;animation:cnCresce .6s cubic-bezier(.23,1,.32,1) backwards}
+@keyframes cnCresce{from{transform:scaleX(0)}to{transform:scaleX(1)}}
+.cn-li.sem span,.cn-li.sem b{color:#9A6400}
+html[data-tema="escuro"] .cn-li.sem span,html[data-tema="escuro"] .cn-li.sem b{color:#F2C063}
+.cn-txt{font-size:13px;line-height:1.5;color:var(--c4);margin:0}
+.cn-txt b{color:var(--preto)}
+.cn-pico{margin-top:10px;padding:10px 12px;border-radius:12px;background:#FFF0F7;border:1px solid #F9D2E6}
+html[data-tema="escuro"] .cn-pico{background:#2a1424;border-color:#4a2140}
+.cn-pico small{display:block;font-size:11px;font-weight:800;letter-spacing:.06em;text-transform:uppercase;color:#B0005E}
+html[data-tema="escuro"] .cn-pico small{color:#ff8fc4}
+.cn-pico b{display:block;margin-top:3px;font-size:15px;font-weight:800;color:var(--preto)}
+.cn-spk{display:flex;align-items:flex-end;gap:2px;height:54px;padding:0 1px}
+.cn-spk i{flex:1 1 0;min-width:0;border-radius:3px 3px 0 0;background:color-mix(in srgb,#D80073 38%,transparent);transform-origin:bottom;animation:cnSobe .5s cubic-bezier(.23,1,.32,1) backwards}
+.cn-spk i.pk{background:#D80073}
+@keyframes cnSobe{from{transform:scaleY(0)}to{transform:scaleY(1)}}
+.cn-spkx{display:flex;justify-content:space-between;margin-top:4px;font-size:11px;font-weight:700;color:var(--c4)}
+.cn-vz{font-size:13px;color:var(--c4);padding:6px 2px}
+.cn-ft{display:flex;align-items:center;justify-content:space-between;gap:10px;padding:10px 14px 12px;border-top:1px solid var(--c2,#E6DFEE)}
+html[data-tema="escuro"] .cn-ft{border-color:#2c2636}
+.cn-ft small{font-size:12px;color:var(--c4)}
+.cn-lk{all:unset;cursor:pointer;font-size:13px;font-weight:800;color:var(--k,#4F3F91);border-radius:8px;padding:4px 6px;margin:-4px -6px;transition:background-color .15s}
+.cn-lk:hover{background:color-mix(in srgb,var(--k,#4F3F91) 9%,transparent)}
+.cn-lk:focus-visible{outline:2px solid var(--k,#4F3F91);outline-offset:2px}
+html[data-tema="escuro"] .cn-lk{--k:#c9bdf5}
+.cn-nota{margin:12px 0 0;font-size:12.5px;color:var(--c4)}
+/* gráfico: o chat dividido pelas filas */
+.vd-c i.fchat.cnx{display:flex;flex-direction:column;background:none!important;overflow:hidden}
+.vd-c i.fchat.cnx>u{display:block;flex:var(--n) 1 0;min-height:1px;background:var(--c)}
+.cn-leg{display:inline-flex;align-items:center;gap:6px 12px;flex-wrap:wrap}
+.cn-leg .t{font-weight:800}
+.cn-leg span{display:inline-flex;align-items:center;gap:5px;white-space:nowrap}
+.cn-leg span i{width:10px;height:10px;border-radius:3px;background:var(--c);display:inline-block}
+.cn-leg span b{font-variant-numeric:tabular-nums}
+/* janela da meia hora: chat separado por fila, com a fila de cada pessoa */
+.cn-sub{display:flex;align-items:center;gap:8px;margin:10px 2px 6px;font-size:12px;font-weight:800;color:var(--preto)}
+.cn-sub:first-child{margin-top:2px}
+.cn-sub i{width:10px;height:10px;border-radius:3px;background:var(--c)}
+.cn-sub b{margin-left:auto;min-width:22px;height:20px;padding:0 7px;border-radius:7px;display:grid;place-items:center;font-size:12px;color:#fff;background:var(--c)}
+.cn-hdf{display:flex;flex-wrap:wrap;gap:5px;padding:8px 12px 0}
+.cn-hdf span{display:inline-flex;align-items:center;gap:5px;font-size:11.5px;font-weight:800;padding:3px 8px;border-radius:7px;color:var(--preto);background:color-mix(in srgb,var(--c) 13%,transparent)}
+.cn-hdf span i{width:8px;height:8px;border-radius:2px;background:var(--c)}
+.cn-tag{display:inline-block;margin-left:6px;padding:1px 7px;border-radius:6px;font-size:10.5px;font-weight:800;font-style:normal;vertical-align:1px;white-space:nowrap;color:color-mix(in srgb,var(--c) 80%,#000);background:color-mix(in srgb,var(--c) 15%,transparent)}
+html[data-tema="escuro"] .cn-tag{color:color-mix(in srgb,var(--c) 55%,#fff)}
+.cn-tag.sem{--c:#C98A00}
+.pchip .cn-tag,.vd-lin .cn-tag{align-self:flex-start;justify-self:start;width:max-content;max-width:100%;margin:2px 0 0;overflow:hidden;text-overflow:ellipsis}
+.vd-lin .cn-tag{margin:0 0 0 6px;vertical-align:1px}
+/* filtro das filas do chat no Agentes por Horário */
+.cnf{display:flex;align-items:center;gap:10px;flex-wrap:wrap;margin:6px 0 12px;padding:10px 12px;border-radius:12px;background:#F7F5FD;border:1px solid #E3DCF5}
+html[data-tema="escuro"] .cnf{background:#1f1b2b;border-color:#3a3150}
+.cnf>.rt{font-size:12px;font-weight:800;letter-spacing:.05em;text-transform:uppercase;color:#4F3F91}
+html[data-tema="escuro"] .cnf>.rt{color:#c9bdf5}
+.cnf-c{position:relative}
+.cnf-bt{all:unset;box-sizing:border-box;cursor:pointer;display:inline-flex;align-items:center;gap:8px;height:36px;padding:0 12px;border-radius:10px;border:1.5px solid var(--c2,#E6DFEE);background:var(--sup,#fff);font-size:13px;font-weight:800;color:var(--preto);transition:border-color .15s,box-shadow .15s}
+.cnf-bt:hover{border-color:#B7A8E6}.cnf-bt:focus-visible{outline:none;border-color:#4F3F91;box-shadow:0 0 0 3px rgba(79,63,145,.18)}
+.cnf-bt .dots{display:inline-flex;gap:3px}.cnf-bt .dots i{width:8px;height:8px;border-radius:2px;background:var(--c)}
+.cnf-bt svg{width:14px;height:14px;color:var(--c4)}
+.cnf-pop{position:absolute;z-index:70;top:calc(100% + 6px);left:0;width:270px;padding:8px;border-radius:14px;background:var(--sup,#fff);border:1px solid var(--c2,#E6DFEE);box-shadow:0 22px 48px -22px rgba(40,20,70,.45);animation:cnfPop .16s cubic-bezier(.23,1,.32,1)}
+html[data-tema="escuro"] .cnf-pop{background:#1c1823;border-color:#2c2636}
+@keyframes cnfPop{from{opacity:0;transform:translateY(-4px) scale(.98)}to{opacity:1;transform:none}}
+.cnf-pop label{display:grid;grid-template-columns:18px 10px 1fr auto;gap:8px;align-items:center;padding:7px 8px;border-radius:9px;font-size:13.5px;font-weight:700;color:var(--preto);cursor:pointer}
+.cnf-pop label:hover{background:#F4F1FB} html[data-tema="escuro"] .cnf-pop label:hover{background:#2a2333}
+.cnf-pop input{accent-color:#4F3F91;width:16px;height:16px;margin:0}
+.cnf-pop label i{width:10px;height:10px;border-radius:3px;background:var(--c)}
+.cnf-pop label small{font-size:12px;font-weight:800;color:var(--c4);font-variant-numeric:tabular-nums}
+.cnf-pop .ac{display:flex;justify-content:space-between;padding:8px 8px 4px;margin-top:4px;border-top:1px solid var(--c2,#E6DFEE)}
+.cnf-pop .ac button{all:unset;cursor:pointer;font-size:12.5px;font-weight:800;color:#4F3F91}
+html[data-tema="escuro"] .cnf-pop .ac button{color:#c9bdf5}
+.cnf .nt{font-size:12.5px;color:var(--c4)}
+.cnf .nt b{color:var(--preto)}
+.cnf .lp{all:unset;cursor:pointer;font-size:12.5px;font-weight:800;color:#B0005E;margin-left:auto}
+.af-pos{display:inline-block;margin-left:6px;padding:1px 7px;border-radius:6px;font-size:10.5px;font-weight:800;color:#9A6400;background:#FFF3D9}
+/* gráfico mais limpo: número só de quem atende, legenda em duas linhas, "agora" sem sobrepor */
+.vd-c .num small{display:none}
+.vd-cob .vd-graf2{margin-top:40px}
+.vd-c .num{font-size:10.5px!important;letter-spacing:0}
+.leg-fr .cn-leg{flex-basis:100%;order:10;gap:4px 14px;padding-top:2px}
+.leg-fr .cn-leg .t{font-weight:800;color:var(--preto)}
+.vd-agoral::after{top:-36px!important;left:50%!important;transform:translateX(-50%);padding:0 7px;border-radius:6px;background:var(--pink,#D80073);color:#fff!important;font-size:10px;line-height:15px;white-space:nowrap;z-index:3}
+@media (max-width:980px){ .cn-grid{grid-template-columns:1fr} }
+@media (prefers-reduced-motion:reduce){ .cn-li em u,.cn-spk i{animation:none} }
+</style>
+<script>
+/* ===================== Visão do Dia: 0800, Chat e Assíncrono separados, e filas do chat ao longo do dia ===================== */
+var CN_SEM_G = '#BDB4CC'; var CN_COR = { 'Pós-pagamento': '#4F3F91', 'Ativo RA': '#8A63E0', 'Ativo Retenção': '#3D7BE0', 'Ativo Preventiva': '#1FA2C8', 'Ticket RA': '#B79CF2' }, CN_SEM = '#C98A00';
+var CN_IC = { o800: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M22 16.9v3a2 2 0 0 1-2.2 2 19.8 19.8 0 0 1-8.6-3.1 19.5 19.5 0 0 1-6-6A19.8 19.8 0 0 1 2.1 4.2 2 2 0 0 1 4.1 2h3a2 2 0 0 1 2 1.7c.1.9.4 1.8.7 2.7a2 2 0 0 1-.5 2.1L8 9.8a16 16 0 0 0 6 6l1.3-1.3a2 2 0 0 1 2.1-.4c.9.3 1.8.6 2.7.7a2 2 0 0 1 1.7 2z"/></svg>',
+  chat: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21 11.5a8.4 8.4 0 0 1-9 8.4 8.6 8.6 0 0 1-3.9-.9L3 21l1.9-5A8.4 8.4 0 0 1 12 3.1a8.4 8.4 0 0 1 9 8.4z"/></svg>',
+  ass: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="4" width="18" height="16" rx="2"/><path d="M7 9h10M7 13h6"/></svg>',
+  info: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M12 11v6M12 7.5v.01"/></svg>' };
+if (typeof fcCor === 'function') { fcCor = function (v, lista) { if (!v) return CN_SEM; if (CN_COR[v]) return CN_COR[v]; var i = (lista || []).indexOf(v); return AA_EXTRA[(i < 0 ? 0 : i) % AA_EXTRA.length]; }; }
+/* fila de uma pessoa no dia: de hoje em diante, fila que saiu da lista conta como "sem fila"; dias passados mostram a fila que era */
+function cnFila(info, email, data) { var f = ((info && info.atual) || {})[email] || ''; if (f && data >= hojeLocal() && (info.areas || []).indexOf(f) < 0) return ''; return f; }
+function cnFilas(info, data) { var l = (info && info.areas || []).slice(); if (data < hojeLocal()) Object.keys((info && info.atual) || {}).forEach(function (e) { var f = info.atual[e]; if (f && l.indexOf(f) < 0) l.push(f); }); return l; }
+function cnTem(x, k) { return (x.blocos || []).some(function (b) { return b[0] === k; }); }
+function cnAgentes(r) { return (r && r.itens || []).filter(function (x) { return x.perfil === 'AGENTE' && x.sit === 'T'; }); }
+function cnPct(n, t) { return t ? Math.round(n / t * 100) + '% dos escalados' : ''; }
+function cnLinha(nome, n, max, cor, sem) { return '<div class="cn-li' + (sem ? ' sem' : '') + '" style="--c:' + cor + '"><i></i><span>' + esc(nome) + '</span><b>' + n + '</b><em><u style="--w:' + (max && n ? Math.max(4, n / max * 100) : 0).toFixed(1) + '%"></u></em></div>'; }
+/* cartão: os 3 canais lado a lado */
+function cnCartao(r) { var card = $('vdAtuacao'); if (!card || !r || !r.itens) return; var ag = cnAgentes(r), tot = ag.length; if (!tot) return;
+  var p0800 = ag.filter(function (x) { return cnTem(x, '0800'); }), pChat = ag.filter(function (x) { return cnTem(x, 'chat'); }), pAss = ag.filter(function (x) { return cnTem(x, 'ass'); });
+  var semAt = ag.filter(function (x) { return !cnTem(x, '0800') && !cnTem(x, 'chat') && !cnTem(x, 'ass'); }).length, soma = p0800.length + pChat.length + pAss.length;
+  /* horário com mais gente no 0800 */
+  var pico = null, serie = []; for (var k = 0; k < VD_N; k++) { var mid = VD_I + k * VD_SLOT + 15, n = p0800.filter(function (x) { var o = vdOnde(x, mid); return o && o.k === '0800'; }).length; serie.push(n); if (n && (!pico || n > pico.n)) pico = { n: n, k: k }; }
+  var mx = Math.max.apply(null, serie.concat([1])), spark = '<div class="cn-spk" aria-hidden="true">' + serie.map(function (n, k) { return '<i style="height:' + (n ? Math.max(6, n / mx * 100) : 0).toFixed(1) + '%" title="' + hm(VD_I + k * VD_SLOT) + ': ' + n + ' no 0800"' + (pico && k === pico.k ? ' class="pk"' : '') + '></i>'; }).join('') + '</div><div class="cn-spkx"><span>' + hm(VD_I) + '</span><span>' + hm(VD_I + Math.floor(VD_N / 2) * VD_SLOT) + '</span><span>' + hm(VD_I + VD_N * VD_SLOT) + '</span></div>';
+  var h2 = card.querySelector('h2'), cab = card.querySelector('.vdat-cab, .vd-sec-cab');
+  var corpo = '<div class="cn-aviso">' + CN_IC.info + '<span><b>Cada número mostra quantas pessoas passam por aquele canal no dia.</b> Quem atende 0800 e chat no mesmo dia aparece nos dois. Por isso a soma dos três canais (' + soma + ') pode ser maior que os ' + tot + ' agentes escalados.</span></div>' +
+    '<div class="cn-grid">' +
+    '<section class="cn-seg cn-0800"><div class="cn-hd"><span class="ic">' + CN_IC.o800 + '</span><div><h3>0800</h3><small>Atendimento por telefone</small></div><div class="n"><b>' + p0800.length + '</b><span>pessoas</span></div></div><div class="cn-bd"><p class="cn-txt">Todo mundo que passa pelo 0800 atende <b>a mesma fila</b> na Twilio.</p>' +
+      (pico ? '<div class="cn-pico"><small>Mais pessoas no 0800</small><b>' + hm(VD_I + pico.k * VD_SLOT) + ' às ' + hm(VD_I + (pico.k + 1) * VD_SLOT) + ' · ' + pico.n + ' pessoa' + (pico.n === 1 ? '' : 's') + '</b></div>' : '') + (p0800.length ? '<div class="cn-rot" style="margin-top:12px">Pessoas no 0800 ao longo do dia</div>' + spark : '') + '</div><div class="cn-ft"><small>' + cnPct(p0800.length, tot) + '</small></div></section>' +
+    '<section class="cn-seg cn-chat"><div class="cn-hd"><span class="ic">' + CN_IC.chat + '</span><div><h3>Chat</h3><small>Atendimento digital, por fila</small></div><div class="n"><b>' + pChat.length + '</b><span>pessoas</span></div></div><div class="cn-bd" id="cnChat"><div class="cn-vz">Carregando as filas…</div></div><div class="cn-ft"><small>' + cnPct(pChat.length, tot) + '</small>' + (pChat.length ? '<button type="button" class="cn-lk" data-cn="chat">Ver e definir filas ›</button>' : '') + '</div></section>' +
+    '<section class="cn-seg cn-ass"><div class="cn-hd"><span class="ic">' + CN_IC.ass + '</span><div><h3>Assíncrono</h3><small>Atendimento por tickets, por área</small></div><div class="n"><b>' + pAss.length + '</b><span>pessoas</span></div></div><div class="cn-bd" id="cnAss"><div class="cn-vz">Carregando as áreas…</div></div><div class="cn-ft" style="--k:#A51E5B"><small>' + cnPct(pAss.length, tot) + '</small>' + (typeof aaPessoas === 'function' && aaPessoas(r).length ? '<button type="button" class="cn-lk" data-cn="ass" style="--k:#A51E5B">Ver e definir áreas ›</button>' : '') + '</div></section></div>' +
+    (semAt ? '<p class="cn-nota">' + semAt + ' pessoa' + (semAt === 1 ? '' : 's') + ' ainda sem atuação definida na escala deste dia.</p>' : '');
+  /* troca o conteúdo antigo do cartão (blocos, barra e faixas), mantendo o título */
+  var topo = h2; while (topo && topo.parentNode !== card) topo = topo.parentNode;
+  var sub = topo && topo !== h2 ? [].slice.call(topo.querySelectorAll('span, p')).filter(function (e) { return /agentes? trabalha|agentes? escalad/i.test(e.textContent); })[0] : null;
+  [].slice.call(card.children).forEach(function (c) { if (c !== topo) c.remove(); });
+  if (h2) h2.textContent = 'Agentes por Atuação no Dia'; if (sub) sub.textContent = tot + ' agentes escalados';
+  card.insertAdjacentHTML('beforeend', '<div class="cn-wrap">' + corpo + '</div>'); card.classList.add('cn-on');
+  var bc = card.querySelector('[data-cn=chat]'); if (bc) bc.onclick = function () { fcModal(r); };
+  var ba = card.querySelector('[data-cn=ass]'); if (ba) ba.onclick = function () { aaModal(r); };
+  fcCarregar(r.data).then(function (info) { var el = $('cnChat'); if (!el || estado.vdUlt !== r) return; var lista = cnFilas(info, r.data), c = {}, sem = 0; lista.forEach(function (f) { c[f] = 0; });
+    pChat.forEach(function (x) { var f = cnFila(info, x.email, r.data); if (f) c[f] = (c[f] || 0) + 1; else sem++; }); var max = Math.max.apply(null, lista.map(function (f) { return c[f]; }).concat([sem, 1]));
+    el.innerHTML = pChat.length ? '<div class="cn-rot">Pessoas por fila</div>' + lista.map(function (f) { return cnLinha(f, c[f] || 0, max, fcCor(f, lista)); }).join('') + (sem ? cnLinha('Sem fila definida', sem, max, CN_SEM, true) : '') : '<div class="cn-vz">Ninguém passa pelo chat neste dia.</div>'; }).catch(function () { var el = $('cnChat'); if (el) el.innerHTML = '<div class="cn-vz">Não foi possível carregar as filas agora.</div>'; });
+  aaCarregar(r.data).then(function (info) { var el = $('cnAss'); if (!el || estado.vdUlt !== r) return; var lista = info.areas || [], k2 = aaContar(pAss, info), max = Math.max.apply(null, lista.map(function (a) { return k2.c[a] || 0; }).concat([k2.sem, 1]));
+    el.innerHTML = pAss.length ? '<div class="cn-rot">Pessoas por área resolvedora</div>' + lista.map(function (a) { return cnLinha(a, k2.c[a] || 0, max, aaCor(a, lista)); }).join('') + (k2.sem ? cnLinha('Sem área definida', k2.sem, max, CN_SEM, true) : '') : '<div class="cn-vz">Ninguém no assíncrono neste dia.</div>'; }).catch(function () { var el = $('cnAss'); if (el) el.innerHTML = '<div class="cn-vz">Não foi possível carregar as áreas agora.</div>'; });
+}
+/* gráfico Agentes por Horário: a parte do chat de cada barra dividida pelas filas, nos dois modos */
+function cnGraf() { var r = estado.vdUlt, g = $('vdGraf'); if (!r || !g) return; var info = (estado.fcCache || {})[r.data]; if (!info) { fcCarregar(r.data).then(cnGraf).catch(function () { }); return; }
+  var pres = estado.vdModo === 'pres' && estado.vdPresR && estado.vdPresR.r, base = pres ? estado.vdPresR.r : r, ag = cnAgentes(base), lista = cnFilas(info, r.data);
+  g.querySelectorAll('.vd-c[data-k]').forEach(function (col) { var ch = col.querySelector('i.fchat'); if (!ch || ch.classList.contains('cnx')) return; var mid = VD_I + (+col.dataset.k) * VD_SLOT + 15, c = {}, sem = 0;
+    ag.forEach(function (x) { var o = vdOnde(x, mid); if (!o || o.k !== 'chat') return; var f = cnFila(info, x.email, r.data); if (f) c[f] = (c[f] || 0) + 1; else sem++; });
+    var partes = lista.filter(function (f) { return c[f]; }).map(function (f) { return [f, c[f], fcCor(f, lista)]; }); if (sem) partes.push(['Sem fila', sem, CN_SEM_G]);
+    if (!partes.length) return; ch.classList.add('cnx'); ch.innerHTML = partes.map(function (p) { return '<u style="--n:' + p[1] + ';--c:' + p[2] + '"></u>'; }).join('');
+    var t = col.getAttribute('title') || ''; if (t && t.indexOf('filas do chat') < 0) col.setAttribute('title', t.replace(/\. Clique/, ' · filas do chat: ' + partes.map(function (p) { return p[0] + ' ' + p[1]; }).join(', ') + '. Clique')); });
+  /* legenda: o item "Chat (Digital)" vira as filas, com quantas pessoas passam por cada uma no dia */
+  var cardG = g.closest('.vd-cob') || g.parentNode, dia = {}, semD = 0;
+  ag.filter(function (x) { return cnTem(x, 'chat'); }).forEach(function (x) { var f = cnFila(info, x.email, r.data); if (f) dia[f] = (dia[f] || 0) + 1; else semD++; });
+  var html = '<span class="cn-leg" data-cnleg><span class="t">Chat, por fila:</span>' + lista.filter(function (f) { return dia[f]; }).map(function (f) { return '<span style="--c:' + fcCor(f, lista) + '"><i></i>' + esc(f) + '</span>'; }).join('') + (semD ? '<span style="--c:' + CN_SEM_G + '"><i></i>Sem fila definida</span>' : '') + '</span>';
+  /* explicação do número em cima da barra */
+  var pp = cardG.querySelector('.vd-cob-cab p'); if (pp && /atendendo \/ escalados/.test(pp.innerHTML)) pp.innerHTML = pp.innerHTML.replace(/o número em cima é <b>atendendo \/ escalados<\/b>/, 'o número em cima é <b>quantos estão atendendo</b> (passe o mouse para ver os escalados)');
+  var velho = cardG.querySelector('[data-cnleg]'); if (velho) { velho.outerHTML = html; return; }
+  var alvo = null; cardG.querySelectorAll('span, div, li').forEach(function (e) { if (!alvo && e.children.length <= 2 && /^\s*Chat \(Digital\)\s*$/.test(e.textContent)) alvo = e; });
+  if (alvo) alvo.outerHTML = html; }
+/* janela da meia hora: o chat separado por fila, com a quantidade no título e a fila de cada pessoa */
+function cnJanela() { var raiz = $('slCorpo'), r = estado.vdUlt; if (!raiz || !r) return; var info = (estado.fcCache || {})[r.data]; if (!info) { fcCarregar(r.data).then(cnJanela).catch(function () { }); return; } var lista = cnFilas(info, r.data);
+  raiz.querySelectorAll('.sl-card').forEach(function (cd) { var b = cd.querySelector('.hd b'); if (!b || cd.dataset.cn || !/^Chat/.test(b.textContent.trim())) return; cd.dataset.cn = '1'; (function tira(n) { if (!n) return; if (n.nodeType === 3) { if (/Chat \(Digital\)/.test(n.nodeValue)) { n.nodeValue = n.nodeValue.replace('Chat (Digital)', 'Chat'); return true; } return; } for (var i = 0; i < n.childNodes.length; i++) if (tira(n.childNodes[i])) return true; })(b);
+    var bd = cd.querySelector('.bd'), chips = [].slice.call(bd.querySelectorAll('.pchip[data-ag]')); if (!chips.length) return; var gr = {};
+    chips.forEach(function (p) { var f = cnFila(info, p.dataset.ag, r.data) || ''; (gr[f] = gr[f] || []).push(p); var nm = p.querySelector('b'); if (nm && !p.querySelector('.cn-tag')) nm.insertAdjacentHTML('afterend', f ? '<em class="cn-tag" style="--c:' + fcCor(f, lista) + '">' + esc(f) + '</em>' : '<em class="cn-tag sem">Sem fila</em>'); });
+    var ordem = lista.filter(function (f) { return gr[f]; }).concat(Object.keys(gr).filter(function (f) { return f && lista.indexOf(f) < 0; })).concat(gr[''] ? [''] : []);
+    cd.querySelector('.hd').insertAdjacentHTML('afterend', '<div class="cn-hdf">' + ordem.map(function (f) { return '<span style="--c:' + (f ? fcCor(f, lista) : CN_SEM) + '"><i></i>' + esc(f || 'Sem fila') + ' · ' + gr[f].length + '</span>'; }).join('') + '</div>');
+    bd.innerHTML = ''; ordem.forEach(function (f) { bd.insertAdjacentHTML('beforeend', '<div class="cn-sub" style="--c:' + (f ? fcCor(f, lista) : CN_SEM) + '"><i></i>' + esc(f || 'Sem fila definida') + '<b>' + gr[f].length + '</b></div>'); gr[f].forEach(function (p) { bd.appendChild(p); }); }); });
+  var leg = raiz.querySelector('.sl-leg'); if (leg && !leg.dataset.cn) { leg.dataset.cn = '1'; var cont = {}; var pri = raiz.querySelector('.sl-card[data-cn]'); (pri ? [].slice.call(pri.querySelectorAll('.pchip[data-ag]')) : []).forEach(function (p) { var f = cnFila(info, p.dataset.ag, r.data) || 'Sem fila'; cont[f] = (cont[f] || 0) + 1; });
+    var li = [].slice.call(leg.querySelectorAll('.sl-li')).filter(function (x) { return /^Chat/.test((x.querySelector('span') || {}).textContent || ''); })[0];
+    if (li && Object.keys(cont).length) { li.querySelector('span').textContent = 'Chat'; li.insertAdjacentHTML('afterend', '<div class="cn-hdf" style="padding:2px 0 6px 18px">' + Object.keys(cont).sort(function (a, b) { return (lista.indexOf(a) < 0 ? 99 : lista.indexOf(a)) - (lista.indexOf(b) < 0 ? 99 : lista.indexOf(b)); }).map(function (f) { return '<span style="--c:' + (f === 'Sem fila' ? CN_SEM : fcCor(f, lista)) + '"><i></i>' + esc(f) + ' · ' + cont[f] + '</span>'; }).join('') + '</div>'); } } }
+/* tag da fila ao lado do nome na lista "Agentes Escalados" */
+function cnLista() { var r = estado.vdUlt; if (!r) return; var info = (estado.fcCache || {})[r.data]; if (!info) return; var lista = cnFilas(info, r.data), por = {}; (r.itens || []).forEach(function (x) { por[x.email] = x; });
+  gc().querySelectorAll('.vd-lin[data-ag]').forEach(function (l) { if (l.querySelector('.cn-tag')) return; var x = por[l.dataset.ag]; if (!x || x.perfil !== 'AGENTE' || !cnTem(x, 'chat')) return; var f = cnFila(info, x.email, r.data), nm = l.querySelector('b');
+    if (nm) nm.insertAdjacentHTML('afterend', f ? '<em class="cn-tag" style="--c:' + fcCor(f, lista) + '">' + esc(f) + '</em>' : '<em class="cn-tag sem">Sem fila</em>'); }); }
+(function () {
+  if (typeof desenharVisaoDia === 'function') { var _d = desenharVisaoDia; desenharVisaoDia = function (r) { var x = _d.apply(this, arguments); try { cnCartao(r || estado.vdUlt); } catch (e) { if (window.console) console.warn('canais', e); } try { cnGraf(); } catch (e) { } try { fcCarregar((r || estado.vdUlt).data).then(cnLista).catch(function () { }); } catch (e) { } return x; }; }
+  /* o gráfico e a janela da meia hora são redesenhados por várias partes do painel: decora sempre que mudarem */
+  var pend = 0; new MutationObserver(function () { if (pend) return; pend = requestAnimationFrame(function () { pend = 0; try { if ($('vdGraf') && $('vdGraf').querySelector('i.fchat:not(.cnx)')) cnGraf(); } catch (e) { } try { if ($('slCorpo') && $('slCorpo').querySelector('.sl-card:not([data-cn])')) cnJanela(); } catch (e) { } try { if (gc() && gc().querySelector('.vd-lin[data-ag]:not(:has(.cn-tag))')) cnLista(); } catch (e) { } }); }).observe(document.body, { childList: true, subtree: true });
+  /* definir filas atualiza o cartão, o gráfico e as tags */
+  if (typeof fcModal === 'function') { var _m = fcModal; fcModal = function (r) { var x = _m.apply(this, arguments); try { var w = document.querySelector('#fcModal'); w = w && w.closest('.modal-fundo'); if (w) new MutationObserver(function (ms, ob) { if (!document.body.contains(w)) { ob.disconnect(); var rr = estado.vdUlt; if (rr) { cnCartao(rr); var gg = $('vdGraf'); if (gg) gg.querySelectorAll('i.fchat.cnx').forEach(function (i) { i.classList.remove('cnx'); }); cnGraf(); gc().querySelectorAll('.vd-lin .cn-tag').forEach(function (t) { t.remove(); }); cnLista(); } } }).observe(document.body, { childList: true, subtree: true }); } catch (e) { } return x; }; }
+})();
+
+/* ===================== Filtro das filas do chat no Agentes por Horário ===================== */
+/* Filtro dentro da janela da meia hora. estado.cnSel = null: todas as filas (padrão, toda vez que a janela abre). Com filas escolhidas, quem está
+   numa fila fora da seleção deixa de contar no chat da janela; 0800 e assíncrono não mudam. Ao fechar a janela, o filtro volta ao padrão. */
+(function () { if (typeof vdOnde !== 'function') return; var _o = vdOnde; vdOnde = function (x, mid) { var o = _o.apply(this, arguments);
+  if (o && o.k === 'chat' && estado.cnSel && document.getElementById('slCorpo')) { var r = estado.vdUlt, info = r && (estado.fcCache || {})[r.data]; if (info && estado.cnSel.indexOf(cnFila(info, x.email, r.data) || '') < 0) return null; } return o; }; })();
+function cnFiltroJanela() { var raiz = $('slCorpo'), r = estado.vdUlt; if (!raiz || !r) return; var info = (estado.fcCache || {})[r.data]; if (!info) return;
+  var lista = cnFilas(info, r.data), dia = {}, sem = 0; cnAgentes(r).filter(function (x) { return cnTem(x, 'chat'); }).forEach(function (x) { var f = cnFila(info, x.email, r.data); if (f) dia[f] = (dia[f] || 0) + 1; else sem++; });
+  var ops = lista.map(function (f) { return [f, f, fcCor(f, lista), dia[f] || 0]; }); if (sem || (estado.cnSel && estado.cnSel.indexOf('') >= 0)) ops.push(['', 'Sem fila definida', CN_SEM, sem]);
+  var sel = estado.cnSel, todas = !sel, esc1 = todas ? ops : ops.filter(function (o) { return sel.indexOf(o[0]) >= 0; }), nSel = esc1.length;
+  var rot = todas ? 'Todas as filas' : nSel === 0 ? 'Nenhuma fila' : nSel === 1 ? esc1[0][1] : nSel + ' de ' + ops.length + ' filas';
+  var html = '<div class="cnf" id="cnfM"><span class="rt">Filas do Chat</span><div class="cnf-c"><button type="button" class="cnf-bt" id="cnfBt" aria-haspopup="true" aria-expanded="false"><span class="dots">' + esc1.slice(0, 6).map(function (o) { return '<i style="--c:' + o[2] + '"></i>'; }).join('') + '</span>' + esc(rot) + '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M6 9l6 6 6-6"/></svg></button></div>' +
+    '<span class="nt">' + (todas ? 'Mostrando o chat de <b>todas as filas</b>. Escolha as filas para ver só elas.' : 'Mostrando o chat só de <b>' + esc(esc1.map(function (o) { return o[1]; }).join(', ') || 'nenhuma fila') + '</b>. 0800 e assíncrono não mudam.') + '</span>' + (todas ? '' : '<button type="button" class="lp" id="cnfLimpa">Mostrar todas</button>') + '</div>';
+  var velho = $('cnfM'); if (velho) velho.remove(); var topo = raiz.querySelector('.sl-top'); if (topo) topo.insertAdjacentHTML('afterend', html); else raiz.insertAdjacentHTML('afterbegin', html);
+  var aplicar = function (nova) { estado.cnSel = nova && nova.length === ops.length ? null : nova; var b = raiz.querySelector('.sl-dia [data-j].on') || raiz.querySelector('.sl-dia [data-j]'); if (b) b.click(); };
+  var lp = $('cnfLimpa'); if (lp) lp.onclick = function () { aplicar(null); };
+  $('cnfBt').onclick = function (e) { e.stopPropagation(); var c = this.parentNode, p = c.querySelector('.cnf-pop'); if (p) { p.remove(); this.setAttribute('aria-expanded', 'false'); return; } this.setAttribute('aria-expanded', 'true');
+    c.insertAdjacentHTML('beforeend', '<div class="cnf-pop" role="dialog" aria-label="Escolher as filas do chat">' + ops.map(function (o) { return '<label><input type="checkbox" value="' + esc(o[0]) + '"' + (todas || sel.indexOf(o[0]) >= 0 ? ' checked' : '') + '><i style="--c:' + o[2] + '"></i><span>' + esc(o[1]) + '</span><small title="Pessoas nesta fila no dia">' + o[3] + '</small></label>'; }).join('') + '<div class="ac"><button type="button" data-a="todas">Marcar todas</button><button type="button" data-a="nenhuma">Desmarcar todas</button></div></div>');
+    var pop = c.querySelector('.cnf-pop'), ler = function () { return [].map.call(pop.querySelectorAll('input:checked'), function (i) { return i.value; }); };
+    pop.querySelectorAll('input').forEach(function (i) { i.onchange = function () { aplicar(ler()); }; });
+    pop.querySelector('[data-a=todas]').onclick = function () { aplicar(null); }; pop.querySelector('[data-a=nenhuma]').onclick = function () { aplicar([]); }; }; }
+/* janela redesenhada (abrir, mudar de meia hora ou de filtro): coloca o filtro de novo; janela fechada: filtro volta ao padrão */
+(function () { var aberta = false; new MutationObserver(function () { var r = $('slCorpo');
+  if (r && !aberta) { aberta = true; estado.cnSel = null; }
+  if (r && !$('cnfM') && r.querySelector('.sl-top')) { try { cnFiltroJanela(); } catch (e) { } }
+  if (!r && aberta) { aberta = false; if (estado.cnSel) { estado.cnSel = null; try { if (typeof vdCobAplicar === 'function' && estado.vdUlt && $('vdGraf')) { var y = window.scrollY; vdCobAplicar(estado.vdUlt); window.scrollTo(0, y); } } catch (e) { } } } }).observe(document.body, { childList: true, subtree: true }); })();
+/* ===================== Ajustes de fila: o chat de quem muda de fila é a Pós-pagamento ===================== */
+(function () { if (typeof afLinha !== 'function' || typeof afChip !== 'function') return; var _l = afLinha; afLinha = function (it) { var h = _l.apply(this, arguments);
+  try { if (it && it.filaChat) { var a = afChip('chat'), b = a.replace(/>[^<]*</, '>' + esc(it.filaChat) + '<'); if (a !== b) h = h.split(a).join(b); }
+    if (it && it.semFila) h = h.replace('</b>', '</b><span class="af-pos" title="Defina a fila do chat desta pessoa na Visão do Dia">Sem fila definida</span>'); } catch (e) { } return h; }; })();
+
+/* ajustes de fila: cada pessoa mostra a fila do chat dela (Pós-pagamento, Ativo RA etc.); o cabeçalho de cada grupo só troca "Chat" pela fila quando todos são da mesma fila */
+(function () { if (typeof afChip !== 'function') return; var _c = afChip;
+  var filaUnica = function () { var r = estado.afModalR || estado.afDia || estado.afHoje; if (!r) return ''; var fs = {}; (r.itens || []).forEach(function (it) { if (it.filaChat) fs[it.filaChat] = 1; }); var k = Object.keys(fs); return k.length === 1 ? k[0] : ''; };
+  afChip = function (k) { var h = _c.apply(this, arguments); if (k !== 'chat') return h; var f = filaUnica(); return f ? h.replace('>Chat<', '>' + esc(f) + '<') : h; };
+  var pend = 0; new MutationObserver(function () { if (pend) return; pend = requestAnimationFrame(function () { pend = 0; var r = estado.afModalR; if (!r || !$('afCorpo')) return; var por = {}; (r.itens || []).forEach(function (it) { por[it.chave] = it; });
+    $('afCorpo').querySelectorAll('.af-row').forEach(function (row) { if (row.dataset.cnf) return; var b = row.querySelector('[data-afok],[data-afdes]'), it = b && por[b.getAttribute('data-afok') || b.getAttribute('data-afdes')]; if (!it) return; row.dataset.cnf = '1';
+      if (it.filaChat) row.querySelectorAll('.af-f').forEach(function (c) { if (/^(Chat|Pós-pagamento|Ativo RA|Ativo Retenção|Ativo Preventiva|Ticket RA)$/.test(c.textContent.trim()) && !/0800/.test(c.textContent)) c.textContent = it.filaChat; });
+      var nm = row.querySelector('.af-id b'); if (it.semFila && nm && !nm.querySelector('.af-pos')) nm.insertAdjacentHTML('beforeend', '<span class="af-pos" title="Defina a fila do chat desta pessoa na Visão do Dia">Sem fila definida</span>'); }); }); }).observe(document.body, { childList: true, subtree: true }); })();
+</script>

@@ -1,0 +1,39 @@
+<style>
+/* ===================== Cadastro de Férias e Licenças: foto das pessoas na busca ===================== */
+.lista-p{max-height:300px}
+.lista-p button.lp-f{display:flex;align-items:center;gap:12px;justify-content:flex-start;padding:8px 12px;transition:background-color .15s}
+.lista-p button.lp-f .av{width:34px;height:34px;flex:none;border-radius:50%;font-size:12px;background-size:cover;background-position:center}
+.lista-p button.lp-f .lp-t{display:flex;flex-direction:column;min-width:0;line-height:1.25}
+.lista-p button.lp-f .lp-t span{font-weight:700;color:var(--preto);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.lista-p button.lp-f .lp-t small{font-size:12px;font-weight:600;color:var(--c4)}
+.lista-p button.lp-f:focus-visible{outline:2px solid var(--rosa);outline-offset:-2px}
+html[data-tema="escuro"] .lista-p button{background:transparent}
+html[data-tema="escuro"] .lista-p button:hover{background:rgba(255,255,255,.06)}
+.escolhido .esc-f{display:flex;align-items:center;gap:12px;min-width:0}
+.escolhido .esc-f .av{width:44px;height:44px;flex:none;border-radius:50%;font-size:15px;background-size:cover;background-position:center;box-shadow:0 0 0 3px #fff,0 0 0 4.5px var(--rosa)}
+html[data-tema="escuro"] .escolhido .esc-f .av{box-shadow:0 0 0 3px #1c1823,0 0 0 4.5px var(--rosa)}
+</style>
+<script>
+/* ===================== Cadastro de Férias e Licenças: foto das pessoas na busca e na pessoa escolhida ===================== */
+function afFotos(raiz) { var novo = false;
+  var lista = raiz.querySelector('#mfLista');
+  if (lista) lista.querySelectorAll('button[data-p]:not(.lp-f)').forEach(function (b) {
+    var e = b.getAttribute('data-p'), nm = b.querySelector('span'), co = b.querySelector('small'), nome = nm ? nm.textContent : e;
+    var t = document.createElement('span'); t.className = 'lp-t'; if (nm) t.appendChild(nm); if (co) t.appendChild(co);
+    b.classList.add('lp-f'); b.innerHTML = avatarHtml(e, nome, ''); b.appendChild(t); novo = true; });
+  var es = raiz.querySelector('#mfPessoa .escolhido');
+  if (es && !es.querySelector('.esc-f')) { var tx = es.firstElementChild; if (tx && tx.tagName === 'DIV') { var em = (estado.pessoas || []).filter(function (p) { return (tx.querySelector('b') || {}).textContent === p.nome; })[0];
+    var w = document.createElement('div'); w.className = 'esc-f'; w.innerHTML = avatarHtml(em ? em.email : '', em ? em.nome : (tx.querySelector('b') || {}).textContent || '', ''); es.insertBefore(w, tx); w.appendChild(tx); novo = true; } }
+  if (novo && typeof atualizarAvatares === 'function') atualizarAvatares();
+}
+(function () { if (typeof modalAfast !== 'function') return; var _m = modalAfast;
+  modalAfast = function () { var x = _m.apply(this, arguments);
+    try { var md = document.getElementById('mfPessoa'); md = md && (md.closest('.modal') || md.parentNode); if (md) { afFotos(md); var ob = new MutationObserver(function () { afFotos(md); }); ob.observe(md, { childList: true, subtree: true });
+      var fim = setInterval(function () { if (!document.body.contains(md)) { ob.disconnect(); clearInterval(fim); } }, 2000); } } catch (e) { }
+    return x; }; })();
+</script>
+
+<style>
+/* Histórico: o botão Reverter não aparece de forma alguma (09/11/2026) */
+[data-rev]{display:none!important}
+</style>

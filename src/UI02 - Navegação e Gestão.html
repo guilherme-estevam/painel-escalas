@@ -1,0 +1,394 @@
+<style>
+.ola{display:flex;align-items:flex-end;justify-content:space-between;gap:16px;flex-wrap:wrap;margin-bottom:18px}
+.ola h1{margin:0;font-size:28px;font-weight:800}
+.ola p{margin:4px 0 0;color:var(--c4);font-size:15px}
+.dica-cal{display:flex;align-items:center;justify-content:center;gap:8px;background:var(--rosa-bg);color:var(--vinho);border-radius:12px;padding:10px 14px;font-size:14px;font-weight:600;margin:0 0 14px}
+.dica-cal b{font-weight:800}
+.dia.clic{cursor:pointer;transition:transform .08s ease, box-shadow .08s ease}
+.dia.clic:hover{box-shadow:inset 0 0 0 3px var(--pink);transform:translateY(-1px)}
+.dia.clic:focus-visible{outline:3px solid var(--pink);outline-offset:-3px}
+.dia .pendtag{font-size:10px;font-weight:800;background:#fff;color:var(--vinho);border-radius:6px;padding:1px 6px;align-self:flex-start}
+.dia.hoje .n{background:var(--rosa);color:#fff;border-radius:50%;width:24px;height:24px;display:inline-flex;align-items:center;justify-content:center;font-size:13px}
+.como{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:10px;margin:4px 0 16px}
+.como div{background:var(--c1);border-radius:12px;padding:10px 12px;font-size:13px;color:var(--c4)}
+.como b{display:flex;align-items:center;gap:8px;color:var(--preto);font-size:14px;margin-bottom:2px}
+.como i{font-style:normal;background:var(--preto);color:#fff;border-radius:50%;width:20px;height:20px;display:inline-flex;align-items:center;justify-content:center;font-size:12px}
+.grupo{margin-top:16px}
+.grupo h3{font-size:15px;margin:0 0 10px;display:flex;align-items:center;gap:8px}
+.grupo h3 .n{background:var(--rosa);color:#fff;border-radius:10px;padding:0 8px;font-size:12px}
+.tcard{border:1px solid var(--c2);border-left:4px solid var(--c3);border-radius:12px;padding:12px 14px;display:flex;gap:14px;align-items:center;justify-content:space-between;flex-wrap:wrap;margin-bottom:10px;background:#fff}
+.tcard.acao{border-left-color:var(--rosa);background:#fffafd}
+.tcard.oferta{border-left-color:var(--roxo)}
+.tcard .quem{font-size:13px;color:var(--c4);margin-top:6px}
+.tcard .quem b{color:var(--preto)}
+.tcard .tlado{display:flex;gap:8px;align-items:center;flex-wrap:wrap}
+.ola select{width:auto}
+.pessoa-cel .frase{flex-wrap:nowrap}
+.pessoa-cel .chip,.dupla .chip{white-space:nowrap}
+.dupla{display:grid;grid-template-columns:minmax(0,1fr) auto auto;gap:8px;align-items:center}
+.dupla b{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.frase{display:flex;gap:8px;align-items:center;flex-wrap:wrap}
+.chip{border-radius:10px;padding:6px 10px;font-size:14px;font-weight:600}
+.chip b{font-weight:800}
+.chip.f{background:var(--creme);color:var(--vinho)}
+.chip.t{background:var(--roxo);color:#fff}
+.seta{color:var(--c4);font-weight:800}
+.passo{border:1px solid var(--c2);border-radius:14px;padding:14px;margin-bottom:12px}
+.passo h4{margin:0 0 10px;font-size:15px;display:flex;gap:10px;align-items:center}
+.passo h4 i{font-style:normal;background:var(--rosa);color:#fff;border-radius:50%;width:24px;height:24px;display:inline-flex;align-items:center;justify-content:center;font-size:13px;flex:none}
+.passo.off{opacity:.45;pointer-events:none}
+.dias-btn{display:grid;grid-template-columns:repeat(auto-fill,minmax(110px,1fr));gap:8px}
+.diabtn{border:1.5px solid var(--c3);background:#fff;border-radius:12px;padding:10px;text-align:center;cursor:pointer;font-weight:700}
+.diabtn small{display:block;font-weight:600;color:var(--c4);font-size:12px}
+.diabtn.on{border-color:var(--roxo);background:var(--roxo);color:#fff}
+.diabtn.on small{color:#e4e0f5}
+.resumo{display:flex;justify-content:center;gap:10px;flex-wrap:wrap;background:var(--c1);border-radius:14px;padding:14px;margin-bottom:12px}
+.resumo .chip{font-size:15px;padding:10px 14px}
+.opcard{display:flex;gap:10px;align-items:flex-start;border:1.5px solid var(--c3);border-radius:12px;padding:12px;cursor:pointer;margin-bottom:8px}
+.opcard.on{border-color:var(--rosa);background:var(--rosa-bg)}
+.opcard input{margin-top:3px;accent-color:var(--rosa)}
+.opcard b{display:block}
+.opcard span{font-size:13px;color:var(--c4)}
+.modal.xl{max-width:980px}
+.pessoa-cel b{display:block}
+.pessoa-cel small{color:var(--c4)}
+.ev{display:inline-block;border-radius:20px;padding:2px 10px;font-size:12px;font-weight:700}
+.ev.ok{background:var(--roxo-bg);color:var(--roxo)}
+.ev.ruim{background:var(--rosa);color:#fff}
+.ev.neutro{background:var(--c2);color:var(--preto)}
+.ev.link{background:var(--creme);color:var(--vinho)}
+.vazio-mini{padding:16px;text-align:center;color:var(--c4);font-size:14px;background:var(--c1);border-radius:12px}
+@media (max-width:900px){
+  .como{grid-template-columns:repeat(2,minmax(0,1fr))}
+  .ola h1{font-size:24px}
+  .tcard{flex-direction:column;align-items:flex-start}
+  .chip{font-size:13px}
+  .dica-cal{display:block;text-align:center}
+  .dia .pendtag{font-size:0;width:9px;height:9px;padding:0;border-radius:50%;background:var(--pink);position:absolute;bottom:6px;right:6px}
+}
+</style>
+<script>
+Object.assign(ACOES, {TROCA_ABERTA:'Troca aberta para qualquer colega',TROCA_EXPIRADA:'Troca expirada',AFASTAMENTO_ALTERADO:'Férias/licença alterada'});
+SEL_TROCA.ABERTA='ras'; SEL_TROCA.EXPIRADA='sem';
+var EVENTOS_ACESSO = {LOGIN:['Entrou no painel','ok'],LOGOUT:['Saiu do painel','neutro'],LOGIN_FALHOU:['Senha incorreta','ruim'],LINK_SENHA_ENVIADO:['Pediu link de senha','link'],LINK_SENHA_NEGADO:['Pediu link sem ter acesso','ruim'],SENHA_DEFINIDA_POR_LINK:['Criou ou redefiniu a senha','ok'],SENHA_ALTERADA:['Alterou a senha','ok'],TROCA_SENHA_FALHOU:['Errou a senha atual ao alterar','ruim']};
+function hojeLocal(){ var d=new Date(); return d.getFullYear()+'-'+('0'+(d.getMonth()+1)).slice(-2)+'-'+('0'+d.getDate()).slice(-2); }
+function isoDia(d){ d=String(d||''); if(/^\d{4}-\d{2}-\d{2}/.test(d)) return d.slice(0,10); var y=new Date(d); if(isNaN(y)) return ''; return y.getFullYear()+'-'+('0'+(y.getMonth()+1)).slice(-2)+'-'+('0'+y.getDate()).slice(-2); } // aceita data em outro formato sem quebrar a tela
+function dSem(d){ var i=isoDia(d); if(!i) return esc(String(d||'')); var x=new Date(i+'T12:00:00Z'); return SEM[x.getUTCDay()].toLowerCase()+', '+i.slice(8)+'/'+i.slice(5,7); }
+
+/* ================= navegação ================= */
+montarApp = function(){
+  var eu = estado.dados.eu;
+  $('bEu').textContent = primeiro(eu.nome);
+  $('quem').innerHTML = '<strong>'+esc(eu.nome)+'</strong><br>'+esc(eu.email)+'<br>'+(eu.perfil==='GESTAO'?'Gestão':'Agente');
+  var abas = [['jornada','Minha Jornada']]; if(ehGestao()) abas.push(['gestao','Gestão de Escalas']);
+  $('abas').innerHTML = abas.map(function(a){ return '<button data-aba="'+a[0]+'">'+a[1]+'</button>'; }).join('');
+  $('abas').querySelectorAll('button').forEach(function(b){ b.addEventListener('click', function(){ trocarAba(b.getAttribute('data-aba')); }); });
+  mostrar('telaApp');
+  if(ehGestao() && estado.superadmin===undefined) chamar('apiMeuAcesso', estado.token).then(function(r){ estado.superadmin=r.superadmin; if(estado.aba==='gestao') desenharSubnav(); }).catch(function(){});
+  trocarAba(estado.aba && abas.some(function(a){return a[0]===estado.aba;}) ? estado.aba : 'jornada');
+};
+var _trocarAbaBase = trocarAba;
+trocarAba = function(aba){
+  if(aba==='jornada' && estado.jornadaAlvo && ehGestao()){ var a=estado.jornadaAlvo; estado.jornadaAlvo=null; modalJornadaDe(a); return; }
+  _trocarAbaBase(aba);
+};
+telaGestao = function(){
+  var main=$('conteudo'); main.className = estado.sub==='plan' ? 'largo' : '';
+  main.innerHTML='<div class="subnav" id="subnav"></div><div id="gConteudo"></div>';
+  desenharSubnav(); abrirSub();
+};
+function desenharSubnav(){
+  var el=$('subnav'); if(!el) return;
+  var subs=[['plan','Planejamento'],['trocas','Trocas'],['afast','Férias e Licenças'],['fer','Feriados'],['logs','Histórico de Alterações']]; // atualização pelo Headcount desativada
+  subs.push(['acessos','Histórico de Acessos']) // toda a gestão (o Planejamento continua só para o WFM);
+  el.innerHTML=subs.map(function(s){ return '<button data-sub="'+s[0]+'" class="'+(estado.sub===s[0]?'ativa':'')+'">'+s[1]+'</button>'; }).join('');
+  el.querySelectorAll('[data-sub]').forEach(function(b){ b.onclick=function(){
+    var s=b.getAttribute('data-sub'); if(s===estado.sub) return;
+    if(estado.sub==='plan' && temEdicoes() && !confirm('Há alterações não salvas na grade. Sair mesmo assim?')) return;
+    if(estado.sub==='plan') estado.edits={};
+    estado.sub=s; telaGestao(); }; });
+}
+function abrirSub(){
+  var s=estado.sub;
+  if(s==='plan') carregarPlano(); else if(s==='trocas') telaTrocasGestao(); else if(s==='afast') telaAfast(); else if(s==='fer') telaFeriados();
+  else if(s==='hc') telaHeadcount(); else if(s==='acessos') telaAcessos(); else { estado.sub='logs'; telaLogs(); }
+}
+
+/* ================= calendário ================= */
+function calendario(d,p,e,af,o){
+  o=o||{}; var fer={}; d.feriados.forEach(function(f){ fer[f.data]=f; });
+  var n=diasMes(d.mes), ini=wdDe(d.mes,1), cel='', pend=o.pend||[];
+  for(var i=0;i<ini;i++) cel+='<div class="dia fora"></div>';
+  for(var dd=1; dd<=n; dd++){
+    var id=dataDe(d.mes,dd), s=(e.dias||'').charAt(dd-1), a=tipoAfast(af,id), cls, tp, tc, hr='', hc='';
+    if(a){ cls=a; tp=a==='FERIAS'?'Férias':'Licença'; tc=a==='FERIAS'?'Férias':'Lic.'; }
+    else if(s==='T'){ cls='T'; tp='Trabalho'; tc='Trab.'; hr=p.entrada+' às '+p.saida; hc=p.entrada.slice(0,2)+'–'+p.saida.slice(0,2); }
+    else if(s==='F'){ cls='F'; tp='Folga'; tc='Folga'; }
+    else { cls='V'; tp='Não definido'; tc='—'; }
+    var temPend=pend.indexOf(id)>=0;
+    var clic = o.clicavel && s==='T' && !a && id>=o.hoje; // dia com troca pendente também pode ser clicado (mostra a troca e permite pedir outra)
+    cel+='<div class="dia '+cls+(clic?' clic':'')+(id===o.hoje?' hoje':'')+'"'+(clic?' data-dia="'+id+'" tabindex="0" role="button" title="Pedir troca deste dia" aria-label="'+dSem(id)+': trabalho. Pedir troca"':'')+'><span class="n">'+dd+'</span>'+(fer[id]?'<span class="fer" title="'+esc(fer[id].nome)+'">'+esc(fer[id].nome)+'</span>':'')+'<span class="tp l">'+tp+'</span><span class="tp c">'+tc+'</span>'+(hr?'<span class="hr l">'+hr+'</span><span class="hr c">'+hc+'</span>':'')+(temPend?'<span class="pendtag">Troca pendente</span>':'')+'</div>';
+  }
+  var resto=(7-((ini+n)%7))%7; for(var j=0;j<resto;j++) cel+='<div class="dia fora"></div>';
+  return '<div class="legenda"><span><i style="background:#4F3F91"></i>Trabalho</span><span><i style="background:#FAECE2;border:1px solid #F5A4C7"></i>Folga</span><span><i style="background:#FFE5F3;border:1px solid #F5A4C7"></i>Férias</span><span><i style="background:#FFD2D2"></i>Licença</span><span><i style="background:#FF59C1"></i>Feriado</span></div>'+
+    '<div class="cal"><div class="cal-sem cal-cab">'+SEM.map(function(x){return '<div>'+x+'</div>';}).join('')+'</div><div class="cal-sem">'+cel+'</div></div>';
+}
+function cartoesResumo(v){
+  return '<div class="numeros" style="--cols:4"><div class="numero"><b>'+v.resumo.trabalho+'</b><span>Dias de trabalho</span></div><div class="numero"><b>'+v.resumo.folga+'</b><span>Folgas</span></div><div class="numero"><b>'+v.resumo.domingosFolga+'</b><span>Domingos de folga</span></div><div class="numero"><b>'+v.resumo.afastado+'</b><span>Dias de férias ou licença</span></div></div>';
+}
+function fichaPessoa(p, st){
+  return '<div class="ficha"><div><small>Cargo</small><strong>'+esc(p.cargo)+'</strong></div><div><small>Squad</small><strong>'+esc(p.squad)+'</strong></div><div><small>Coordenação</small><strong>'+esc(p.coord)+'</strong></div><div><small>Horário</small><strong>'+esc(p.entrada)+' às '+esc(p.saida)+'</strong></div><div><small>Situação da escala</small><strong><span class="selo '+st[1]+'">'+st[0]+'</span></strong></div></div>';
+}
+
+/* ================= Minha jornada ================= */
+telaJornada = function(){ carregando(); chamar('apiMinhaJornada', estado.token, estado.mes).then(desenharMinhaJornada).catch(falhaGeral); };
+function desenharMinhaJornada(d){
+  estado.jor=d; var main=$('conteudo'); main.className='';
+  var sel='<select id="jMes" class="sel-mes" aria-label="Mês">'+opcoesMes(estado.mes)+'</select>';
+  var p=d.pessoas[0];
+  if(!p){ main.innerHTML='<div class="ola"><div><h1>Minha Jornada</h1></div>'+sel+'</div><div class="vazio"><strong>Seu acesso ainda não tem escala vinculada.</strong>Fale com a sua coordenação.</div>'; ligarMes(); return; }
+  var e=d.escalas[p.email], af=d.afast[p.email]||[];
+  var st = e.dias ? STATUS.PUBLICADA : ['Ainda não publicada','sem'];
+  var h='<div class="ola"><div><h1>Minha Jornada</h1><p>Olá, '+esc(primeiro(p.nome))+'. Esta é a sua escala oficial de '+rotuloMes(d.mes).toLowerCase()+'.</p></div>'+sel+'</div>'+fichaPessoa(p, st);
+  if(!e.dias){
+    h+='<div class="vazio"><strong>Sua escala de '+rotuloMes(d.mes).toLowerCase()+' ainda não foi publicada.</strong>Quando a gestão publicar, seus dias de trabalho, folgas e feriados aparecem aqui.</div>';
+  } else {
+    var v=validarEscala_({mes:d.mes,dias:e.dias,ant:e.ant,prox:e.prox,afast:af,segSex:p.segSex});
+    h+=cartoesResumo(v);
+    if(d.souAgente) h+='<div class="dica-cal">Quer trocar um dia? <b>Clique num dia de trabalho</b> no calendário.</div>';
+    h+=calendario(d,p,e,af,{clicavel:d.souAgente, hoje:d.hoje, pend:d.trocasPendentes});
+    if(v.avisos.length) h+='<div class="alertas">'+v.avisos.map(function(x){return '<div class="a">'+esc(x.msg)+'</div>';}).join('')+'</div>';
+  }
+  if(d.souAgente) h+='<div id="secTrocas"></div>';
+  main.innerHTML=h; ligarMes();
+  main.querySelectorAll('[data-dia]').forEach(function(c){ var f=function(){ modalNovaTroca(c.dataset.dia); }; c.onclick=f; c.onkeydown=function(ev){ if(ev.key==='Enter'||ev.key===' '){ ev.preventDefault(); f(); } }; });
+  if(d.souAgente) secaoTrocasAgente(d);
+}
+function ligarMes(){ $('jMes').onchange=function(){ estado.mes=this.value; telaJornada(); }; }
+
+/* ================= Trocas (agente) ================= */
+function fraseTroca(t, eu){
+  var souSol = t.solicitante===eu;
+  var folga = souSol ? t.dataSolicitante : t.dataColega, trab = souSol ? t.dataColega : t.dataSolicitante;
+  return '<div class="frase"><span class="chip f">Passa a folgar <b>'+dSem(folga)+'</b></span><span class="seta">e</span><span class="chip t">Passa a trabalhar <b>'+dSem(trab)+'</b></span></div>';
+}
+secaoTrocasAgente = function(d){
+  var el=$('secTrocas'); if(!el) return;
+  el.innerHTML='<div class="secao"><div class="carregando" style="min-height:60px"><div class="giro"></div> Carregando trocas…</div></div>';
+  Promise.all([chamar('apiTrocasV2', estado.token, null), chamar('apiTrocaOfertas', estado.token)]).then(function(r){
+    var eu=r[0].eu, todas=r[0].itens, ofertas=r[1].itens;
+    var responder=todas.filter(function(t){ return t.colega===eu && t.status==='AGUARDANDO_COLEGA'; });
+    var minhas=todas.filter(function(t){ return responder.indexOf(t)<0; });
+    var temEscala=!!(d.escalas[d.pessoas[0].email]||{}).dias;
+    var h='<div class="secao"><div class="secao-cab"><div><h2>Trocas de Escala</h2><p>Troque um dia de trabalho por uma folga da mesma semana, com um colega da mesma atuação e do mesmo horário que você.</p></div>'+(temEscala?'<button class="btn" id="bNovaTroca">Pedir troca</button>':'')+'</div>'+
+      '<div class="como"><div><b><i>1</i>Escolha o dia</b>em que você quer folgar</div><div><b><i>2</i>Escolha a folga</b>da mesma semana, em que vai trabalhar no lugar</div><div><b><i>3</i>Envie o pedido</b>para um colega ou em aberto, para quem puder cobrir</div><div><b><i>4</i>Aceite e aprovação</b>o colega aceita, a coordenação aprova e a escala muda</div></div>';
+    if(responder.length) h+='<div class="grupo"><h3>Precisam da sua resposta <span class="n">'+responder.length+'</span></h3>'+responder.map(function(t){
+      return '<div class="tcard acao"><div>'+fraseTroca(t,eu)+'<div class="quem">Pedido de <b>'+esc(t.nomeSolicitante)+'</b> · '+dhBr(t.criadaEm)+(t.motivo?' · "'+esc(t.motivo)+'"':'')+'</div></div><div class="tlado"><button class="btn sec peq" data-tacao="recusar" data-id="'+t.id+'">Recusar</button><button class="btn peq" data-tacao="aceitar" data-id="'+t.id+'">Ver e aceitar</button></div></div>'; }).join('')+'</div>';
+    if(ofertas.length) h+='<div class="grupo"><h3>Trocas disponíveis para você <span class="n" style="background:#4F3F91">'+ofertas.length+'</span></h3>'+ofertas.map(function(t){
+      return '<div class="tcard oferta"><div>'+fraseTroca(t,eu)+'<div class="quem"><b>'+esc(t.nomeSolicitante)+'</b> '+(ehHorarioT(t)?'quer o seu horário em '+dSem(t.dataSolicitante)+' (você passa a trabalhar no horário de '+esc(primeiro(t.nomeSolicitante))+')':'quer folgar em '+dSem(t.dataSolicitante))+(t.motivo?' · "'+esc(t.motivo)+'"':'')+'</div></div><div class="tlado"><button class="btn vermelho peq" data-recusa-oferta="'+t.id+'">Ver e recusar</button><button class="btn roxo peq" data-oferta="'+t.id+'">Ver e aceitar</button></div></div>'; }).join('')+'</div>';
+    h+='<div class="grupo"><h3>Minhas trocas</h3>'+(minhas.length?minhas.map(function(t){
+      var souSol=t.solicitante===eu, com = souSol ? (t.colega ? 'Com <b>'+esc(t.nomeColega)+'</b>' : '<b>Em aberto</b> · qualquer colega que possa cobrir pode aceitar') : 'Pedido de <b>'+esc(t.nomeSolicitante)+'</b>';
+      var dec = (t.status==='APROVADA' && t.decisaoPor) ? ' · aprovada por '+esc(nomeDe(t.decisaoPor))+(t.decisaoEm?' em '+dhBr(t.decisaoEm):'') : (t.obsDecisao?' · '+esc(t.obsDecisao):'');
+      var podeCancelar = souSol && (t.status==='ABERTA'||t.status==='AGUARDANDO_COLEGA'||t.status==='AGUARDANDO_GESTAO');
+      return '<div class="tcard" data-st="'+esc(t.status)+'"><div>'+fraseTroca(t,eu)+'<div class="quem">'+com+' · pedido em '+dhBr(t.criadaEm)+dec+'</div>'+(typeof acompTroca==='function'?acompTroca(t,eu):'')+'</div><div class="tlado"><span class="selo '+(SEL_TROCA[t.status]||'sem')+'">'+esc(t.rotulo)+'</span><button class="btn sec peq" data-acomp="'+t.id+'">Acompanhar</button>'+(podeCancelar?'<button class="btn sec peq" data-tacao="cancelar" data-id="'+t.id+'">Cancelar</button>':'')+'</div></div>'; }).join(''):'<div class="vazio-mini">Você ainda não pediu nenhuma troca.</div>')+'</div></div>';
+    el.innerHTML=h;
+    if($('bNovaTroca')) $('bNovaTroca').onclick=function(){ modalNovaTroca(''); };
+    el.querySelectorAll('[data-tacao]').forEach(function(b){ b.onclick=function(){ acaoTrocaAgenteV2(b.dataset.tacao, b.dataset.id, ofertas.concat(todas)); }; });
+    el.querySelectorAll('[data-oferta]').forEach(function(b){ b.onclick=function(){ modalAceitarOferta(ofertas.filter(function(x){return x.id===b.dataset.oferta;})[0]); }; });
+    el.querySelectorAll('[data-recusa-oferta]').forEach(function(b){ b.onclick=function(){ modalVerRecusarOferta(ofertas.filter(function(x){return x.id===b.dataset.recusaOferta;})[0]); }; });
+  }).catch(falhaGeral);
+};
+function recarregarJornada(){ telaJornada(); atualizarSino(); }
+function acaoTrocaAgenteV2(acao, id, lista){
+  var t=lista.filter(function(x){return x.id===id;})[0];
+  if(acao==='cancelar'){ if(!confirm('Cancelar este pedido de troca?')) return; chamar('apiTrocaCancelarV2', estado.token, id).then(function(r){ if(!r.ok){ toast(r.msg,true); return; } toast('Pedido cancelado.'); recarregarJornada(); }).catch(falhaGeral); return; }
+  if(acao==='recusar'){ var m=prompt('Recusar a troca? Se quiser, diga o motivo:'); if(m===null) return; chamar('apiTrocaResponder', estado.token, id, false, m).then(function(r){ if(!r.ok){ toast(r.msg,true); return; } toast('Troca recusada.'); recarregarJornada(); }).catch(falhaGeral); return; }
+  var w=abrirModal('<h3>Responder pedido de troca</h3><p class="sub">Pedido de <b>'+esc(t.nomeSolicitante)+'</b>. Confira como fica a semana de vocês dois.</p><div class="resumo">'+fraseTroca(t, estado.dados.eu.email)+'</div><div id="aPrev"><div class="carregando" style="min-height:80px"><div class="giro"></div></div></div><div class="acoes"><button class="btn sec" data-fechar>Voltar</button><button class="btn" id="aOk" disabled>Aceitar troca</button></div>', true);
+  chamar('apiTrocaPreviaPorId', estado.token, id).then(function(pv){ w.querySelector('#aPrev').innerHTML=htmlPrevia(pv); w.querySelector('#aOk').disabled=!pv.ok; }).catch(function(e){ w.remove(); falhaGeral(e); });
+  w.querySelector('#aOk').onclick=function(){ var bt=this; ocupado(bt,true,'Aceitando…'); chamar('apiTrocaResponder', estado.token, id, true, '').then(function(r){ w.remove(); toast(r.ok?'Troca aceita. Agora falta a aprovação da coordenação.':r.msg, !r.ok); recarregarJornada(); }).catch(function(e){ w.remove(); falhaGeral(e); }); };
+}
+function modalAceitarOferta(t){
+  var w=abrirModal('<h3>Aceitar troca de '+esc(primeiro(t.nomeSolicitante))+'</h3><p class="sub">Se você aceitar, sua escala fica assim. A coordenação ainda precisa aprovar.</p><div class="resumo">'+fraseTroca(t, estado.dados.eu.email)+'</div><div id="oPrev"><div class="carregando" style="min-height:80px"><div class="giro"></div></div></div><div class="acoes"><button class="btn sec" data-fechar>Voltar</button><button class="btn roxo" id="oOk" disabled>Aceitar e cobrir</button></div>', true);
+  chamar('apiTrocaPreviaOferta', estado.token, t.id).then(function(pv){ w.querySelector('#oPrev').innerHTML=htmlPrevia(pv); w.querySelector('#oOk').disabled=!pv.ok; }).catch(function(e){ w.remove(); falhaGeral(e); });
+  w.querySelector('#oOk').onclick=function(){ var bt=this; ocupado(bt,true,'Aceitando…'); chamar('apiTrocaAceitarOferta', estado.token, t.id).then(function(r){ w.remove(); toast(r.ok?'Você aceitou a troca. Agora falta a aprovação da coordenação.':r.msg, !r.ok); recarregarJornada(); }).catch(function(e){ w.remove(); falhaGeral(e); }); };
+}
+function modalNovaTroca(dFolga){
+  var d=estado.jor, p=d.pessoas[0], e=d.escalas[p.email], af=d.afast[p.email]||[], pend=d.trocasPendentes||[];
+  var n=diasMes(d.mes), trabDias=[];
+  for(var dd=1; dd<=n; dd++){ var id=dataDe(d.mes,dd); if(e.dias.charAt(dd-1)==='T' && id>=d.hoje && !tipoAfast(af,id) && pend.indexOf(id)<0) trabDias.push(id); }
+  if(!trabDias.length){ toast('Você não tem dias de trabalho disponíveis para troca neste mês.', true); return; }
+  var st={folga: trabDias.indexOf(dFolga)>=0 ? dFolga : '', trab:'', modo:'aberta', colega:'', compat:null};
+  var w=abrirModal('<h3>Pedir troca de escala</h3><p class="sub">Troque um dia de trabalho por uma folga da mesma semana. Assim a semana continua com 5 dias de trabalho e 2 de folga.</p>'+
+    '<div class="passo"><h4><i>1</i>Qual dia você quer folgar?</h4><select id="nFolga"><option value="">Escolha um dia de trabalho</option>'+trabDias.map(function(x){ return '<option value="'+x+'"'+(x===st.folga?' selected':'')+'>'+dSem(x)+' · dia de trabalho</option>'; }).join('')+'</select></div>'+
+    '<div class="passo" id="pTrab"><h4><i>2</i>Em qual folga da mesma semana você vai trabalhar?</h4><div id="nTrab"></div></div>'+
+    '<div id="nResumo"></div>'+
+    '<div class="passo" id="pCom"><h4><i>3</i>Com quem?</h4>'+
+      '<label class="opcard on" data-modo="aberta"><input type="radio" name="nModo" checked><div><b>Deixar em aberto</b><span>Avisamos os colegas que podem cobrir esse dia. O primeiro que aceitar fica com a troca.</span></div></label>'+
+      '<label class="opcard" data-modo="colega"><input type="radio" name="nModo"><div><b>Escolher um colega</b><span>Mostramos só colegas com a mesma atuação que você, que folgam no dia que você quer folgar e trabalham no outro dia.</span></div></label>'+
+      '<div id="nColWrap" class="oculto" style="margin-top:8px"></div></div>'+
+    '<div id="nPrev"></div>'+
+    '<div class="campo"><label for="nMot">Motivo (opcional, aparece para o colega e para a gestão)</label><input id="nMot" type="text" maxlength="200"></div>'+
+    '<div class="acoes"><button class="btn sec" data-fechar>Cancelar</button><button class="btn" id="nEnviar" disabled>Enviar pedido</button></div>', true);
+  var q=function(s){ return w.querySelector(s); };
+  var semana=function(id){ var x=new Date(id+'T12:00:00Z'); x.setUTCDate(x.getUTCDate()-x.getUTCDay()); var out=[]; for(var k=0;k<7;k++){ var y=new Date(x.getTime()); y.setUTCDate(y.getUTCDate()+k); out.push(y.toISOString().slice(0,10)); } return out; };
+  function desenharTrab(){
+    if(!st.folga){ q('#nTrab').innerHTML='<div class="vazio-mini">Escolha primeiro o dia que quer folgar.</div>'; q('#pTrab').classList.add('off'); return; }
+    q('#pTrab').classList.remove('off');
+    var op=semana(st.folga).filter(function(id){ return id.slice(0,7)===d.mes && id>=d.hoje && e.dias.charAt(+id.slice(8)-1)==='F' && !tipoAfast(af,id) && pend.indexOf(id)<0; });
+    if(st.trab && op.indexOf(st.trab)<0) st.trab='';
+    q('#nTrab').innerHTML = op.length ? '<div class="dias-btn">'+op.map(function(id){ return '<button type="button" class="diabtn'+(id===st.trab?' on':'')+'" data-t="'+id+'">'+dSem(id)+'<small>dia de folga</small></button>'; }).join('')+'</div>'
+      : '<div class="vazio-mini">Você não tem folga disponível na semana de '+dSem(semana(st.folga)[0])+' a '+dSem(semana(st.folga)[6])+'. Escolha outro dia para folgar.</div>';
+    w.querySelectorAll('[data-t]').forEach(function(b){ b.onclick=function(){ st.trab=b.dataset.t; st.compat=null; st.colega=''; desenharTrab(); atualizar(); }; });
+  }
+  function atualizar(){
+    var pronto = st.folga && st.trab;
+    q('#nResumo').innerHTML = pronto ? '<div class="resumo"><span class="chip f">Passa a folgar <b>'+dSem(st.folga)+'</b></span><span class="seta">e</span><span class="chip t">Passa a trabalhar <b>'+dSem(st.trab)+'</b></span></div>' : '';
+    q('#pCom').classList.toggle('off', !pronto);
+    q('#nEnviar').disabled=true; q('#nPrev').innerHTML='';
+    if(!pronto) return;
+    if(st.modo==='colega'){
+      q('#nColWrap').classList.remove('oculto');
+      if(!st.compat){ q('#nColWrap').innerHTML='<div class="carregando" style="min-height:50px"><div class="giro"></div> Buscando colegas que podem cobrir…</div>';
+        chamar('apiTrocaCompativeis', estado.token, st.folga, st.trab).then(function(r){ st.compat=r.ok?r.colegas:[]; if(!r.ok){ q('#nColWrap').innerHTML='<div class="res erro">'+esc(r.msg)+'</div>'; return; } desenharColegas(); }).catch(falhaGeral); return; }
+      desenharColegas(); if(!st.colega) return;
+    } else q('#nColWrap').classList.add('oculto');
+    previa();
+  }
+  function desenharColegas(){
+    if(!st.compat.length){ q('#nColWrap').innerHTML='<div class="vazio-mini">Nenhum colega folga em '+dSem(st.folga)+' e trabalha em '+dSem(st.trab)+'. Deixe o pedido em aberto ou escolha outros dias.</div>'; return; }
+    var g={}; st.compat.forEach(function(c){ (g[c.coord]=g[c.coord]||[]).push(c); });
+    q('#nColWrap').innerHTML='<label for="nCol">'+st.compat.length+' colega(s) podem cobrir</label><select id="nCol"><option value="">Escolha o colega</option>'+Object.keys(g).sort().map(function(k){ return '<optgroup label="'+esc(k)+'">'+g[k].map(function(c){ return '<option value="'+esc(c.email)+'"'+(c.email===st.colega?' selected':'')+'>'+esc(c.nome)+'</option>'; }).join('')+'</optgroup>'; }).join('')+'</select>';
+    q('#nCol').onchange=function(){ st.colega=this.value; q('#nPrev').innerHTML=''; q('#nEnviar').disabled=true; if(st.colega) previa(); };
+  }
+  function previa(){
+    q('#nPrev').innerHTML='<div class="carregando" style="min-height:60px"><div class="giro"></div> Conferindo as regras…</div>';
+    chamar('apiTrocaPreviaNova', estado.token, st.folga, st.trab, st.modo==='colega'?st.colega:'').then(function(pv){
+      q('#nPrev').innerHTML=htmlPrevia(pv)+(pv.aberta&&pv.ok?'<div class="dica" style="margin:-4px 0 12px">A escala do colega é conferida quando alguém aceitar.</div>':'');
+      q('#nEnviar').disabled=!pv.ok; q('#nEnviar').textContent = st.modo==='colega' ? 'Enviar para o colega' : 'Abrir pedido';
+    }).catch(falhaGeral);
+  }
+  q('#nFolga').onchange=function(){ st.folga=this.value; st.trab=''; st.compat=null; st.colega=''; desenharTrab(); atualizar(); };
+  w.querySelectorAll('[data-modo]').forEach(function(l){ l.onclick=function(ev){ ev.preventDefault(); st.modo=l.dataset.modo; w.querySelectorAll('[data-modo]').forEach(function(x){ var on=x===l; x.classList.toggle('on',on); x.querySelector('input').checked=on; }); atualizar(); }; });
+  q('#nEnviar').onclick=function(){
+    var bt=this; ocupado(bt,true,'Enviando…');
+    chamar('apiTrocaCriar', estado.token, st.folga, st.trab, st.modo==='colega'?st.colega:'', q('#nMot').value).then(function(r){
+      if(!r.ok){ ocupado(bt,true,'Enviar pedido'); q('#nPrev').innerHTML='<div class="res erro">'+(r.motivos||[r.msg]).map(esc).join('<br>')+'</div>'; return; }
+      w.remove(); toast(st.modo==='colega'?'Pedido enviado. O colega recebeu um e-mail.':'Pedido aberto. '+(r.compativeis||0)+' colega(s) que podem cobrir foram avisados.'); recarregarJornada();
+    }).catch(function(e){ ocupado(bt,false,'Enviar pedido'); falhaGeral(e); });
+  };
+  desenharTrab(); atualizar();
+}
+
+/* ================= Gestão: jornada de alguém (modal) ================= */
+function modalJornadaDe(email){
+  var w=abrirModal('<div id="mjCorpo"><div class="carregando" style="min-height:120px"><div class="giro"></div> Carregando…</div></div>', true);
+  w.querySelector('.modal').classList.add('xl');
+  var mes=estado.mes;
+  function carregar(){
+    chamar('apiMes', estado.token, mes, email).then(function(d){
+      var p=d.pessoas[0]; if(!p){ w.querySelector('#mjCorpo').innerHTML='<div class="res erro">Pessoa não encontrada.</div>'; return; }
+      var e=d.escalas[p.email], af=d.afast[p.email]||[], st=STATUS[e.status]||STATUS.SEM_ESCALA;
+      var h='<div class="ola" style="margin-bottom:12px"><div><h1 style="font-size:22px">'+esc(p.nome)+'</h1><p>'+esc(p.email)+'</p></div><select id="mjMes" class="sel-mes" style="width:auto">'+opcoesMes(mes)+'</select></div>'+fichaPessoa(p, st);
+      if(!e.dias) h+='<div class="vazio"><strong>Sem escala em '+rotuloMes(mes).toLowerCase()+'.</strong>Monte a escala na aba Planejamento.</div>';
+      else {
+        var v=validarEscala_({mes:d.mes,dias:e.dias,ant:e.ant,prox:e.prox,afast:af,segSex:p.segSex});
+        if(e.status==='ALTERADA') h+='<div class="alertas" style="margin:0 0 12px"><div class="a">Mostrando o rascunho. Há alterações ainda não publicadas: o agente continua vendo a versão publicada em '+dhBr(e.publicadaEm||'')+'.</div></div>';
+        h+=cartoesResumo(v)+calendario(d,p,e,af,{});
+        var al=v.erros.map(function(x){return '<div class="e">'+esc(x.msg)+'</div>';}).join('')+v.avisos.map(function(x){return '<div class="a">'+esc(x.msg)+'</div>';}).join('')+v.pendencias.map(function(x){return '<div class="p">'+esc(x.msg)+'</div>';}).join('');
+        if(al) h+='<div class="alertas">'+al+'</div>';
+      }
+      h+='<div class="acoes"><button class="btn sec" data-fechar>Fechar</button></div>';
+      w.querySelector('#mjCorpo').innerHTML=h;
+      w.querySelector('#mjMes').onchange=function(){ mes=this.value; w.querySelector('#mjCorpo').innerHTML='<div class="carregando" style="min-height:120px"><div class="giro"></div> Carregando…</div>'; carregar(); };
+    }).catch(function(e){ w.remove(); falhaGeral(e); });
+  }
+  carregar();
+}
+
+/* ================= Gestão: trocas ================= */
+telaTrocasGestao = function(filtro){
+  gCarregando(); filtro = filtro===undefined ? (estado.fTrocas===undefined?'AGUARDANDO_GESTAO':estado.fTrocas) : filtro; estado.fTrocas=filtro;
+  chamar('apiTrocasV2', estado.token, {status:filtro}).then(function(r){
+    var c=r.contagem, chips=[['AGUARDANDO_GESTAO','Aguardando aprovação'],['ABERTA','Em aberto'],['AGUARDANDO_COLEGA','Aguardando o colega'],['APROVADA','Aprovadas'],['REJEITADA','Rejeitadas'],['RECUSADA_COLEGA','Recusadas pelos colegas'],['CANCELADA','Canceladas'],['EXPIRADA','Expiradas'],['BLOQUEADA','Bloqueadas por regra'],['INVALIDADA','Invalidadas'],['','Todas']];
+    var lado=function(nome, folga, trab){ return '<div class="pessoa-cel"><b>'+esc(nome)+'</b><div class="frase" style="margin-top:4px"><span class="chip f" style="font-size:12px;padding:3px 8px">folga <b>'+dSem(folga)+'</b></span><span class="chip t" style="font-size:12px;padding:3px 8px">trabalha <b>'+dSem(trab)+'</b></span></div></div>'; };
+    gc().innerHTML='<div class="cab"><div><h1>Trocas de Escala</h1><p>Qualquer pessoa da gestão pode aprovar ou rejeitar. Antes de efetivar, as regras são conferidas de novo.</p></div></div>'+
+      '<div class="chips">'+chips.map(function(x){ var n=x[0]?(c[x[0]]||0):0; return '<button data-f="'+x[0]+'" class="'+(filtro===x[0]?'ativa':'')+'">'+x[1]+(x[0]==='AGUARDANDO_GESTAO'&&n?'<i>'+n+'</i>':(x[0]&&n?' ('+n+')':''))+'</button>'; }).join('')+'</div>'+
+      '<div class="tabela"><table><thead><tr><th>Pedido em</th><th class="esq">Quem pediu</th><th class="esq">Quem cobre</th><th>Situação</th><th></th></tr></thead><tbody>'+
+      (r.itens.length?r.itens.map(function(t){ return '<tr><td>'+dhBr(t.criadaEm)+'</td><td class="esq">'+lado(t.nomeSolicitante, t.dataSolicitante, t.dataColega)+(t.motivo?'<small style="color:#6D6D6D">"'+esc(t.motivo)+'"</small>':'')+'</td><td class="esq">'+(t.colega?lado(t.nomeColega, t.dataColega, t.dataSolicitante):'<span class="selo ras">Em aberto</span>')+'</td><td style="white-space:normal;max-width:230px"><span class="selo '+(SEL_TROCA[t.status]||'sem')+'">'+esc(t.rotulo)+'</span><div style="font-size:12px;color:#6D6D6D;margin-top:4px">'+(t.decisaoPor?'por '+esc(t.decisaoPor)+' em '+dhBr(t.decisaoEm)+(t.obsDecisao?' · '+esc(t.obsDecisao):''):'')+(t.status==='BLOQUEADA'||t.status==='INVALIDADA'?esc(t.validacao):'')+'</div></td><td>'+(t.status==='AGUARDANDO_GESTAO'?'<button class="btn peq" data-analisar="'+t.id+'">Analisar</button>':'')+'</td></tr>'; }).join(''):'<tr><td colspan="5" style="padding:28px;color:#6D6D6D">Nenhuma troca nesta situação.</td></tr>')+'</tbody></table></div>';
+    gc().querySelectorAll('[data-f]').forEach(function(b){ b.onclick=function(){ telaTrocasGestao(b.dataset.f); }; });
+    gc().querySelectorAll('[data-analisar]').forEach(function(b){ var t=r.itens.filter(function(x){return x.id===b.dataset.analisar;})[0]; b.onclick=function(){ modalDecidirTroca(t); }; });
+  }).catch(falhaGeral);
+};
+modalDecidirTroca = function(t){
+  var w=abrirModal('<h3>Aprovar troca</h3><p class="sub">Pedida em '+dhBr(t.criadaEm)+(t.motivo?' · Motivo: '+esc(t.motivo):'')+'</p>'+
+    '<div class="resumo" style="display:grid;gap:10px">'+
+      '<div class="dupla"><b>'+esc(t.nomeSolicitante)+'</b><span class="chip f">folga <b>'+dSem(t.dataSolicitante)+'</b></span><span class="chip t">trabalha <b>'+dSem(t.dataColega)+'</b></span></div>'+
+      '<div class="dupla"><b>'+esc(t.nomeColega)+'</b><span class="chip f">folga <b>'+dSem(t.dataColega)+'</b></span><span class="chip t">trabalha <b>'+dSem(t.dataSolicitante)+'</b></span></div></div>'+
+    '<div id="dPrev"><div class="carregando" style="min-height:80px"><div class="giro"></div></div></div>'+
+    '<div class="campo"><label for="dObs">Observação (vai para o histórico e para os agentes; obrigatória para rejeitar)</label><input id="dObs" type="text" maxlength="200"></div>'+
+    '<div class="acoes"><button class="btn sec" data-fechar>Voltar</button><button class="btn sec" id="dRej">Rejeitar</button><button class="btn roxo" id="dApr" disabled>Aprovar e aplicar</button></div>', true);
+  chamar('apiTrocaPreviaPorId', estado.token, t.id).then(function(pv){ w.querySelector('#dPrev').innerHTML=htmlPrevia(pv); w.querySelector('#dApr').disabled=!pv.ok; }).catch(function(e){ w.remove(); falhaGeral(e); });
+  var decidir=function(apr, bt){ ocupado(bt,true,apr?'Aplicando…':'Rejeitando…'); chamar('apiTrocaDecidir', estado.token, t.id, apr, w.querySelector('#dObs').value).then(function(r){ w.remove(); toast(r.ok?(apr?(r.parcial?r.msg:'Troca aprovada e aplicada nas duas escalas.'):'Troca recusada.'):r.msg, !r.ok); telaTrocasGestao(); atualizarSino(); }).catch(function(e){ w.remove(); falhaGeral(e); }); };
+  w.querySelector('#dApr').onclick=function(){ decidir(true,this); };
+  w.querySelector('#dRej').onclick=function(){ if(!w.querySelector('#dObs').value.trim()){ toast('Escreva o motivo da rejeição na observação.', true); return; } decidir(false,this); };
+};
+
+/* ================= Gestão: férias e licenças (com edição) ================= */
+telaAfast = function(){
+  gCarregando();
+  Promise.all([chamar('apiAfastamentos', estado.token, estado.mes), estado.pessoas?Promise.resolve(null):chamar('apiPessoas', estado.token)]).then(function(r){
+    if(r[1]) estado.pessoas=r[1].pessoas;
+    var it=r[0].itens, mapa={}; it.forEach(function(a){ mapa[a.id]=a; });
+    gc().innerHTML='<div class="cab"><div><h1>Férias e Licenças</h1><p>Nesses dias, as regras de 5x2 e de domingo de folga não se aplicam à pessoa.</p></div><div class="acoes"><select id="aMes" class="sel-mes" aria-label="Mês">'+opcoesMes(estado.mes)+'</select></div></div>'+
+      '<div class="form-linha" id="aForm" style="grid-template-columns:2.6fr 1fr 1.2fr 1.2fr 1.6fr auto auto"><input type="hidden" id="aId">'+
+        '<div><label for="aP">Profissional</label><select id="aP"><option value="">Escolha</option>'+estado.pessoas.map(function(p){ return '<option value="'+esc(p.email)+'">'+esc(p.nome)+' · '+esc(p.coord)+'</option>'; }).join('')+'</select></div>'+
+        '<div><label for="aT">Tipo</label><select id="aT"><option value="FERIAS">Férias</option><option value="LICENCA">Licença</option></select></div>'+
+        '<div><label for="aI">Início</label><input id="aI" type="date"></div>'+
+        '<div><label for="aF">Fim</label><input id="aF" type="date"></div>'+
+        '<div><label for="aO">Observação (opcional)</label><input id="aO" type="text" maxlength="200"></div>'+
+        '<button class="btn sec oculto" id="aCanc">Cancelar</button><button class="btn" id="aAdd">Adicionar</button></div>'+
+      '<div class="tabela"><table><thead><tr><th class="esq">Profissional</th><th>Tipo</th><th>Início</th><th>Fim</th><th>Dias</th><th class="esq">Observação</th><th>Ações</th></tr></thead><tbody>'+
+      (it.length?it.map(function(a){ var dias=Math.round((Date.parse(a.fim)-Date.parse(a.inicio))/864e5)+1; return '<tr><td class="esq"><b>'+esc(a.nome)+'</b></td><td><span class="selo '+(a.tipo==='FERIAS'?'alt':'ras')+'">'+(a.tipo==='FERIAS'?'Férias':'Licença')+'</span></td><td>'+dBr(a.inicio)+'</td><td>'+dBr(a.fim)+'</td><td>'+dias+'</td><td class="esq">'+esc(a.obs||'')+'</td><td><button class="btn sec peq" data-ed="'+esc(a.id)+'">Editar</button> <button class="btn sec peq" data-rem="'+esc(a.id)+'">Remover</button></td></tr>'; }).join(''):'<tr><td colspan="7" style="padding:28px;color:#6D6D6D">Nenhuma férias ou licença em '+rotuloMes(estado.mes).toLowerCase()+'.</td></tr>')+
+      '</tbody></table></div>';
+    var limpar=function(){ $('aId').value=''; $('aP').value=''; $('aP').disabled=false; $('aT').value='FERIAS'; $('aI').value=''; $('aF').value=''; $('aO').value=''; $('aAdd').textContent='Adicionar'; $('aCanc').classList.add('oculto'); $('aForm').style.boxShadow=''; };
+    $('aMes').onchange=function(){ estado.mes=this.value; telaAfast(); };
+    $('aCanc').onclick=limpar;
+    $('aAdd').onclick=function(){ var b=this, id=$('aId').value; ocupado(b,true,'Salvando…');
+      var dados={id:id, email:$('aP').value, tipo:$('aT').value, inicio:$('aI').value, fim:$('aF').value, obs:$('aO').value};
+      chamar(id?'apiEditarAfastamento':'apiSalvarAfastamento', estado.token, dados).then(function(r){ ocupado(b,false,id?'Salvar alteração':'Adicionar'); if(!r.ok){ toast(r.msg,true); return; } toast(id?'Alteração salva.':'Afastamento cadastrado.'); telaAfast(); }).catch(function(e){ ocupado(b,false,'Adicionar'); falhaGeral(e); }); };
+    gc().querySelectorAll('[data-ed]').forEach(function(b){ b.onclick=function(){ var a=mapa[b.dataset.ed]; $('aId').value=a.id; $('aP').value=a.email; $('aT').value=a.tipo; $('aI').value=a.inicio; $('aF').value=a.fim; $('aO').value=a.obs||''; $('aAdd').textContent='Salvar alteração'; $('aCanc').classList.remove('oculto'); $('aForm').style.boxShadow='0 0 0 2px #D80073'; $('aForm').scrollIntoView({behavior:'smooth',block:'center'}); toast('Editando '+primeiro(a.nome)+'. Altere os campos e salve.'); }; });
+    gc().querySelectorAll('[data-rem]').forEach(function(b){ b.onclick=function(){ var a=mapa[b.dataset.rem]; var mot=prompt('Remover '+(a.tipo==='FERIAS'?'as férias':'a licença')+' de '+a.nome+'? Informe o motivo:'); if(mot===null) return;
+      chamar('apiRemoverAfastamento', estado.token, a.id, mot).then(function(r){ if(!r.ok){ toast(r.msg,true); return; } toast('Afastamento removido.'); telaAfast(); }).catch(falhaGeral); }; });
+  }).catch(falhaGeral);
+};
+
+/* ================= Histórico de acessos (restrito) ================= */
+function telaAcessos(filtro){
+  gCarregando(); filtro=filtro||estado.fAcessos||{}; estado.fAcessos=filtro; var visao=estado.visaoAcessos||'pessoas';
+  chamar('apiAcessos', estado.token, filtro).then(function(r){
+    var s=r.resumo;
+    var h='<div class="cab"><div><h1>Histórico de Acessos</h1><p>Quem entrou no painel, quando, e quem ainda não criou a senha. Visível só para você.</p></div></div>'+
+      '<div class="numeros" style="--cols:6"><div class="numero"><b>'+s.acessosHoje+'</b><span>Logins hoje</span></div><div class="numero"><b>'+s.pessoasHoje+'</b><span>Pessoas que entraram hoje</span></div><div class="numero"><b>'+s.pessoas7+'</b><span>Pessoas nos últimos 7 dias</span></div><div class="numero'+(s.falhasHoje?' alerta':'')+'"><b>'+s.falhasHoje+'</b><span>Senhas incorretas hoje</span></div><div class="numero"><b>'+s.comSenha+' de '+s.total+'</b><span>Já criaram a senha</span></div><div class="numero'+(s.semSenha?' alerta':'')+'"><b>'+s.semSenha+'</b><span>Ainda sem senha</span></div></div>'+
+      '<div class="chips"><button data-v="pessoas" class="'+(visao==='pessoas'?'ativa':'')+'">Por pessoa</button><button data-v="eventos" class="'+(visao==='eventos'?'ativa':'')+'">Linha do tempo</button></div><div id="acCorpo"></div>';
+    gc().innerHTML=h;
+    gc().querySelectorAll('[data-v]').forEach(function(b){ b.onclick=function(){ estado.visaoAcessos=b.dataset.v; telaAcessos(filtro); }; });
+    if(visao==='pessoas'){
+      var fp=estado.fAcPessoa||'', q=estado.qAcPessoa||'';
+      var desenhar=function(){
+        var lista=r.pessoas.filter(function(p){ var hoje=p.ultimo && p.ultimo.slice(0,10)===hojeLocal();
+          if(fp==='sem' && p.senhaEm) return false; if(fp==='nunca' && p.ultimo) return false; if(fp==='hoje' && !hoje) return false;
+          if(q && (p.nome+' '+p.email).toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g,'').indexOf(q.toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g,''))<0) return false; return true; });
+        $('acTab').innerHTML=lista.length?lista.map(function(p){ return '<tr><td class="esq pessoa-cel"><b>'+esc(p.nome)+'</b><small>'+esc(p.email)+'</small></td><td>'+esc(p.coord)+'</td><td>'+papelChip(p.email, p.perfil)+'</td><td>'+(p.senhaEm?dhBr(p.senhaEm):'<span class="ev ruim">Ainda não criou</span>')+'</td><td>'+(p.ultimo?dhBr(p.ultimo):'<span class="ev neutro">Nunca entrou</span>')+'</td><td><b>'+p.n30+'</b></td></tr>'; }).join(''):'<tr><td colspan="6" style="padding:24px;color:#6D6D6D">Ninguém com esse filtro.</td></tr>';
+        $('acConta').textContent=lista.length+' de '+r.pessoas.length+' pessoas';
+      };
+      $('acCorpo').innerHTML='<div class="filtros"><select id="acF"><option value="">Todas as pessoas</option><option value="hoje">Entraram hoje</option><option value="nunca">Nunca entraram</option><option value="sem">Ainda sem senha</option></select><input id="acQ" type="text" placeholder="Buscar por nome ou e-mail" value="'+esc(q)+'"><span class="contador" id="acConta"></span></div>'+
+        '<div class="tabela"><table><thead><tr><th class="esq">Pessoa</th><th>Coordenação</th><th>Perfil</th><th>Senha criada em</th><th>Último acesso</th><th>Acessos (30 dias)</th></tr></thead><tbody id="acTab"></tbody></table></div>';
+      $('acF').value=fp; $('acF').onchange=function(){ fp=estado.fAcPessoa=this.value; desenhar(); }; $('acQ').oninput=function(){ q=estado.qAcPessoa=this.value; desenhar(); }; desenhar();
+    } else {
+      $('acCorpo').innerHTML='<div class="filtros"><input id="eDe" type="date" value="'+(filtro.de||'')+'" aria-label="De"><input id="eAte" type="date" value="'+(filtro.ate||'')+'" aria-label="Até"><select id="eTipo"><option value="">Todos os eventos</option>'+Object.keys(EVENTOS_ACESSO).map(function(k){ return '<option value="'+k+'"'+(k===filtro.tipo?' selected':'')+'>'+EVENTOS_ACESSO[k][0]+'</option>'; }).join('')+'</select><input id="eQ" type="text" placeholder="Nome ou e-mail" value="'+esc(filtro.texto||'')+'"><button class="btn sec" id="eOk">Filtrar</button><span class="contador">'+(r.totalEventos>300?'Mostrando 300 de '+r.totalEventos:r.totalEventos+' evento(s)')+'</span></div>'+
+        '<div class="tabela"><table><thead><tr><th>Data e hora</th><th class="esq">Pessoa</th><th>Evento</th></tr></thead><tbody>'+(r.eventos.length?r.eventos.map(function(ev){ var x=EVENTOS_ACESSO[ev.acao]||[ev.acao,'neutro']; return '<tr><td>'+dhBr(ev.em)+'</td><td class="esq pessoa-cel"><b>'+esc(ev.nome||'Fora do painel')+'</b><small>'+esc(ev.email)+'</small></td><td><span class="ev '+x[1]+'">'+x[0]+'</span></td></tr>'; }).join(''):'<tr><td colspan="3" style="padding:24px;color:#6D6D6D">Nenhum evento no período.</td></tr>')+'</tbody></table></div>';
+      $('eOk').onclick=function(){ telaAcessos({de:$('eDe').value, ate:$('eAte').value, tipo:$('eTipo').value, texto:$('eQ').value}); };
+    }
+  }).catch(falhaGeral);
+}
+</script>

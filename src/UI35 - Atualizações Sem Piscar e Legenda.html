@@ -1,0 +1,55 @@
+<style>
+/* ===================== v148: sem "piscar" nas atualizações automáticas, cartões que se mexem, legenda e período centralizado ===================== */
+/* janela dos cartões (Atestados…): período centralizado embaixo da situação */
+.lg-km .lg-km-it .lg-st{display:flex;flex-direction:column;align-items:center;justify-content:center}
+.lg-km .lg-km-it .lg-st .sb{display:inline-flex!important;flex-direction:column;align-items:center;gap:5px}
+.lg-km .lg-km-it .lg-st .sb .sb-bt{order:1}
+.lg-km .lg-km-it .lg-st .lg-per{order:2;display:block;text-align:center;margin:0;white-space:nowrap}
+/* legenda dos quadradinhos de Quem Mais Faltou */
+.ls-leg2{display:flex;flex-wrap:wrap;justify-content:center;gap:8px 16px;margin:14px 0 2px;font-size:12px;font-weight:700;color:var(--c4)}
+.ls-leg2 span{display:inline-flex;align-items:center;gap:6px}
+.ls-leg2 i{width:12px;height:12px;border-radius:4px;display:inline-block}
+.ls-leg2 i.v{background:transparent;border:1.5px dashed var(--c2,#D9D2E3);box-sizing:border-box}
+</style>
+<script>
+/* ===================== Controle de Logados (Lista): a atualização automática só redesenha se alguém mudou de situação ===================== */
+(function () { if (typeof lgCarregar !== 'function') return; var _lc = lgCarregar; lgCarregar = function (silencioso) {
+  var f = estado.lg, v = f && f.vista; if (!silencioso || !estado.lgR || v === 'semana' || v === 'mes') return _lc.apply(this, arguments);
+  var d = f.data; return chamar('apiControleLogados', estado.token, d).then(function (r) { if (estado.sub !== 'logados' || estado.lg.data !== d) return;
+    var mudou = JSON.stringify(r.itens) !== JSON.stringify(estado.lgR.itens) || r.feriado !== estado.lgR.feriado; estado.lgR = r; estado.lgEm = Date.now();
+    if (mudou) { var y = window.scrollY; lgDesenhar(); window.scrollTo(0, y); return; }
+    try { var fx = gc() && gc().querySelector('.lg-faixa'); if (fx && r.agora) { var w = document.createTreeWalker(fx, NodeFilter.SHOW_TEXT), n; while ((n = w.nextNode())) n.nodeValue = n.nodeValue.replace(/\b\d{2}:\d{2}\b/, r.agora); } } catch (e) { } })
+  .catch(function () { }); }; })();
+
+/* ===================== Visão do Dia: a atualização de 2 em 2 minutos do gráfico com presença acontece por trás ===================== */
+(function () { if (typeof vdCobAplicar !== 'function') return; var _v = vdCobAplicar; vdCobAplicar = function (r) { try { var g = $('vdGraf');
+  if (estado.vdModo === 'pres' && r && r === estado.vdUlt && g && g.parentNode && g.parentNode.classList.contains('vd-pres') && estado.vdPresR && !((estado.vdPres || {})[r.data])) {
+    vdPresCarregar(r.data, function (p) { if (!p || estado.vdUlt !== r || estado.vdModo !== 'pres') return; var y = window.scrollY; vdPresRedesenhar(r, p); try { vdAgoraPres(r, p); } catch (e) { } window.scrollTo(0, y); }); return; } } catch (e) { }
+  return _v.apply(this, arguments); }; })();
+
+/* ===================== Cartões que se mexem de volta na Semana e no Mês (o "pisca" era o cartão do dia subir; isso continua fora) ===================== */
+function lsSoltarCartoes(raiz) { if (!raiz) return; raiz.querySelectorAll('.lg-card').forEach(function (c) { if (c.dataset.dsTilt === 'fixo') delete c.dataset.dsTilt; }); }
+(function () { var _sd = lgSemDesenhar; lgSemDesenhar = function (r) { var x = _sd.apply(this, arguments); try { var el = $('lgSemCorpo'); lsSoltarCartoes(el); lsLegenda(r); } catch (e) { } return x; }; })();
+(function () { var _md = lgMesDesenhar; lgMesDesenhar = function (r) { var x = _md.apply(this, arguments); try { lsSoltarCartoes($('lgMesCorpo')); } catch (e) { } return x; }; })();
+/* legenda dos quadradinhos (domingo a sábado) em Quem Mais Faltou */
+function lsLegenda(r) { var el = $('lgSemCorpo'); if (!el || !r) return; var c2 = el.querySelectorAll('.ls-grid .lg-card')[1]; if (!c2 || c2.querySelector('.ls-leg2')) return;
+  var vistos = {}, fut = r.dias.some(function (d) { return d.futuro; }); r.pessoas.forEach(function (p) { Object.keys(p.d || {}).forEach(function (k) { vistos[p.d[k]] = 1; }); });
+  var ordem = ['PRESENTE', 'AGUARDANDO', 'FALTA', 'ATESTADO', 'COMPENSA', 'LICENCA', 'FERIAS', 'FOLGA', 'SEM'], nome = { PRESENTE: 'Presente', AGUARDANDO: 'Aguardando Registro', FALTA: 'Falta Injustificada', ATESTADO: 'Atestado', COMPENSA: 'Compensa / Day Off', LICENCA: 'Licença', FERIAS: 'Férias', FOLGA: 'Folga', SEM: 'Sem Escala' };
+  var itens = ordem.filter(function (s) { return vistos[s]; }).concat(Object.keys(vistos).filter(function (s) { return ordem.indexOf(s) < 0; }));
+  var h = itens.map(function (s) { return '<span><i style="background:' + (LG_COR[s] || '#C4C4CC') + '"></i>' + esc((r.rotulos && r.rotulos[s]) || nome[s] || s) + '</span>'; }).join('') + (fut ? '<span><i class="v"></i>Ainda Não Chegou</span>' : '') + '<span><i class="v" style="border-style:solid;background:var(--c1,#F4F1F7)"></i>Sem Registro</span>';
+  var tw = c2.querySelector('.ls-tw'); if (tw) tw.insertAdjacentHTML('afterend', '<div class="ls-leg2" aria-label="Legenda dos dias">' + h + '</div>'); }
+
+/* ===================== Mais rápido: ao abrir o Controle de Logados, a Semana e o Mês atuais já são buscados por trás ===================== */
+function lgPreBuscar() { if (estado.lgPreEm && Date.now() - estado.lgPreEm < 5 * 60000) return; estado.lgPreEm = Date.now(); var k = lgSemIni(hojeLocal()), m = hojeLocal().slice(0, 7);
+  setTimeout(function () { if (estado.sub !== 'logados') return;
+    if (!(estado.lgSem || {})[k]) chamar('apiControleLogadosSemana', estado.token, k).then(function (r) { estado.lgSem = estado.lgSem || {}; if (!estado.lgSem[k]) estado.lgSem[k] = { r: r, t: Date.now() }; }).catch(function () { });
+    if (!(estado.lgMes || {})[m]) chamar('apiControleLogadosMes', estado.token, m).then(function (r) { estado.lgMes = estado.lgMes || {}; if (!estado.lgMes[m]) estado.lgMes[m] = { r: r, t: Date.now() }; }).catch(function () { }); }, 4000); }
+(function () { var _d = lgDesenhar; lgDesenhar = function () { var x = _d.apply(this, arguments); try { if (estado.lg && (estado.lg.vista === 'lista' || estado.lg.vista === 'painel')) lgPreBuscar(); } catch (e) { } return x; }; })();
+/* semana já vista: aparece na hora e se atualiza por trás (sem tela de carregando) */
+(function () { var _st = lgSemTela; lgSemTela = function (forcar) { var f = estado.lg, k = f && (f.sem || lgSemIni(f.data || hojeLocal())), cc = k && (estado.lgSem || {})[k];
+  if (cc && cc.r && Date.now() - cc.t >= 60000 && !(forcar !== true && $('lgSemCorpo') && $('lgSemCorpo').dataset.sem === k)) {
+    var t0 = cc.t; cc.t = Date.now(); var x = _st.apply(this, arguments); cc.t = t0;
+    chamar('apiControleLogadosSemana', estado.token, k).then(function (r) { estado.lgSem[k] = { r: r, t: Date.now() }; if (estado.lg.vista !== 'semana' || estado.lg.sem !== k || JSON.stringify(r) === JSON.stringify(cc.r)) return; var y = window.scrollY; lgSemDesenhar(r); window.scrollTo(0, y); }).catch(function () { });
+    return x; }
+  return _st.apply(this, arguments); }; })();
+</script>

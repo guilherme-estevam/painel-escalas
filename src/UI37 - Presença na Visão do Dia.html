@@ -1,0 +1,116 @@
+<style>
+/* ===================== Visão do Dia: Escalados x Presentes (presença do Controle de Logados) ===================== */
+.vd-coord th,.vd-coord td{text-align:center}
+.vd-coord th:first-child,.vd-coord td:first-child{text-align:left}
+.vd-coord td .vn{font-size:15px;font-weight:800;font-variant-numeric:tabular-nums;color:var(--preto)}
+.vd-coord td .vn.ok{color:#17713D} .vd-coord td .vn.ru{color:#C62828} .vd-coord td .vn.ag{color:#3D7BE0} .vd-coord td .vn.zero{color:var(--c4);font-weight:700}
+html[data-tema="escuro"] .vd-coord td .vn.ok{color:#6fdc9c} html[data-tema="escuro"] .vd-coord td .vn.ru{color:#f29a9a} html[data-tema="escuro"] .vd-coord td .vn.ag{color:#9cc0ff}
+.vd-coord td .vpc{display:inline-flex;align-items:center;gap:8px;font-weight:800;font-variant-numeric:tabular-nums}
+.vd-coord td .vpc .tr{width:70px;height:7px;border-radius:999px;background:var(--c1,#F1EDF5);overflow:hidden}
+html[data-tema="escuro"] .vd-coord td .vpc .tr{background:#2a2333}
+.vd-coord td .vpc .tr i{display:block;height:100%;border-radius:999px;transition:width .5s cubic-bezier(.23,1,.32,1)}
+.vd-coord tr.vd-tot td{border-top:2px solid var(--c2,#E6DFEE);font-weight:800;background:color-mix(in srgb,var(--c1,#F4F1F7) 60%,transparent)}
+html[data-tema="escuro"] .vd-coord tr.vd-tot td{border-top-color:#3a3346;background:#221c2b}
+.vd-pleg{margin:-4px 0 12px;font-size:12.5px;color:var(--c4)}
+.vd-pleg b{color:var(--preto)}
+.vd-mtag{display:inline-block;margin-right:8px;padding:2px 9px;border-radius:999px;font-size:11.5px;font-weight:800;background:rgba(79,63,145,.12);color:#4F3F91}
+.vd-mtag.p{background:rgba(30,158,88,.14);color:#17713D}
+html[data-tema="escuro"] .vd-mtag{background:rgba(155,147,196,.2);color:#d9cffb} html[data-tema="escuro"] .vd-mtag.p{background:rgba(30,158,88,.22);color:#7fe0a5}
+/* "Considerando Presença" no cartão Agora: legível sobre o fundo roxo e rosa */
+.vd-agora .vd-ag-pres{background:rgba(255,255,255,.2);color:#fff;border:1px solid rgba(255,255,255,.42);padding:5px 12px;font-size:12px;letter-spacing:.01em;backdrop-filter:blur(4px)}
+.vd-agora .vd-ag-pres::before{content:"";width:8px;height:8px;border-radius:50%;background:#6EF0A6;box-shadow:0 0 0 0 rgba(110,240,166,.7);animation:vdpPulso 2.2s ease-out infinite}
+html[data-tema="escuro"] .vd-agora .vd-ag-pres{background:rgba(255,255,255,.16);color:#fff}
+@keyframes vdpPulso{0%{box-shadow:0 0 0 0 rgba(110,240,166,.65)}70%{box-shadow:0 0 0 7px rgba(110,240,166,0)}100%{box-shadow:0 0 0 0 rgba(110,240,166,0)}}
+@media (prefers-reduced-motion:reduce){ .vd-agora .vd-ag-pres::before{animation:none} }
+/* janela da meia hora (Considerando Presença): título do cartão no mesmo tamanho da Escala do Dia */
+.sl-card .hd span.tt{font-size:inherit}
+.sl-card .hd span.tt b{font-size:inherit;font-weight:800}
+.sl-card .hd span.tt .sl-sub{font-size:11px}
+.vd-st{display:inline-flex;align-items:center;gap:5px;margin-top:4px;padding:3px 9px;border-radius:999px;font-size:11.5px;font-weight:800;color:color-mix(in srgb,var(--k) 85%,#000);background:color-mix(in srgb,var(--k) 13%,transparent);border:1px solid color-mix(in srgb,var(--k) 35%,transparent);white-space:nowrap;width:max-content}
+.vd-st::before{content:"";width:7px;height:7px;border-radius:50%;background:var(--k)}
+html[data-tema="escuro"] .vd-st{color:color-mix(in srgb,var(--k) 55%,#fff);background:color-mix(in srgb,var(--k) 20%,#1e1a24)}
+.vd-lin.vd-tem-st .vd-agu{display:none}
+.ag-hoje .tt:has(.vd-st){justify-content:flex-start;gap:8px;flex-wrap:wrap}
+.ag-hoje .tt:has(.vd-st)>b{margin-right:auto}
+.ag-hoje .tt .vd-st{margin:0;font-size:12px}
+.vd-pdet{display:flex;align-items:center;gap:10px;flex-wrap:wrap;margin:0 0 14px;padding:12px 14px;border-radius:14px;background:color-mix(in srgb,var(--k) 9%,var(--sup,#fff));border:1px solid color-mix(in srgb,var(--k) 30%,transparent)}
+html[data-tema="escuro"] .vd-pdet{background:color-mix(in srgb,var(--k) 14%,#1e1a24)}
+.vd-pdet span{font-size:13px;font-weight:700;color:var(--c4)}
+.vd-pdet .vd-st{margin:0;font-size:12.5px}
+.vd-oculto{display:none!important}
+</style>
+<script>
+/* ===================== Visão do Dia: Escalados x Presentes ===================== */
+var VDP_COR = { PRESENTE: '#1E9E58', AGUARDANDO: '#3D7BE0', FALTA: '#D93A3A', ATESTADO: '#E07A2D', COMPENSA: '#7E57C2', DESLIGADO: '#55556a', MOVIMENTACAO: '#0E8A8A', FOLGA: '#9AA4B2', FERIAS: '#D80073', LICENCA: '#C98A00', SEM_REGISTRO: '#9AA4B2', SEM_ESCALA: '#C4C4CC', MEDIDA: '#6D4C41' };
+var VDP_AUS = { FALTA: 1, ATESTADO: 1, COMPENSA: 1, LICENCA: 1, MEDIDA: 1, DESLIGADO: 1, MOVIMENTACAO: 1 };
+function vdpRot(p, st) { if (!st) return 'Sem Registro'; if (st === 'AGUARDANDO') return 'Aguardando Registro'; return (p && p.rot && p.rot[st]) || st; }
+function vdpChip(p, st) { var s = st || 'SEM_REGISTRO'; return '<span class="vd-st" style="--k:' + (VDP_COR[s] || '#9AA4B2') + '">' + esc(vdpRot(p, st)) + '</span>'; }
+/* a presença só existe a partir do início do controle e até hoje */
+function vdpValida(r, p) { return !!(p && r && r.data && (!p.inicio || r.data >= p.inicio) && (!p.hoje || r.data <= p.hoje)); }
+function vdpAplicar(r, p) {
+  var raiz = typeof gc === 'function' ? gc() : null; if (!raiz || !r || !r.itens) return; var tem = vdpValida(r, p), m = tem ? (p.m || {}) : {};
+  /* nomes: o número é de escalados (quem tem escala de trabalho no dia) */
+  raiz.querySelectorAll('.numeros .numero span').forEach(function (s) { if (s.textContent === 'Agentes trabalhando') s.textContent = 'Agentes escalados'; });
+  raiz.querySelectorAll('.vd-sec h2').forEach(function (h) { if (h.firstChild && h.firstChild.nodeType === 3 && /^Agentes Trabalhando/.test(h.firstChild.nodeValue)) h.firstChild.nodeValue = 'Agentes Escalados '; });
+  /* tabela Por Coordenação: visão de atuação; segue o botão do gráfico (Escala do Dia | Considerando Presença) */
+  var tb = raiz.querySelector('table.vd-coord'); if (tb) {
+    var pres = tem && estado.vdModo === 'pres', CONTA = { PRESENTE: 1 };
+    var conta = function (x) { if (!pres) return true; var st = m[x.email] || 'SEM_REGISTRO'; return !!CONTA[st]; };
+    var porC = {}, z = function () { return { t: 0, '0800': 0, chat: 0, ass: 0, f: 0, a: 0 }; }, tot = z();
+    r.itens.forEach(function (x) { if (x.perfil !== 'AGENTE') return; var o = porC[x.coord] || (porC[x.coord] = z());
+      if (x.sit === 'T') { if (!conta(x)) return; o.t++; tot.t++; var fr = {}; (x.blocos || []).forEach(function (b) { fr[b[0]] = 1; }); ['0800', 'chat', 'ass'].forEach(function (k) { if (fr[k]) { o[k]++; tot[k]++; } }); }
+      else if (x.sit === 'F') { o.f++; tot.f++; } else if (x.sit === 'FERIAS' || x.sit === 'LICENCA') { o.a++; tot.a++; } });
+    tb.querySelector('thead tr').innerHTML = '<th>Coordenação</th><th>' + (pres ? 'Presentes' : 'Escalados') + '</th><th>Passam pelo 0800</th><th>Passam pelo chat</th><th>Assíncrono</th><th>De folga</th><th>Férias ou licença</th>';
+    var linha = function (o) { return '<td><span class="vn">' + o.t + '</span></td><td><span class="vn">' + o['0800'] + '</span></td><td><span class="vn">' + o.chat + '</span></td><td><span class="vn">' + o.ass + '</span></td><td><span class="vn">' + o.f + '</span></td><td><span class="vn">' + o.a + '</span></td>'; };
+    tb.querySelectorAll('tbody tr[data-coord]').forEach(function (tr) { var o = porC[tr.getAttribute('data-coord')] || z(), c0 = tr.children[0].outerHTML; tr.innerHTML = c0 + linha(o); });
+    var tbo = tb.querySelector('tbody'), lt = tbo.querySelector('tr.vd-tot'); if (!lt) { lt = document.createElement('tr'); lt.className = 'vd-tot'; } tbo.appendChild(lt);
+    lt.innerHTML = '<td><b>Total</b></td>' + linha(tot);
+    var sec = tb.closest('.vd-sec'), lg = sec && sec.querySelector('.vd-pleg');
+    var txt = pres ? '<span class="vd-mtag p">Considerando Presença</span>Só quem <b>já registrou presença</b> (Presente). Quem ainda não registrou e as ausências ficam de fora.' : '<span class="vd-mtag">Escala do Dia</span>Todos os <b>escalados</b> do dia, pela atuação na escala.';
+    if (sec && !lg) { lg = document.createElement('p'); lg.className = 'vd-pleg'; sec.querySelector('h2').after(lg); } if (lg) lg.innerHTML = txt;
+  }
+  /* selo de situação em cada agente escalado */
+  raiz.querySelectorAll('.vd-lin[data-ag]').forEach(function (b) { var e = b.getAttribute('data-ag'), x = r.itens.filter(function (y) { return y.email === e; })[0];
+    var velho = b.querySelector('.vd-st'); if (velho) velho.remove(); b.classList.remove('vd-tem-st'); b.removeAttribute('data-vdsit');
+    if (!tem || !x || x.perfil !== 'AGENTE' || x.sit !== 'T') return; var st = m[e] || '', id = b.querySelector('.vd-id'); if (!id) return;
+    var bx = id.querySelector('small'); (bx || id).insertAdjacentHTML('afterend', vdpChip(p, st)); b.classList.add('vd-tem-st');
+    b.setAttribute('data-vdsit', st === 'PRESENTE' ? 'pres' : st === 'AGUARDANDO' ? 'agu' : VDP_AUS[st] ? 'aus' : 'sem'); });
+  vdpFiltroAplicar(tem);
+}
+/* filtro "Todas as situações" */
+function vdpFiltroAplicar(tem) { var raiz = gc(), f = raiz.querySelector('.vd-filtros'); if (!f) return; var s = document.getElementById('vdSit');
+  if (!tem) { if (s) s.remove(); estado.vdSit = ''; }
+  else if (!s) { s = document.createElement('select'); s.id = 'vdSit'; s.setAttribute('aria-label', 'Situação');
+    s.innerHTML = [['', 'Todas as situações'], ['pres', 'Só presentes'], ['agu', 'Só aguardando registro'], ['aus', 'Só ausentes (falta, atestado, day off…)'], ['sem', 'Só sem registro']].map(function (o) { return '<option value="' + o[0] + '"' + ((estado.vdSit || '') === o[0] ? ' selected' : '') + '>' + o[1] + '</option>'; }).join('');
+    var q = document.getElementById('vdQ'); if (q) f.insertBefore(s, q); else f.appendChild(s); s.onchange = function () { estado.vdSit = s.value; vdpFiltroAplicar(true); }; }
+  var sit = tem ? (estado.vdSit || '') : '';
+  raiz.querySelectorAll('.vd-sec').forEach(function (sec) { var h = sec.querySelector('h2'); if (!h || !/^Agentes Escalados/.test(h.textContent)) return; var n = 0;
+    sec.querySelectorAll('.vd-lin[data-ag]').forEach(function (b) { var ok = !sit || b.getAttribute('data-vdsit') === sit; b.classList.toggle('vd-oculto', !ok); if (ok) n++; });
+    var c = h.querySelector('.n'); if (c) c.textContent = n; });
+}
+/* o botão Escala do Dia | Considerando Presença também muda a tabela */
+(function () { if (typeof vdCobAplicar !== 'function') return; var _c = vdCobAplicar; vdCobAplicar = function () { var x = _c.apply(this, arguments); try { if (estado.vdpR) vdpAplicar(estado.vdpR, estado.vdpP || null); } catch (e) { } return x; }; })();
+/* liga na Visão do Dia (redesenhos e atualização da presença a cada 30 s no dia de hoje) */
+(function () { if (typeof desenharVisaoDia !== 'function') return; var _d = desenharVisaoDia;
+  desenharVisaoDia = function (r) { var x = _d.apply(this, arguments); estado.vdpR = r;
+    try { vdpAplicar(r, null); } catch (e) { }
+    if (typeof vdPresCarregar === 'function' && r && r.data) vdPresCarregar(r.data, function (p) { if (estado.vdpR !== r) return; estado.vdpP = p; try { vdpAplicar(r, p); } catch (e) { } });
+    return x; };
+  setInterval(function () { var r = estado.vdpR, raiz = typeof gc === 'function' ? gc() : null; if (!r || !raiz || !raiz.querySelector('table.vd-coord') || document.hidden) return;
+    if (typeof hojeLocal === 'function' && r.data !== hojeLocal()) return;
+    vdPresCarregar(r.data, function (p) { if (estado.vdpR !== r || !raiz.querySelector('table.vd-coord')) return; estado.vdpP = p; try { vdpAplicar(r, p); } catch (e) { } }); }, 30000); })();
+/* Detalhes do agente: a situação do dia ao lado de "Trabalha" (a janela abre com "Carregando…" e só depois recebe o conteúdo) */
+function vdpDetalhe(email, data) { if (typeof vdPresCarregar !== 'function') return; email = String(email || '').toLowerCase();
+  vdPresCarregar(data, function (p) { if (!p || !vdpValida({ data: data }, p)) return; var st = (p.m || {})[email] || '';
+    var por = function () { var feito = false;
+      document.querySelectorAll('.ag-hoje .tt').forEach(function (tt) { if (tt.querySelector('.vd-st')) { feito = true; return; } var md = tt.closest('.modal') || document.body;
+        if ((md.textContent || '').toLowerCase().indexOf(email) < 0) return; var selo = tt.querySelector('.selo'); if (!selo || !selo.classList.contains('pub')) { feito = true; return; }
+        selo.insertAdjacentHTML('afterend', vdpChip(p, st)); feito = true; });
+      return feito; };
+    if (por()) return; var ob = new MutationObserver(function () { if (por()) ob.disconnect(); }); ob.observe(document.body, { childList: true, subtree: true }); setTimeout(function () { ob.disconnect(); }, 15000); }); }
+(function () { if (typeof modalAgente !== 'function') return; var _m = modalAgente;
+  modalAgente = function (email) { var x = _m.apply(this, arguments);
+    try { var data = (estado.vd && estado.vd.data) || (typeof hojeLocal === 'function' ? hojeLocal() : '');
+      if (data) vdpDetalhe(email, data); } catch (e) { }
+    return x; }; })();
+</script>

@@ -1,0 +1,38 @@
+<style>
+/* ===================== Filas do chat: confirmação ao definir para todos ===================== */
+.fct-m{display:flex;flex-direction:column;gap:12px}
+.fct-m h2{margin:0;font-size:18px;font-weight:800;color:var(--preto)}
+.fct-m p{margin:0;font-size:14px;line-height:1.5;color:var(--c5,#4a4458)}
+.fct-m .av{padding:10px 12px;border-radius:12px;background:#FFF6E5;border:1px solid #F3D7A2;color:#7A4E00;font-size:13px;line-height:1.45}
+html[data-tema="escuro"] .fct-m .av{background:#2a2110;border-color:#5a4416;color:#f2cf8a}
+.fct-m .ac{display:flex;justify-content:flex-end;gap:8px;margin-top:4px}
+</style>
+<script>
+/* ===================== Filas do chat: não sobrescrever o que outra pessoa definiu (12/11/2026) =====================
+   1) As filas de cada dia ficavam guardadas na página para sempre; quem estava com o painel aberto há horas
+      aplicava filas antigas por cima das novas. Agora a informação vale por 1 minuto e é sempre buscada ao abrir a janela.
+   2) "Definir todos como" pede confirmação, usa as filas atuais do servidor e só grava quem realmente muda.
+   3) "Sem fila" não aparece mais em "Definir todos como": tirar a fila só pessoa por pessoa. */
+var FCT_TTL = 60 * 1000;
+(function () { if (typeof fcCarregar !== 'function') return; var _c = fcCarregar; estado.fcCacheEm = estado.fcCacheEm || {};
+  fcCarregar = function (data) { estado.fcCache = estado.fcCache || {}; var em = estado.fcCacheEm[data] || 0; if (estado.fcCache[data] && (!em || Date.now() - em > FCT_TTL)) { if (em) delete estado.fcCache[data]; else estado.fcCacheEm[data] = Date.now(); }
+    var tinha = !!estado.fcCache[data]; return _c.apply(this, arguments).then(function (x) { if (!tinha) estado.fcCacheEm[data] = Date.now(); return x; }); }; })();
+(function () { if (typeof fcModal !== 'function') return; var _m = fcModal; fcModal = function (r) { try { if (r && r.data && estado.fcCache) { delete estado.fcCache[r.data]; } } catch (e) { } return _m.apply(this, arguments); }; })();
+function fctConfirmar(texto, aviso, ok) { var w = abrirModal('<div class="fct-m"><h2>Definir Fila para Todos</h2><p>' + texto + '</p>' + (aviso ? '<div class="av">' + aviso + '</div>' : '') + '<div class="ac"><button class="btn sec" data-fechar>Cancelar</button><button class="btn" id="fctOk">Confirmar</button></div></div>');
+  var b = w.querySelector('#fctOk'); b.onclick = function () { b.disabled = true; w.remove(); ok(); }; }
+function fctAplicar(s) { var fila = s.value, g = s.closest('.aa-g'), r = estado.vdUlt; s.value = '__'; if (window.listaSuspensaAtualizar) try { listaSuspensaAtualizar(s); } catch (e) { }
+  if (!g || !r || fila === '__') return; if (!fila) { if (typeof toast === 'function') toast('Para tirar a fila, altere uma pessoa por vez.'); return; }
+  var coord = ((g.querySelector('.aa-gh .t b') || {}).textContent || 'deste grupo'), emails = [].map.call(g.querySelectorAll('.aa-row'), function (rw) { return rw.dataset.email; });
+  chamar('apiFilasChat', estado.token, r.data).then(function (x) { estado.fcCache = estado.fcCache || {}; estado.fcCache[r.data] = x; estado.fcCacheEm[r.data] = Date.now(); var at = x.atual || {};
+    var muda = emails.filter(function (e) { return (at[e] || '') !== fila; }), troca = muda.filter(function (e) { return at[e]; });
+    if (!muda.length) { if (typeof toast === 'function') toast('Todas as pessoas de ' + coord + ' já estão em ' + fila + '.'); return; }
+    fctConfirmar('Definir <b>' + muda.length + ' ' + (muda.length === 1 ? 'pessoa' : 'pessoas') + '</b> de ' + esc(coord) + ' como <b>' + esc(fila) + '</b>?', troca.length ? '<b>' + troca.length + (troca.length === 1 ? ' pessoa já tem' : ' pessoas já têm') + ' outra fila definida</b> e ' + (troca.length === 1 ? 'vai' : 'vão') + ' mudar para ' + esc(fila) + '.' : '', function () {
+      chamar('apiFilaChatDefinir', estado.token, r.data, muda, fila).then(function (y) { estado.fcCache[r.data] = { data: r.data, areas: x.areas, atual: y.atual || at, podeEditar: x.podeEditar }; estado.fcCacheEm[r.data] = Date.now(); Object.keys(estado.fcCache).forEach(function (d) { if (d > r.data) delete estado.fcCache[d]; });
+        var fundo = $('fcModal') && $('fcModal').closest('.modal-fundo'); if (fundo) fundo.remove(); if (typeof toast === 'function') toast(muda.length + (muda.length === 1 ? ' pessoa definida' : ' pessoas definidas') + ' como ' + fila + '.'); setTimeout(function () { fcModal(r); }, 50); })
+      .catch(function (e) { if (typeof falhaGeral === 'function') falhaGeral(e); else alert(e && e.message || e); }); }); })
+  .catch(function (e) { if (typeof falhaGeral === 'function') falhaGeral(e); else alert(e && e.message || e); }); }
+/* intercepta "Definir todos como" antes do comportamento antigo */
+document.addEventListener('change', function (ev) { var s = ev.target; if (!s || !s.matches || !s.matches('select[data-fc-todos]')) return; ev.stopImmediatePropagation(); ev.stopPropagation(); if (s.value === '__' || s.dataset.fct) return; s.dataset.fct = '1'; try { fctAplicar(s); } finally { setTimeout(function () { delete s.dataset.fct; }, 0); } }, true);
+/* tira "Sem fila" de "Definir todos como" */
+new MutationObserver(function () { document.querySelectorAll('select[data-fc-todos]').forEach(function (s) { var o = s.querySelector('option[value=""]'); if (o) { o.remove(); if (window.listaSuspensaAtualizar) try { listaSuspensaAtualizar(s); } catch (e) { } } }); }).observe(document.body, { childList: true, subtree: true });
+</script>

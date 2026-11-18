@@ -1,0 +1,71 @@
+<style>
+/* ===== separação por semana na grade ===== */
+.grade th.sem-ini,.grade td.sem-ini{border-left:3px solid var(--c3)!important}
+.grade thead th.sem-par{background:var(--c1)}
+html[data-tema="escuro"] .grade thead th.sem-par{background:#2c2c36!important}
+.grade thead th.dcol.sem-ini{position:sticky}
+/* ===== avisos de pendência ===== */
+.pend-b{display:inline-flex;align-items:center;justify-content:center;min-width:20px;height:20px;padding:0 6px;margin-left:6px;border-radius:10px;background:var(--rosa);color:#fff;font-size:11.5px;font-weight:800;line-height:1;vertical-align:1px;animation:pendPulso 2s ease-in-out infinite}
+@keyframes pendPulso{0%,100%{box-shadow:0 0 0 0 rgba(216,0,115,.55)}50%{box-shadow:0 0 0 6px rgba(216,0,115,0)}}
+#bSino.tem{animation:sinoBalanco 2.4s ease-in-out infinite;transform-origin:50% 0}
+@keyframes sinoBalanco{0%,82%,100%{transform:rotate(0)}86%{transform:rotate(14deg)}90%{transform:rotate(-12deg)}94%{transform:rotate(8deg)}97%{transform:rotate(-4deg)}}
+.aviso-aprov{display:flex;align-items:center;gap:16px;flex-wrap:wrap;background:linear-gradient(135deg,var(--rosa),var(--roxo));color:#fff;border-radius:16px;padding:14px 18px;margin:0 0 16px;box-shadow:0 10px 28px rgba(216,0,115,.25)}
+.aviso-aprov .ic{width:44px;height:44px;border-radius:50%;background:rgba(255,255,255,.18);display:flex;align-items:center;justify-content:center;flex:none;animation:sinoBalanco 2.4s ease-in-out infinite}
+.aviso-aprov b{display:block;font-size:17px}
+.aviso-aprov span{font-size:13.5px;opacity:.92}
+.aviso-aprov button{margin-left:auto;border:0;background:#fff;color:var(--rosa);font:inherit;font-weight:800;border-radius:12px;padding:10px 16px;cursor:pointer}
+.aviso-aprov button:hover{filter:brightness(.95)}
+</style>
+<script>
+/* ===================== separação por semana (domingo a sábado) ===================== */
+function semDoDia(mes, dd){ return Math.floor((wdDe(mes,1)+dd-1)/7); }
+var _linhaGradeUI5 = linhaGrade;
+linhaGrade = function(p){
+  var h=_linhaGradeUI5(p), mes=estado.plan.mes, dd=0;
+  return h.replace(/<td class="dc">/g, function(m){ dd++; return dd>1 && wdDe(mes,dd)===0 ? '<td class="dc sem-ini">' : m; });
+};
+var _desenharGradeUI5 = desenharGrade;
+desenharGrade = function(){
+  _desenharGradeUI5();
+  var g=$('grade'); if(!g) return; var mes=estado.plan.mes;
+  g.querySelectorAll('thead th.dcol').forEach(function(th,i){ var dd=i+1; if(dd>1 && wdDe(mes,dd)===0) th.classList.add('sem-ini'); if(semDoDia(mes,dd)%2===1) th.classList.add('sem-par'); var s=semDoDia(mes,dd); th.title=(th.title?th.title+' · ':'')+'Semana '+(s+1); });
+  var tf=g.querySelector('tfoot tr'); if(tf){ var tds=tf.querySelectorAll('td'); for(var dd=1; dd<=estado.plan.dias; dd++){ var td=tds[2+dd]; if(td && dd>1 && wdDe(mes,dd)===0) td.classList.add('sem-ini'); } }
+};
+
+/* ===================== notificações e pendências sempre em dia ===================== */
+atualizarSino = function(){
+  if(!estado.token) return;
+  chamar('apiNotificacoes', estado.token).then(function(r){ estado.notif=r; contadorSino(); }).catch(function(){});
+  if(ehGestao()) atualizarPendencias();
+};
+var _contadorSinoUI6 = contadorSino;
+contadorSino = function(){ _contadorSinoUI6(); var b=$('bSino'), r=estado.notif||{}; if(b) b.classList.toggle('tem', !!r.naoLidas); };
+function atualizarPendencias(){
+  chamar('apiPendencias', estado.token).then(function(r){ estado.pend=r.trocas||0; estado.histNovos=r.historico||0; marcarPendencias(); }).catch(function(){});
+}
+function badge(n){ return n ? '<span class="pend-b" aria-label="'+n+' pendente(s)">'+(n>99?'99+':n)+'</span>' : ''; }
+function marcarPendencias(){
+  var n=estado.pend||0;
+  var ab=$('abas') && $('abas').querySelector('[data-aba="gestao"]'); if(ab) ab.innerHTML='Gestão de Escalas'+badge(n);
+  var sb=$('subnav') && $('subnav').querySelector('[data-sub="trocas"]'); if(sb) sb.innerHTML='Trocas'+badge(n);
+  var av=$('avisoAprov'); if(av) av.remove();
+  if(n && estado.aba==='gestao' && estado.sub!=='trocas' && $('subnav')){
+    var el=document.createElement('div'); el.className='aviso-aprov'; el.id='avisoAprov';
+    el.innerHTML='<span class="ic"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M18 8a6 6 0 0 0-12 0c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.7 21a2 2 0 0 1-3.4 0"/></svg></span><div><b>'+n+' troca'+(n>1?'s':'')+' aguardando a sua aprovação</b><span>A escala dos agentes só muda depois da aprovação da coordenação.</span></div><button type="button" id="avisoAprovIr">Analisar agora</button>';
+    $('subnav').parentNode.insertBefore(el, $('subnav').nextSibling);
+    $('avisoAprovIr').onclick=function(){ estado.fTrocas='AGUARDANDO_GESTAO'; estado.sub='trocas'; telaGestao(); };
+  }
+}
+var _montarAppUI5 = montarApp;
+montarApp = function(){ _montarAppUI5(); atualizarSino(); };
+var _desenharSubnavUI5 = desenharSubnav;
+desenharSubnav = function(){ _desenharSubnavUI5(); marcarPendencias(); };
+var _trocarAbaUI2 = trocarAba;
+trocarAba = function(aba){ _trocarAbaUI2(aba); marcarPendencias(); };
+// trocas aprovadas ou rejeitadas atualizam o contador
+var _modalDecidirTroca = modalDecidirTroca;
+modalDecidirTroca = function(t){ _modalDecidirTroca(t); setTimeout(function(){ var obs=new MutationObserver(function(){ if(!document.body.contains(document.querySelector('#dApr'))){ obs.disconnect(); atualizarPendencias(); } }); obs.observe(document.getElementById('modais'), {childList:true, subtree:true}); }, 0); };
+// a cada 90 segundos, se o painel estiver aberto na tela
+setInterval(function(){ if(estado.token && !document.hidden) atualizarSino(); }, 90000);
+document.addEventListener('visibilitychange', function(){ if(!document.hidden && estado.token) atualizarSino(); });
+</script>

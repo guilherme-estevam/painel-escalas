@@ -1,0 +1,22 @@
+# Configuração local do clasp (contém o scriptId)
+.clasp.json
+.clasprc.json
+
+# Dados e exportações nunca entram no repositório
+*.csv
+*.xlsx
+*.xls
+dados/
+exports/
+
+# Ferramentas internas de sanitização (contêm o de-para com dados reais)
+portfolio-tools/
+*.py
+
+# Ambiente
+node_modules/
+.env
+.env.*
+.vscode/
+.DS_Store
+Thumbs.db

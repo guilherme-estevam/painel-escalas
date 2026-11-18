@@ -1,0 +1,66 @@
+<style>
+/* ===================== modais de recusar e cancelar troca ===================== */
+.mx .mx-top{display:flex;gap:14px;align-items:flex-start;margin-bottom:14px}
+.mx .mx-ic{width:46px;height:46px;border-radius:50%;flex:none;display:flex;align-items:center;justify-content:center}
+.mx .mx-ic.ruim{background:#FDE2E2;color:#C42B2B}
+html[data-tema="escuro"] .mx .mx-ic.ruim{background:#4a1f22;color:#ff8f8f}
+.mx h3{margin:0 0 2px;font-size:20px}
+.mx .mx-sub{margin:0;color:var(--c4);font-size:14px}
+.mx .mx-card{border:1px solid var(--c2);border-radius:16px;padding:14px;background:var(--c1);margin-bottom:14px}
+.mx .mx-quem{display:flex;align-items:center;gap:10px;margin-bottom:10px}
+.mx .mx-quem .av{width:38px;height:38px;font-size:13px;flex:none}
+.mx .mx-quem b{display:block;font-size:14px}
+.mx .mx-quem small{font-size:12.5px;color:var(--c4)}
+.mx .mx-mot{margin-top:10px;font-size:13px;color:var(--c4);font-style:italic}
+.mx .mx-lbl{display:block;font-weight:800;font-size:14px;margin-bottom:8px}
+.mx .mx-lbl small{font-weight:600;color:var(--c4)}
+.mx .mx-chips{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:10px}
+.mx .mx-chips button{border:1.5px solid var(--c3);background:var(--sup,#fff);color:var(--preto);border-radius:20px;padding:6px 12px;font:inherit;font-size:13px;font-weight:700;cursor:pointer}
+.mx .mx-chips button:hover{border-color:var(--rosa)}
+.mx .mx-chips button.on{border-color:var(--rosa);background:var(--rosa-bg);color:var(--rosa)}
+.mx textarea{width:100%;min-height:76px;resize:vertical;border:1.5px solid var(--c3);border-radius:12px;padding:10px 12px;font:inherit;font-size:14px;background:var(--sup,#fff);color:var(--preto)}
+.mx textarea:focus{outline:none;border-color:var(--rosa);box-shadow:0 0 0 3px rgba(216,0,115,.12)}
+.mx .mx-cont{text-align:right;font-size:11.5px;color:var(--c4);margin-top:4px}
+.mx .mx-info{display:flex;gap:8px;align-items:flex-start;font-size:13px;color:var(--c4);background:var(--c1);border-radius:12px;padding:10px 12px;margin-top:12px}
+.btn.perigo{background:#D93A40;color:#fff;border-color:#D93A40}
+.btn.perigo:hover{filter:brightness(.95)}
+html[data-tema="escuro"] .btn.perigo{background:#e5484d;border-color:#e5484d}
+</style>
+<script>
+/* ===================== recusar e cancelar troca com modal próprio ===================== */
+var MX_X='<svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="m15 9-6 6M9 9l6 6"/></svg>';
+var MX_I='<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" aria-hidden="true" style="flex:none;margin-top:1px"><circle cx="12" cy="12" r="9"/><path d="M12 11v5M12 8h.01"/></svg>';
+function modalRecusarTroca(t){
+  var eu=estado.dados.eu.email, nome=t.nomeSolicitante, pn=primeiro(nome);
+  var atalhos=['Já tenho compromisso nesse dia','Não consigo trabalhar nesse dia','Prefiro não trocar desta vez'];
+  var w=abrirModal('<div class="mx"><div class="mx-top"><span class="mx-ic ruim">'+MX_X+'</span><div><h3>Recusar troca</h3><p class="mx-sub">'+esc(pn)+' recebe um aviso de que você não vai cobrir e pode pedir para outra pessoa.</p></div></div>'+
+    '<div class="mx-card"><div class="mx-quem">'+avatarHtml(t.solicitante, nome, '')+'<div><b>'+esc(nome)+'</b><small>pediu em '+dhBr(t.criadaEm)+'</small></div></div>'+fraseTroca(t, eu)+(t.motivo?'<div class="mx-mot">Motivo de '+esc(pn)+': “'+esc(t.motivo)+'”</div>':'')+'</div>'+
+    '<label class="mx-lbl" for="rxMot">Quer dizer o motivo? <small>(opcional)</small></label>'+
+    '<div class="mx-chips">'+atalhos.map(function(a){ return '<button type="button" data-at="'+esc(a)+'">'+esc(a)+'</button>'; }).join('')+'</div>'+
+    '<textarea id="rxMot" maxlength="200" placeholder="Escreva aqui, se quiser. '+esc(pn)+' vai ver esta mensagem."></textarea><div class="mx-cont"><span id="rxN">0</span>/200</div>'+
+    '<div class="mx-info">'+MX_I+'<span>Sua escala não muda. O pedido de '+esc(pn)+' é encerrado.</span></div>'+
+    '<div class="acoes"><button class="btn sec" data-fechar>Voltar</button><button class="btn perigo" id="rxOk">Recusar troca</button></div></div>', true);
+  atualizarAvatares();
+  var ta=w.querySelector('#rxMot'), cont=function(){ w.querySelector('#rxN').textContent=ta.value.length; };
+  ta.oninput=function(){ cont(); w.querySelectorAll('[data-at]').forEach(function(b){ b.classList.toggle('on', b.dataset.at===ta.value); }); };
+  w.querySelectorAll('[data-at]').forEach(function(b){ b.onclick=function(){ var on=b.classList.contains('on'); ta.value = on ? '' : b.dataset.at; ta.oninput(); if(!on) ta.focus(); }; });
+  w.querySelector('#rxOk').onclick=function(){ var bt=this; ocupado(bt,true,'Recusando…');
+    chamar('apiTrocaResponder', estado.token, t.id, false, ta.value.trim()).then(function(r){ if(!r.ok){ ocupado(bt,false,'Recusar troca'); toast(r.msg,true); return; } w.remove(); toast('Troca recusada. '+pn+' recebeu o aviso.'); recarregarJornada(); }).catch(function(e){ ocupado(bt,false,'Recusar troca'); falhaGeral(e); }); };
+}
+function modalCancelarPedido(t){
+  var eu=estado.dados.eu.email, aguardando = t.status==='AGUARDANDO_GESTAO' ? 'A gestão deixa de ver o pedido e '+esc(primeiro(t.nomeColega||''))+' é avisado(a).' : (t.colega ? esc(primeiro(t.nomeColega))+' deixa de ver o pedido.' : 'Os colegas que podiam cobrir deixam de ver o pedido.');
+  var w=abrirModal('<div class="mx"><div class="mx-top"><span class="mx-ic ruim">'+MX_X+'</span><div><h3>Cancelar pedido de troca?</h3><p class="mx-sub">'+aguardando+'</p></div></div>'+
+    '<div class="mx-card">'+fraseTroca(t, eu)+'<div class="mx-mot" style="font-style:normal">'+(t.colega?'Com '+esc(t.nomeColega):'Pedido em aberto')+' · pedido em '+dhBr(t.criadaEm)+'</div></div>'+
+    '<div class="mx-info">'+MX_I+'<span>Sua escala continua como está. Se mudar de ideia, é só pedir de novo.</span></div>'+
+    '<div class="acoes"><button class="btn sec" data-fechar>Manter pedido</button><button class="btn perigo" id="cxOk">Cancelar pedido</button></div></div>', true);
+  w.querySelector('#cxOk').onclick=function(){ var bt=this; ocupado(bt,true,'Cancelando…');
+    chamar('apiTrocaCancelarV2', estado.token, t.id).then(function(r){ if(!r.ok){ ocupado(bt,false,'Cancelar pedido'); toast(r.msg,true); return; } w.remove(); toast('Pedido cancelado.'); recarregarJornada(); }).catch(function(e){ ocupado(bt,false,'Cancelar pedido'); falhaGeral(e); }); };
+}
+var _acaoTrocaAgenteV2 = acaoTrocaAgenteV2;
+acaoTrocaAgenteV2 = function(acao, id, lista){
+  var t=lista.filter(function(x){ return x.id===id; })[0];
+  if(t && acao==='recusar') return modalRecusarTroca(t);
+  if(t && acao==='cancelar') return modalCancelarPedido(t);
+  return _acaoTrocaAgenteV2(acao, id, lista);
+};
+</script>

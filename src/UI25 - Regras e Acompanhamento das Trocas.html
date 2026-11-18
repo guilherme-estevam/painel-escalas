@@ -1,0 +1,101 @@
+<style>
+/* ===================== regras e acompanhamento das trocas (v47) ===================== */
+.rgk{margin:12px 0 4px;border:1.5px solid #E6DFEE;border-radius:14px;padding:12px 14px;background:var(--sup,#fff)}
+html[data-tema="escuro"] .rgk{border-color:#3a3346;background:#1e1a24}
+.rgk h5{margin:0 0 10px;font-size:14px;color:var(--preto)}
+.rgk-l{display:grid;gap:9px}
+.rgk-i{display:flex;gap:10px;align-items:flex-start;font-size:13px;line-height:1.45}
+.rgk-i .s{flex:none;width:22px;height:22px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:900;margin-top:1px}
+.rgk-i .s.ok{background:#E3F6EA;color:#1E7A43} .rgk-i .s.x{background:#FDE7E9;color:#C2272F} .rgk-i .s.i{background:var(--roxo-bg);color:var(--roxo)}
+html[data-tema="escuro"] .rgk-i .s.ok{background:#173a26;color:#7fe0a5} html[data-tema="escuro"] .rgk-i .s.x{background:#4a1d22;color:#ff9aa1}
+.rgk-i b{display:block;color:var(--preto)}
+.rgk-i span{color:var(--c4)}
+.acp{margin-top:9px;display:flex;flex-wrap:wrap;gap:5px;align-items:center}
+.acp .e{display:inline-flex;align-items:center;gap:4px;border-radius:20px;padding:3px 10px;font-size:12px;font-weight:700;background:var(--c1);color:var(--c4);white-space:nowrap}
+.acp .e.ok{background:#E3F6EA;color:#1E7A43} .acp .e.esp{background:#FFF4D6;color:#7a5200}
+html[data-tema="escuro"] .acp .e.ok{background:#173a26;color:#7fe0a5} html[data-tema="escuro"] .acp .e.esp{background:#3d3214;color:#ffd77a}
+.acp .seta{color:var(--c3);font-weight:800}
+.acp-p{font-size:12px;color:var(--c4);margin-top:5px}
+.nota-parcial{margin:0 0 12px;padding:9px 12px;border-radius:10px;background:#FFF4D6;color:#6b4e00;font-size:13px}
+html[data-tema="escuro"] .nota-parcial{background:#3d3214;color:#f3d98c}
+</style>
+<script>
+/* ===================== regras de troca (v47) ===================== */
+PRAZO_TROCA_H = 72;
+REGRAS_TROCA = [
+  {ic:'relogio', t:'Prazo para pedir e aceitar: 72 horas', p:'O pedido e o aceite do colega precisam acontecer até 72 horas antes do primeiro turno da troca. Exemplo: turno na sexta às 09:00, peça e aceite até a terça às 09:00.', destaque:true},
+  {ic:'pessoas', t:'Mesma atuação e mesmo horário', p:'A troca é só com quem tem a sua atuação (0800 e chat, ou assíncrono) e o seu horário de entrada e saída. A lista de colegas mostra só quem pode mesmo trocar com você.'},
+  {ic:'semana', t:'Na mesma semana', p:'O dia em que você folga e o dia em que passa a trabalhar ficam na mesma semana, de domingo a sábado. Assim a semana de cada pessoa continua fechada.'},
+  {ic:'check', t:'5 dias de trabalho e 2 folgas', p:'Depois da troca, cada pessoa continua com 5 dias de trabalho e 2 folgas na semana. Dias de férias, licença ou feriado sem trabalho não entram em troca.'},
+  {ic:'semana', t:'Domingos: no máximo 2 de trabalho', p:'No mês, cada pessoa trabalha no máximo 2 domingos e folga pelo menos 1. Se a troca passar desse limite para alguém, ela não é permitida.'},
+  {ic:'escudo', t:'Quem aprova', p:'Basta uma aprovação de cada coordenação: a sua e, se o colega for de outra, a do colega. Em férias ou licença, aprova a coordenação substituta. A gerência e o WFM também podem aprovar.'},
+  {ic:'relogio', t:'Prazo da coordenação: 24 horas', p:'A coordenação aprova até 24 horas antes do primeiro turno. Com as aprovações necessárias, a escala muda na hora. Sem aceite ou sem aprovação no prazo, a troca expira.'},
+  {ic:'troca', t:'Vários pedidos para o mesmo dia', p:'Você pode receber mais de um pedido para o mesmo dia. Para fazer um pedido seu com esse dia, recuse antes os que recebeu. Acompanhe tudo em Minhas trocas.'}
+];
+
+/* Clicar no dia: abre direto o pedido de troca de dia (a troca de horário foi desativada) */
+var _escolherTipoTroca_25 = escolherTipoTroca;
+escolherTipoTroca = function(dia){
+  var d=estado.jor, pend=(d&&d.trocasPendentes)||[];
+  if(!dia){ modalNovaTroca(''); return; }
+  var h=null; try{ h=thHorarioDoDia(d, +dia.slice(8)); }catch(e){ h=null; }
+  var fora = !prazoOk(dia, h&&h.i);
+  if(pend.indexOf(dia)<0 && !fora){ modalNovaTroca(dia); return; }
+  _escolherTipoTroca_25(dia);
+  var w=[].slice.call(document.querySelectorAll('#modais .modal-fundo')).pop(); if(!w) return;
+  var hb=w.querySelector('#eHora'); if(hb) hb.remove();
+  var e2=w.querySelector('.esc2'); if(e2) e2.style.gridTemplateColumns='1fr';
+  if(!w.querySelector('.tpd')){ var t3=w.querySelector('.tq h3'); if(t3) t3.textContent='Trocar Este Dia'; var sb=w.querySelector('.tq > p.sub'); if(sb) sb.textContent='Você folga neste dia e trabalha numa folga da mesma semana. Um colega com a mesma atuação e o mesmo horário cobre o seu dia.'; }
+};
+
+/* Prévia do pedido: "Regras desta troca", com ✓ ou ✕ para cada uma */
+var _htmlPrevia_25 = htmlPrevia;
+htmlPrevia = function(pv){
+  var h=_htmlPrevia_25(pv); if(!pv || !pv.info) return h;
+  var i=pv.info, erros=(pv.motivos||[]).join(' '), it=[];
+  var item=function(st, t, d){ return '<div class="rgk-i"><span class="s '+st+'" aria-hidden="true">'+(st==='ok'?'✓':st==='x'?'✕':'i')+'</span><div><b>'+t+'</b><span>'+d+'</span></div></div>'; };
+  var hor = pv.aberta ? 'Só colegas com a sua atuação e o seu horário ('+esc(i.horario)+') podem aceitar.' : (i.mesmoHorario ? 'Os dois trabalham das '+esc(i.horario)+'.' : 'Você trabalha das '+esc(i.horario)+' e o colega das '+esc(i.colegaHorario)+'.');
+  it.push(item(i.mesmoHorario?'ok':'x','Mesma atuação e mesmo horário', hor));
+  var semOk=!/dia\(s\) de trabalho/.test(erros);
+  it.push(item(semOk?'ok':'x','5 dias de trabalho e 2 folgas na semana', semOk ? 'A semana continua certa para '+(pv.aberta?'você':'os dois')+'.' : 'A troca deixaria uma semana fora da regra.'));
+  var domOk=!/domingos de trabalho|domingo de folga/.test(erros);
+  var doms=(i.domingos||[]).filter(function(x){ return x.antes!==undefined; }).map(function(x){ return esc(x.nome)+': '+(x.antes===x.depois?x.antes:x.antes+' → '+x.depois)+' de 2'; }).join(' · ');
+  it.push(item(domOk?'ok':'x','Domingos de trabalho no mês (máximo 2)', (doms||'')+(domOk?'':' · a troca passaria do limite ou deixaria alguém sem domingo de folga')));
+  var prazoOkTxt=!/72 horas/.test(erros);
+  it.push(item(prazoOkTxt?'ok':'x','Prazo para pedir e aceitar', (i.prazoPedido?'Até '+esc(i.prazoPedido)+' ':'')+'(72 horas antes do primeiro turno).'));
+  it.push(item('i','Quem aprova', esc(i.aprovadores)+(i.dois?'. Os dois precisam aprovar':'')+(i.prazoAprov?', até '+esc(i.prazoAprov):'')+' (24 horas antes do primeiro turno). A gerência e o WFM também podem aprovar.'));
+  return h+'<div class="rgk" role="region" aria-label="Regras desta troca"><h5>Regras desta troca</h5><div class="rgk-l">'+it.join('')+'</div></div>';
+};
+
+/* Minhas trocas: andamento de cada pedido (quem aceitou, quem já aprovou, quem falta, prazos) */
+function acompTroca(t, eu){
+  var a=t.acomp; if(!a) return '';
+  var ch=[], ok=function(x){ return '<span class="e ok">✓ '+x+'</span>'; }, esp=function(x){ return '<span class="e esp">⏳ '+x+'</span>'; };
+  ch.push(ok('Pedido feito'));
+  if(t.status==='ABERTA') ch.push(esp('Esperando um colega aceitar'));
+  else if(t.status==='AGUARDANDO_COLEGA') ch.push(esp(t.colega===eu?'Esperando a sua resposta':'Esperando '+esc(primeiro(t.nomeColega))+' aceitar'));
+  else ch.push(ok(t.colega===eu ? 'Você aceitou' : esc(primeiro(t.nomeColega))+' aceitou'));
+  (a.coords||[]).forEach(function(c){ ch.push(c.ok ? ok(c.porSubst ? esc(c.porSubst)+' aprovou por '+esc(c.nome) : esc(c.nome)+' aprovou') : esp('Falta '+esc(c.nome)+' aprovar · coordenação de '+esc(c.de)+(c.ausente?' · de férias ou licença ('+esc((a.subst&&a.subst.nome)||'a substituta')+' pode aprovar no lugar)':''))); });
+  if(a.aberta) ch.push('<span class="e">+ coordenador de quem aceitar, se for de outra coordenação</span>');
+  if(a.gerente && a.gerente.precisa) ch.push('<span class="e">ou '+esc(a.gerente.nome)+' (gerente) aprova</span>');
+  var prazo = t.status==='AGUARDANDO_GESTAO' ? 'A coordenação aprova até '+a.prazoAprov+'.' : 'Aceite até '+a.prazoAceite+' · a coordenação aprova até '+a.prazoAprov+'.';
+  return '<div class="acp" aria-label="Andamento da troca">'+ch.join('<span class="seta" aria-hidden="true">›</span>')+'</div><div class="acp-p">'+prazo+' A escala muda assim que chegam as aprovações necessárias.</div>';
+}
+
+/* Gestão: quando ainda falta outro coordenador, o botão diz isso */
+if(typeof modalDecidirTroca==='function'){
+  var _modalDecidirTroca_25 = modalDecidirTroca;
+  modalDecidirTroca = function(t){
+    var r=_modalDecidirTroca_25.apply(this, arguments);
+    if(t && t.podeDecidir && t.faltamOutros && t.faltamOutros.length){
+      var w=[].slice.call(document.querySelectorAll('#modais .modal-fundo')).pop(), tent=0;
+      var ajusta=function(){ if(!w || !document.contains(w)) return; var b=[].slice.call(w.querySelectorAll('button')).filter(function(x){ return /^Aprovar/.test(x.textContent.trim()); })[0];
+        if(!b){ if(tent++<20) setTimeout(ajusta, 150); return; }
+        b.textContent='Aprovar (falta '+t.faltamOutros.join(' e ')+')';
+        var ac=b.closest('.acoes'); if(ac && !w.querySelector('.nota-parcial')){ var n=document.createElement('div'); n.className='nota-parcial'; n.textContent='Sua aprovação fica registrada. A escala só muda quando '+t.faltamOutros.join(' e ')+' também aprovar.'; ac.parentNode.insertBefore(n, ac); } };
+      ajusta();
+    }
+    return r;
+  };
+}
+</script>

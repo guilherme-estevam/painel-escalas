@@ -1,0 +1,40 @@
+<style>
+/* ===================== v150: sub-abas centralizadas (Gestão de Escalas e Aderência e Tempos) ===================== */
+/* o Portal centraliza com margem automática no primeiro e no último item; o indicador deslizante (span) virou primeiro/último
+   e "roubava" essa margem. Agora a margem vai no primeiro e no último BOTÃO. */
+#subnav.subnav > :first-child,#apSubnav.subnav > :first-child,#subnav.subnav > :last-child,#apSubnav.subnav > :last-child{margin-left:0;margin-right:0}
+#subnav.subnav > button:first-of-type,#apSubnav.subnav > button:first-of-type{margin-left:auto!important}
+#subnav.subnav > button:last-of-type,#apSubnav.subnav > button:last-of-type{margin-right:auto!important}
+#subnav.subnav > .ds-ind2,#apSubnav.subnav > .ds-ind2{margin:0!important}
+</style>
+<script>
+/* ===================== Mais rápido: telas já vistas aparecem na hora e as atualizações de fundo viram uma chamada só ===================== */
+(function () { var _ch = window.chamar; if (typeof _ch !== 'function') return;
+  var LER = { apiVisaoMes: 1, apiVisaoDia: 1, apiMes: 1, apiAfastamentos: 1, apiFeriados: 1, apiLogs: 1, apiAcessos: 1, apiMinhaEscala: 1, apiMinhaJornada: 1, apiAderencia: 1, apiPessoas: 1 };
+  var SO_LEITURA = /Previa|Detalhe|Ofertas|Opcoes|Compativeis|Agentes|V\d$|Lista$|Resumo$|Info$|^apiTrocas|^apiControleLogados|^apiPresenca(Painel|Mapa|Hoje)$|^api(Nomes|Fotos|Papeis|MeuAcesso|Inicio|AjustesFila|CapacidadeBanco|AtuacaoDe|AreasAssinc|FilasChat|AgenteDia|Colaborador|PlanoInfo|FeriadosOff|ValidarLink|Batida)$/;
+  var BATE = { apiNotificacoes: 1, apiPendencias: 1, apiLogadosPendentes: 1, apiPresenca: 1 };
+  var TTL = 120000, mem = {}, batida = { t: 0, r: null };
+  var copia = function (x) { try { return typeof structuredClone === 'function' ? structuredClone(x) : JSON.parse(JSON.stringify(x)); } catch (e) { return x; } };
+  var chave = function (a) { try { return JSON.stringify(a); } catch (e) { return null; } };
+  /* cada pedido é independente (a tela recebe sempre o seu próprio objeto, porque algumas telas modificam os dados que recebem);
+     sem prazo próprio: se demorar, o aviso do painel ("Está demorando mais que o normal") oferece "Tentar de novo", que faz um pedido novo */
+  var buscar = function (self, a, k) { var p = _ch.apply(self, a);
+    p.then(function (r) { mem[k] = { t: Date.now(), r: copia(r) }; }, function () { }); return p; };
+  window.chamar = function (fn) { var a = [].slice.call(arguments);
+    /* 1) atualizações de fundo: respondidas pela batida, se ela é recente */
+    if (BATE[fn] && batida.r && Date.now() - batida.t < 100000 && batida.r[fn] !== undefined && !(fn === 'apiPresenca' && a[3] === true)) return Promise.resolve(copia(batida.r[fn]));
+    /* 2) telas de leitura: mostra o que já foi carregado (até 2 min) e atualiza por trás */
+    if (LER[fn]) { var k = chave(a); if (k) { var m = mem[k];
+      if (m && Date.now() - m.t < TTL) { if (Date.now() - m.t > 20000) buscar(this, a, k).catch(function () { }); return Promise.resolve(copia(m.r)); }
+      return buscar(this, a, k); } }
+    /* 3) qualquer ação que grava algo apaga a memória (nunca mostra dado velho depois de uma alteração) */
+    if (!BATE[fn] && !SO_LEITURA.test(fn)) { mem = {}; batida.t = 0; }
+    return _ch.apply(this, a); };
+  Object.keys(_ch).forEach(function (k) { window.chamar[k] = _ch[k]; });
+  /* a batida: uma chamada a cada ~80 s, com a tela visível */
+  var bater = function () { try { if (!estado || !estado.token || !estado.dados || document.hidden) return;
+    _ch('apiBatida', estado.token, !document.hidden, { logados: typeof ehGestao === 'function' && ehGestao() }).then(function (r) { if (r) batida = { t: Date.now(), r: r }; }).catch(function () { }); } catch (e) { } };
+  setTimeout(bater, 6000); setInterval(bater, 80000);
+  document.addEventListener('visibilitychange', function () { if (!document.hidden && Date.now() - batida.t > 60000) bater(); });
+})();
+</script>

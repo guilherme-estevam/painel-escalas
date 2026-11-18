@@ -1,0 +1,243 @@
+<style>
+/* ===================== Minha escala: cartão do turno com linha do tempo ===================== */
+.turno2{border-radius:20px;overflow:hidden;margin-bottom:16px;box-shadow:0 12px 30px rgba(79,63,145,.18)}
+.turno2 .t2top{background:linear-gradient(135deg,var(--roxo),var(--rosa));color:#fff;padding:18px 22px 16px}
+.turno2 .rot{font-size:12.5px;font-weight:800;text-transform:uppercase;letter-spacing:.08em;opacity:.85}
+.turno2 .tit{font-size:24px;font-weight:800;margin:2px 0 4px}
+.turno2 .sub{font-size:14px;opacity:.95}
+.turno2 .agora{display:inline-flex;align-items:center;gap:8px;margin-top:10px;background:rgba(255,255,255,.18);border-radius:12px;padding:7px 12px;font-size:14px}
+.turno2 .agora i{width:9px;height:9px;border-radius:50%;background:#7CF0B5;box-shadow:0 0 0 0 rgba(124,240,181,.7);animation:pulsoVerde 1.8s infinite}
+@keyframes pulsoVerde{0%{box-shadow:0 0 0 0 rgba(124,240,181,.7)}70%{box-shadow:0 0 0 9px rgba(124,240,181,0)}100%{box-shadow:0 0 0 0 rgba(124,240,181,0)}}
+.turno2 .alerta{display:flex;align-items:center;gap:12px;margin-top:12px;background:#fff;color:#262626;max-width:560px;border-radius:14px;padding:10px 14px;box-shadow:0 8px 20px rgba(0,0,0,.18);animation:alertaPulso 2s ease-in-out infinite}
+.turno2 .alerta .ic{width:36px;height:36px;border-radius:50%;background:#FFF4D6;color:#B7791F;display:flex;align-items:center;justify-content:center;flex:none}
+.turno2 .alerta b{display:block;font-size:15px}
+.turno2 .alerta small{font-size:12.5px;color:#6D6D6D}
+@keyframes alertaPulso{0%,100%{transform:scale(1)}50%{transform:scale(1.012)}}
+.turno2 .t2pan{background:var(--sup,#fff);padding:16px 22px 18px}
+.tl{position:relative;margin:4px 0 0}
+.tl .trilho{position:relative;height:46px;border-radius:12px;background:var(--c1)}
+.tl .seg{position:absolute;top:4px;bottom:4px;border-radius:9px;color:#fff;display:flex;flex-direction:column;align-items:center;justify-content:center;overflow:hidden;white-space:nowrap;font-weight:800;font-size:12.5px;line-height:1.15;padding:0 4px}
+.tl .seg small{font-size:10.5px;font-weight:700;opacity:.9}
+.tl .seg.f0800{background:#D80073} .tl .seg.fchat{background:#4F3F91} .tl .seg.fass{background:#A51E5B} .tl .seg.fges{background:#55556a}
+.tl .seg.alm{background:repeating-linear-gradient(135deg,#FDE3CF 0 6px,#FFF1E6 6px 12px);color:#8a4b1f}
+.tl .seg.passou{opacity:.38}
+.tl .regua{position:relative;height:20px;margin-top:4px}
+.tl .regua span{position:absolute;transform:translateX(-50%);font-size:11px;font-weight:700;color:var(--c4)}
+.tl .regua span::before{content:"";position:absolute;left:50%;top:-6px;width:1px;height:5px;background:var(--c3)}
+.tl .agl{position:absolute;top:-8px;bottom:18px;width:2px;background:#E5484D;z-index:3;pointer-events:none}
+.tl .agl b{position:absolute;top:-16px;left:50%;transform:translateX(-50%);background:#E5484D;color:#fff;font-size:10.5px;font-weight:800;border-radius:6px;padding:1px 6px;white-space:nowrap}
+.tl .agl::after{content:"";position:absolute;bottom:-4px;left:-3px;width:8px;height:8px;border-radius:50%;background:#E5484D}
+.agenda{display:grid;gap:6px;margin-top:12px}
+.agenda .it{display:grid;grid-template-columns:12px 1fr auto auto;gap:10px;align-items:center;padding:8px 12px;border-radius:12px;background:var(--c1);font-size:14px}
+.agenda .it i{width:12px;height:12px;border-radius:4px}
+.agenda .it .h{font-weight:800}
+.agenda .it .d{font-size:12.5px;color:var(--c4);min-width:52px;text-align:right}
+.agenda .it .tag{font-size:11px;font-weight:800;border-radius:20px;padding:2px 8px;min-width:70px;text-align:center}
+.agenda .it.agora{background:var(--rosa-bg);box-shadow:inset 0 0 0 2px var(--rosa)}
+.agenda .it.agora .tag{background:var(--rosa);color:#fff}
+.agenda .it.passou{opacity:.55}
+.agenda .it.passou .tag{color:var(--c4)}
+.agenda .it.prox .tag{background:#FFF4D6;color:#8a5a00}
+html[data-tema="escuro"] .agenda .it.prox .tag{background:#3d3214;color:#ffd77a}
+@media (max-width:700px){ .tl .seg small{display:none} .turno2 .tit{font-size:20px} .agenda .it{grid-template-columns:12px 1fr auto} .agenda .it .d{display:none} }
+
+/* ===================== Pedir troca: modal redesenhado ===================== */
+.tq .passo{border-radius:16px}
+.tq .mini{display:grid;grid-template-columns:repeat(7,minmax(0,1fr));gap:4px}
+.tq .mini .sm{text-align:center;font-size:11px;font-weight:800;color:var(--c4);text-transform:uppercase}
+.tq .mini button,.tq .mini span.v{height:38px;border-radius:10px;border:0;font:inherit;font-weight:800;font-size:13px;position:relative}
+.tq .mini span.v{visibility:hidden}
+.tq .mini button.ok{background:var(--roxo-bg);color:var(--roxo);cursor:pointer}
+.tq .mini button.ok:hover{background:var(--roxo);color:#fff}
+.tq .mini button.sel{background:var(--rosa);color:#fff;box-shadow:0 6px 14px rgba(216,0,115,.35)}
+.tq .mini button.f{background:transparent;color:var(--c3);cursor:default}
+.tq .mini button.x{background:transparent;color:var(--c3);text-decoration:line-through;cursor:default}
+.tq .mini-leg{display:flex;gap:14px;flex-wrap:wrap;margin-top:8px;font-size:12px;color:var(--c4)}
+.tq .mini-leg i{display:inline-block;width:12px;height:12px;border-radius:4px;margin-right:5px;vertical-align:-2px}
+.tq .apto-info{font-size:12.5px;color:var(--c4);background:var(--c1);border-radius:10px;padding:8px 10px;margin:-2px 0 10px}
+.tq .opcard{border-radius:14px;padding:14px;gap:12px}
+.tq .opcard.des{opacity:.5;pointer-events:none}
+.tq .opcard .cab-op{display:flex;align-items:center;gap:8px;flex-wrap:wrap;margin-bottom:2px}
+.tq .opcard span strong{display:inline;font-weight:800;color:var(--preto)}
+.tq .opcard .cnt{background:var(--roxo);color:#fff;border-radius:20px;padding:2px 10px;font-size:12px;font-weight:800}
+.tq .opcard .cnt.zero{background:var(--c3)}
+.tq .pilha{display:flex;align-items:center;margin-top:10px}
+.tq .pilha .av{width:30px;height:30px;font-size:11px;margin-left:-8px;box-shadow:0 0 0 2px var(--sup,#fff)}
+.tq .pilha .av:first-child{margin-left:0}
+.tq .pilha .mais{margin-left:6px;font-size:12.5px;font-weight:800;color:var(--c4)}
+.tq .como{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-top:12px}
+.tq .como div{background:var(--sup,#fff);border-radius:12px;padding:10px;font-size:12.5px;border:1px solid var(--c2)}
+.tq .como b{display:flex;align-items:center;justify-content:center;width:22px;height:22px;border-radius:50%;background:var(--rosa);color:#fff;font-size:12px;margin-bottom:6px}
+.tq .colbusca{margin:10px 0 8px}
+.tq .colgrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(180px,1fr));gap:8px;max-height:290px;overflow:auto;padding:2px}
+.tq .colcard{display:flex;align-items:center;gap:10px;border:1.5px solid var(--c2);background:var(--sup,#fff);border-radius:14px;padding:8px 10px;cursor:pointer;text-align:left;font:inherit;color:var(--preto);position:relative}
+.tq .colcard:hover{border-color:var(--rosa)}
+.tq .colcard .av{width:40px;height:40px;font-size:13px;flex:none}
+.tq .colcard b{display:block;font-size:13px;line-height:1.25}
+.tq .colcard small{font-size:11.5px;color:var(--c4)}
+.tq .colcard.on{border-color:var(--rosa);background:var(--rosa-bg);box-shadow:0 6px 14px rgba(216,0,115,.15)}
+.tq .colcard.on::after{content:"✓";position:absolute;top:6px;right:8px;width:20px;height:20px;border-radius:50%;background:var(--rosa);color:#fff;font-size:12px;font-weight:800;display:flex;align-items:center;justify-content:center}
+@media (max-width:700px){ .tq .como{grid-template-columns:1fr} }
+</style>
+<script>
+/* ===================== Minha escala: cartão do turno ===================== */
+var TL_COR={'0800':'f0800',chat:'fchat',ass:'fass',ges:'fges'};
+var TL_NOME={'0800':'0800',chat:'Chat',ass:'Assíncrono',ges:'Trabalho'};
+var TL_HEX={'0800':'#D80073',chat:'#4F3F91',ass:'#A51E5B',ges:'#55556a',alm:'#F1C9A5'};
+function durTxt(m){ var h=Math.floor(m/60), r=m%60; return (h?h+'h':'')+(r?(h?('0'+r).slice(-2):r+' min'):(h?'':'0 min')); }
+cartaoTurno = function(d){
+  var velho=document.getElementById('turnoCard'); if(velho) velho.remove();
+  estado.turnoD=d;
+  var p=d.pessoas[0]; if(!p) return; var e=d.escalas[p.email]; if(!e||!e.dias) return;
+  var hoje=hojeLocal(), mesHoje=hoje.slice(0,7), n=diasMes(d.mes), af=d.afast[p.email]||[];
+  if(mesHoje>d.mes) return;
+  var agoraD=new Date(), minAgora=agoraD.getHours()*60+agoraD.getMinutes();
+  var hor=function(dd){ var x=d.atuacao&&d.atuacao.d?d.atuacao.d[String(dd)]:null; return {x:x, i:x?x[0]:p.entrada, a:x?(x[1]||''):'', f:x?x[2]:p.saida}; };
+  var trabalha=function(dd){ return e.dias.charAt(dd-1)==='T' && !tipoAfast(af, dataDe(d.mes,dd)); };
+  var alvo=null, rot, extra='';
+  if(mesHoje===d.mes){
+    var dh=+hoje.slice(8);
+    if(trabalha(dh) && minAgora < aMin(hor(dh).f)){ alvo=dh; rot = minAgora < aMin(hor(dh).i) ? 'Seu turno de hoje' : 'Turno em andamento'; }
+    else { for(var dd=dh+1; dd<=n; dd++) if(trabalha(dd)){ alvo=dd; break; } rot='Seu próximo turno'; var aH=tipoAfast(af, hoje);
+      extra = trabalha(dh) ? 'Seu turno de hoje terminou às '+hor(dh).f+'.' : aH ? 'Hoje: '+(aH==='FERIAS'?'férias':'licença')+'.' : e.dias.charAt(dh-1)==='F' ? 'Hoje é dia de folga.' : ''; }
+  } else { for(var d2=1; d2<=n; d2++) if(trabalha(d2)){ alvo=d2; break; } rot='Seu primeiro turno de '+MESES_LONGO[+d.mes.slice(5)-1]; }
+  var el=document.createElement('div'); el.className='turno2'; el.id='turnoCard';
+  if(!alvo){ el.innerHTML='<div class="t2top"><div class="rot">'+esc(rot)+'</div><div class="tit">Não há mais turnos em '+MESES_LONGO[+d.mes.slice(5)-1]+'</div>'+(extra?'<div class="sub">'+esc(extra)+'</div>':'')+'</div>'; inserir(); return; }
+  var h=hor(alvo), id=dataDe(d.mes,alvo), ehHoje=id===hoje, quando = ehHoje ? 'Hoje' : dSem(id).replace(/^./,function(c){ return c.toUpperCase(); });
+  // itens do dia (frentes + almoço), em ordem
+  var blocos = h.x ? blocosPadrao_(h.x, d.atuacao.m) : [[p.perfil==='GESTAO'?'ges':'ges', h.i, h.a||h.f]].concat(h.a?[['ges', hm(aMin(h.a)+60), h.f]]:[]);
+  var itens=blocos.map(function(b){ return {k:b[0], ini:aMin(b[1]), fim:aMin(b[2])}; });
+  if(h.a) itens.push({k:'alm', ini:aMin(h.a), fim:aMin(h.a)+60});
+  itens.sort(function(a,b){ return a.ini-b.ini; });
+  var nome=function(k){ return k==='alm'?'Almoço':(TL_NOME[k]||'Trabalho'); };
+  // agora, próximo e alerta
+  var atual=null, prox=null;
+  if(ehHoje){ itens.forEach(function(it){ if(minAgora>=it.ini && minAgora<it.fim) atual=it; if(it.ini>minAgora && (!prox || it.ini<prox.ini)) prox=it; }); }
+  var sub=[h.a?'Almoço das '+h.a+' às '+hm(aMin(h.a)+60):'', extra].filter(Boolean).join(' · ');
+  var agoraHtml='', alertaHtml='';
+  if(ehHoje && atual) agoraHtml='<div class="agora"><i></i>Agora você está '+(atual.k==='alm'?'em <b>almoço</b>':'no <b>'+esc(nome(atual.k))+'</b>')+' até '+hm(atual.fim)+'</div>';
+  else if(ehHoje && minAgora<aMin(h.i)) agoraHtml='<div class="agora"><i></i>Seu turno começa às <b>'+h.i+'</b></div>';
+  if(ehHoje){
+    var fimT=aMin(h.f), txt='', det='', faltaFim=fimT-minAgora;
+    var falta = prox ? prox.ini-minAgora : 0, muda = prox && !(atual && atual.k===prox.k && atual.fim===prox.ini);
+    if(muda && falta>0 && falta<=15){
+      if(minAgora<aMin(h.i)){ txt='Seu turno começa em '+falta+' min'; det='Você começa no '+nome(prox.k)+', às '+hm(prox.ini)+'.'; }
+      else if(prox.k==='alm'){ txt='Em '+falta+' min começa o seu almoço'; det='Pausa das '+hm(prox.ini)+' às '+hm(prox.fim)+'.'; }
+      else if(atual && atual.k==='alm'){ txt='Em '+falta+' min você volta do almoço para o '+nome(prox.k); det='Às '+hm(prox.ini)+', até '+hm(prox.fim)+'.'; }
+      else { txt='Em '+falta+' min você vai para o '+nome(prox.k); det='A partir das '+hm(prox.ini)+', até '+hm(prox.fim)+'.'; }
+    } else if(!prox && atual && atual.k!=='alm' && faltaFim>0 && faltaFim<=15){ txt='Seu turno termina em '+faltaFim+' min'; det='Saída às '+h.f+'.'; }
+    if(txt) alertaHtml='<div class="alerta" role="status"><span class="ic"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="13" r="8"/><path d="M12 9v4l2 2"/><path d="M5 3 2 6M22 6l-3-3"/></svg></span><span><b>'+esc(txt)+'</b><small>'+esc(det)+'</small></span></div>';
+  }
+  // linha do tempo
+  var t0=Math.floor(aMin(h.i)/60)*60, t1=Math.ceil(aMin(h.f)/60)*60; if(t1-t0<120) t1=t0+120;
+  var pct=function(m){ return ((m-t0)/(t1-t0)*100); };
+  var segs=itens.map(function(it){ var w=pct(it.fim)-pct(it.ini), passou=ehHoje && it.fim<=minAgora;
+    return '<span class="seg '+(it.k==='alm'?'alm':(TL_COR[it.k]||'fges'))+(passou?' passou':'')+'" style="left:'+pct(it.ini)+'%;width:calc('+w+'% - 3px);margin-left:1.5px" title="'+nome(it.k)+': '+hm(it.ini)+' às '+hm(it.fim)+'">'+(w>9?esc(nome(it.k)):'')+(w>13?'<small>'+hm(it.ini)+'–'+hm(it.fim)+'</small>':'')+'</span>'; }).join('');
+  var regua=''; for(var m=t0; m<=t1; m+=60) regua+='<span style="left:'+pct(m)+'%">'+(m/60)+'h</span>';
+  var agl = (ehHoje && minAgora>=t0 && minAgora<=t1) ? '<div class="agl" style="left:'+pct(minAgora)+'%"><b>agora '+hm(minAgora)+'</b></div>' : '';
+  var agenda='<div class="agenda">'+itens.map(function(it){ var est = !ehHoje ? '' : it.fim<=minAgora ? 'passou' : (atual===it ? 'agora' : (prox===it ? 'prox' : ''));
+    var tag = est==='passou' ? '✓ concluído' : est==='agora' ? 'agora' : est==='prox' ? (it.ini-minAgora<=60 ? 'em '+(it.ini-minAgora)+' min' : 'a seguir') : '';
+    return '<div class="it '+est+'"><i style="'+(it.k==='alm'?'background:repeating-linear-gradient(135deg,#F1C9A5 0 3px,#FFF1E6 3px 6px)':'background:'+(TL_HEX[it.k]||'#55556a'))+'"></i><span><b>'+esc(nome(it.k))+'</b></span><span class="h">'+hm(it.ini)+' – '+hm(it.fim)+' <span class="d">'+durTxt(it.fim-it.ini)+'</span></span>'+(tag?'<span class="tag">'+esc(tag)+'</span>':'<span></span>')+'</div>'; }).join('')+'</div>';
+  el.innerHTML='<div class="t2top"><div class="rot">'+esc(rot)+'</div><div class="tit">'+esc(quando)+' · '+h.i+' às '+h.f+'</div>'+(sub?'<div class="sub">'+esc(sub)+'</div>':'')+agoraHtml+alertaHtml+'</div>'+
+    '<div class="t2pan"><div class="tl"><div class="trilho">'+segs+'</div>'+agl+'<div class="regua">'+regua+'</div></div>'+agenda+'</div>';
+  inserir();
+  function inserir(){ var ficha=$('conteudo').querySelector('.ficha'); if(ficha) ficha.parentNode.insertBefore(el, ficha); }
+};
+// a linha do "agora" e o alerta se atualizam sozinhos a cada 30 segundos
+setInterval(function(){ if(document.hidden || !estado.turnoD) return; if(document.getElementById('turnoCard')) cartaoTurno(estado.turnoD); }, 30000);
+
+/* ===================== Pedir troca: modal redesenhado ===================== */
+modalNovaTroca = function(dFolga){
+  var d=estado.jor, p=d.pessoas[0], e=d.escalas[p.email], af=d.afast[p.email]||[], pend=d.trocasPendentes||[];
+  var n=diasMes(d.mes), livres={};
+  for(var dd=1; dd<=n; dd++){ var id=dataDe(d.mes,dd); if(e.dias.charAt(dd-1)==='T' && id>=d.hoje && !tipoAfast(af,id) && pend.indexOf(id)<0 && prazoOk(id, inicioTurnoMeu(d, dd))) livres[id]=1; }
+  if(!Object.keys(livres).length){ toast('Você não tem dias de trabalho disponíveis para troca neste mês. Lembre: só dá para trocar dias que começam daqui a mais de 72 horas.', true); return; }
+  var st={folga: livres[dFolga] ? dFolga : '', trab:'', modo:'aberta', colega:'', compat:null, busca:''};
+  var w=abrirModal('<div class="tq"><h3>Pedir troca de escala</h3><p class="sub">Troque um dia de trabalho por uma folga da mesma semana. Assim a semana continua com 5 dias de trabalho e 2 de folga.</p>'+
+    '<div class="passo"><h4><i>1</i>Qual dia você quer folgar?</h4><div id="nCal"></div><div class="mini-leg"><span><i style="background:var(--roxo-bg)"></i>Dia de trabalho que pode trocar</span><span><i style="background:var(--rosa)"></i>Escolhido</span></div><div class="regra48">Só dá para trocar dias cujo turno começa daqui a mais de 72 horas.</div></div>'+
+    '<div class="passo" id="pTrab"><h4><i>2</i>Em qual folga da mesma semana você vai trabalhar?</h4><div id="nTrab"></div></div>'+
+    '<div id="nResumo"></div>'+
+    '<div class="passo" id="pCom"><h4><i>3</i>Com quem?</h4><div id="nCom"></div></div>'+
+    '<div id="nHor"></div><div id="nPrev"></div>'+
+    '<div class="campo"><label for="nMot">Motivo (opcional, aparece para o colega e para a gestão)</label><input id="nMot" type="text" maxlength="200" placeholder="Ex.: consulta médica"></div>'+
+    '<div class="acoes"><button class="btn sec" data-fechar>Cancelar</button><button class="btn" id="nEnviar" disabled>Enviar pedido</button></div></div>', true);
+  w.querySelector('.modal').classList.add('xl');
+  var q=function(s){ return w.querySelector(s); };
+  var semana=function(id){ var x=new Date(id+'T12:00:00Z'); x.setUTCDate(x.getUTCDate()-x.getUTCDay()); var out=[]; for(var k=0;k<7;k++){ var y=new Date(x.getTime()); y.setUTCDate(y.getUTCDate()+k); out.push(y.toISOString().slice(0,10)); } return out; };
+  function desenharCal(){
+    var h=SEM.map(function(s){ return '<span class="sm">'+s+'</span>'; }).join(''), ini=wdDe(d.mes,1);
+    for(var i=0;i<ini;i++) h+='<span class="v"></span>';
+    for(var k=1;k<=n;k++){ var id=dataDe(d.mes,k), c=e.dias.charAt(k-1);
+      if(livres[id]) h+='<button type="button" class="ok'+(id===st.folga?' sel':'')+'" data-fo="'+id+'" title="'+dSem(id)+': dia de trabalho">'+k+'</button>';
+      else h+='<button type="button" class="'+(c==='F'?'f':'x')+'" disabled title="'+dSem(id)+(id<d.hoje?': já passou':c==='F'?': folga':(c==='T'&&!prazoOk(id, inicioTurnoMeu(d, k))?': começa em menos de 72 horas':': indisponível'))+'">'+k+'</button>'; }
+    q('#nCal').innerHTML='<div class="mini">'+h+'</div>';
+    w.querySelectorAll('[data-fo]').forEach(function(b){ b.onclick=function(){ st.folga=b.dataset.fo; st.trab=''; st.compat=null; st.colega=''; desenharCal(); desenharTrab(); atualizar(); }; });
+  }
+  function desenharTrab(){
+    if(!st.folga){ q('#nTrab').innerHTML='<div class="vazio-mini">Escolha primeiro, no calendário, o dia que quer folgar.</div>'; q('#pTrab').classList.add('off'); return; }
+    q('#pTrab').classList.remove('off');
+    var op=semana(st.folga).filter(function(id){ return id.slice(0,7)===d.mes && id>=d.hoje && prazoOk(id,'00:00') && e.dias.charAt(+id.slice(8)-1)==='F' && !tipoAfast(af,id) && pend.indexOf(id)<0; });
+    if(st.trab && op.indexOf(st.trab)<0) st.trab='';
+    if(!st.trab && op.length===1){ st.trab=op[0]; st.compat=null; }
+    q('#nTrab').innerHTML = op.length ? '<div class="dias-btn">'+op.map(function(id){ return '<button type="button" class="diabtn'+(id===st.trab?' on':'')+'" data-t="'+id+'">'+dSem(id)+'<small>dia de folga</small></button>'; }).join('')+'</div>'
+      : '<div class="vazio-mini">Você não tem folga disponível na semana de '+dSem(semana(st.folga)[0])+' a '+dSem(semana(st.folga)[6])+'. Escolha outro dia para folgar.</div>';
+    w.querySelectorAll('[data-t]').forEach(function(b){ b.onclick=function(){ st.trab=b.dataset.t; st.compat=null; st.colega=''; desenharTrab(); atualizar(); }; });
+  }
+  function atualizar(){
+    var pronto = st.folga && st.trab;
+    q('#nResumo').innerHTML = pronto ? '<div class="resumo"><span class="chip f">Passa a folgar <b>'+dSem(st.folga)+'</b></span><span class="seta">e</span><span class="chip t">Passa a trabalhar <b>'+dSem(st.trab)+'</b></span></div>' : '';
+    q('#pCom').classList.toggle('off', !pronto); q('#nEnviar').disabled=true; q('#nPrev').innerHTML=''; q('#nHor').innerHTML='';
+    if(!pronto){ q('#nCom').innerHTML='<div class="vazio-mini">Escolha os dois dias para ver quem pode cobrir.</div>'; return; }
+    if(!st.compat){ q('#nCom').innerHTML='<div class="carregando" style="min-height:60px"><div class="giro"></div> Procurando quem pode cobrir…</div>';
+      var cF=st.folga, cT=st.trab; // resposta atrasada de outros dias é ignorada
+      chamar('apiTrocaCompativeis', estado.token, st.folga, st.trab).then(function(r){ if(st.folga!==cF || st.trab!==cT) return; if(!r.ok){ q('#nCom').innerHTML='<div class="res erro">'+esc(r.msg)+'</div>'; return; } st.compat=r.colegas; if(!st.compat.length && st.modo==='colega') st.modo='aberta'; desenharCom(); }).catch(falhaGeral); return; }
+    desenharCom();
+  }
+  function desenharCom(){
+    var c=st.compat, nn=c.length, txtN = nn ? nn+' pessoa'+(nn>1?'s':'')+' apta'+(nn>1?'s':'') : 'Ninguém apto agora';
+    var pilha = nn ? '<div class="pilha">'+c.slice(0,7).map(function(x){ return avatarHtml(x.email, x.nome, ''); }).join('')+(nn>7?'<span class="mais">+'+(nn-7)+'</span>':'')+'</div>' : '';
+    var h='<div class="apto-info"><b>Quem pode cobrir:</b> colegas com a <b>mesma atuação</b> e o <b>mesmo horário</b> que você, que estão de folga em '+dSem(st.folga)+', trabalham em '+dSem(st.trab)+', não têm outra troca pendente nesses dias e continuam dentro das regras depois da troca (5 por 2 na semana e no máximo 2 domingos de trabalho no mês). Só aparece aqui quem pode mesmo trocar com você.</div>'+
+      '<label class="opcard'+(st.modo==='aberta'?' on':'')+'" data-modo="aberta"><input type="radio" name="nModo"'+(st.modo==='aberta'?' checked':'')+'><div style="flex:1"><div class="cab-op"><b>Deixar em aberto</b><span class="cnt'+(nn?'':' zero')+'">'+txtN+'</span></div>'+
+        '<span>'+(nn ? 'Avisamos <strong>'+(nn>1?'todas as '+nn+' pessoas aptas':'a pessoa apta')+'</strong> pelo sino do painel. A primeira que aceitar fica com a troca.' : 'Hoje ninguém pode cobrir esses dias. Você ainda pode abrir o pedido: ele fica disponível se alguém passar a poder cobrir, ou escolha outros dias.')+'</span>'+pilha+
+        (nn?'<div class="como"><div><b>1</b>Avisamos as '+nn+' pessoa'+(nn>1?'s':'')+' apta'+(nn>1?'s':'')+' no sino do painel.</div><div><b>2</b>A primeira que aceitar fica com a troca. As outras deixam de ver o pedido.</div><div><b>3</b>A coordenação confere as regras e aprova. Só então a escala muda.</div></div>':'')+'</div></label>'+
+      '<label class="opcard'+(st.modo==='colega'?' on':'')+(nn?'':' des')+'" data-modo="colega"><input type="radio" name="nModo"'+(st.modo==='colega'?' checked':'')+'><div><div class="cab-op"><b>Escolher um colega</b></div><span>Você escolhe quem cobre. Só essa pessoa recebe o pedido.</span></div></label>'+
+      '<div id="nColWrap"></div>';
+    q('#nCom').innerHTML=h; atualizarAvatares();
+    w.querySelectorAll('[data-modo]').forEach(function(l){ l.onclick=function(ev){ ev.preventDefault(); if(l.classList.contains('des')) return; st.modo=l.dataset.modo; if(st.modo==='aberta') st.colega=''; desenharCom(); }; });
+    if(st.modo==='colega') desenharColegas(); else previa();
+  }
+  function desenharColegas(){
+    var lista=st.compat.filter(function(x){ return !st.busca || (x.nome+' '+x.coord).toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g,'').indexOf(st.busca.toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g,''))>=0; });
+    q('#nColWrap').innerHTML=(st.compat.length>6?'<input class="colbusca" id="nBusca" type="text" placeholder="Buscar colega pelo nome" value="'+esc(st.busca)+'">':'<div style="height:8px"></div>')+
+      '<div class="colgrid">'+(lista.length?lista.map(function(x){ return '<button type="button" class="colcard'+(x.email===st.colega?' on':'')+'" data-col="'+esc(x.email)+'">'+avatarHtml(x.email, x.nome, '')+'<span><b>'+esc(x.nome)+'</b><small>'+esc(x.coord)+'</small></span></button>'; }).join(''):'<div class="vazio-mini">Ninguém com esse nome.</div>')+'</div>';
+    atualizarAvatares();
+    var b=q('#nBusca'); if(b) b.oninput=function(){ st.busca=this.value; var pos=this.selectionStart; desenharColegas(); var nb=q('#nBusca'); nb.focus(); nb.setSelectionRange(pos,pos); };
+    w.querySelectorAll('[data-col]').forEach(function(c){ c.onclick=function(){ st.colega=c.dataset.col; desenharColegas(); previa(); }; });
+    if(!st.colega){ q('#nPrev').innerHTML=''; q('#nHor').innerHTML=''; q('#nEnviar').disabled=true; q('#nEnviar').textContent='Escolha um colega'; }
+  }
+  function previa(){
+    if(st.modo==='colega' && !st.colega) return;
+    mostrarHorariosTroca(q('#nHor'), {folga:st.folga, trab:st.trab, colega: st.modo==='colega'?st.colega:''});
+    q('#nPrev').innerHTML='<div class="carregando" style="min-height:60px"><div class="giro"></div> Conferindo as regras…</div>';
+    var chave=[st.folga, st.trab, st.modo, st.colega].join('|'); // resposta atrasada de outra escolha é ignorada
+    chamar('apiTrocaPreviaNova', estado.token, st.folga, st.trab, st.modo==='colega'?st.colega:'').then(function(pv){
+      if(chave!==[st.folga, st.trab, st.modo, st.colega].join('|') || !st.compat) return;
+      q('#nPrev').innerHTML=htmlPrevia(pv)+(pv.aberta&&pv.ok?'<div class="dica" style="margin:-4px 0 12px">A escala de quem aceitar é conferida na hora do aceite.</div>':'');
+      q('#nEnviar').disabled=!pv.ok;
+      var nomeCol=st.colega?(st.compat.filter(function(x){ return x.email===st.colega; })[0]||{}).nome:'';
+      q('#nEnviar').textContent = st.modo==='colega' ? 'Enviar para '+primeiro(nomeCol||'o colega') : (st.compat.length?'Abrir pedido e avisar '+st.compat.length+' pessoa'+(st.compat.length>1?'s':''):'Abrir pedido');
+    }).catch(falhaGeral);
+  }
+  q('#nEnviar').onclick=function(){
+    var bt=this, rot=bt.textContent; ocupado(bt,true,'Enviando…');
+    chamar('apiTrocaCriar', estado.token, st.folga, st.trab, st.modo==='colega'?st.colega:'', q('#nMot').value).then(function(r){
+      if(!r.ok){ ocupado(bt,false,rot); q('#nPrev').innerHTML='<div class="res erro">'+(r.motivos||[r.msg]).map(esc).join('<br>')+'</div>'; return; }
+      w.remove();
+      var nomeCol=st.colega?(st.compat.filter(function(x){ return x.email===st.colega; })[0]||{}).nome:'';
+      toast(st.modo==='colega' ? 'Pedido enviado para '+primeiro(nomeCol||'o colega')+'. Agora é só esperar a resposta.' : (r.compativeis ? 'Pedido aberto. Avisamos '+r.compativeis+' pessoa'+(r.compativeis>1?'s':'')+' que podem cobrir.' : 'Pedido aberto. Ninguém pode cobrir agora, mas ele fica disponível.'));
+      recarregarJornada();
+    }).catch(function(err){ ocupado(bt,false,rot); falhaGeral(err); });
+  };
+  desenharCal(); desenharTrab(); atualizar();
+};
+</script>

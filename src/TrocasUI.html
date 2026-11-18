@@ -1,0 +1,178 @@
+<style>
+.secao{background:#fff;border:1px solid var(--c2);border-radius:14px;padding:18px 20px;margin-top:18px}
+.secao-cab{display:flex;justify-content:space-between;align-items:center;gap:12px;margin-bottom:12px;flex-wrap:wrap}
+.secao-cab h2{margin:0;font-size:18px}
+.secao-cab p{margin:2px 0 0;color:var(--c4);font-size:14px}
+.trocas{display:grid;gap:10px}
+.troca{border:1px solid var(--c2);border-radius:12px;padding:12px 14px;display:flex;gap:12px;align-items:center;justify-content:space-between;flex-wrap:wrap}
+.troca b{display:block}
+.troca small{color:var(--c4);font-size:13px}
+.troca .acoes{display:flex;gap:8px;flex-wrap:wrap}
+.chips{display:flex;gap:8px;flex-wrap:wrap;justify-content:center;margin-bottom:14px}
+.chips button{border:1.5px solid var(--c3);background:#fff;border-radius:20px;padding:6px 14px;font-weight:700;cursor:pointer;color:var(--c4);font-size:13px}
+.chips button.ativa{border-color:var(--rosa);color:var(--vinho);background:var(--rosa-bg)}
+.chips button i{font-style:normal;background:var(--rosa);color:#fff;border-radius:10px;padding:0 7px;margin-left:6px;font-size:12px}
+.previa-p{border:1px solid var(--c2);border-radius:12px;padding:12px;margin-bottom:12px;overflow-x:auto}
+.previa-p h4{margin:0 0 8px;font-size:15px;display:flex;justify-content:space-between;gap:8px;flex-wrap:wrap}
+.previa-p h4 small{color:var(--c4);font-weight:600}
+.sem-tab{width:100%;border-collapse:separate;border-spacing:3px;font-size:12px;margin-bottom:6px}
+.sem-tab th{position:static;background:none;border:0;padding:2px;color:var(--c4);font-weight:700}
+.sem-tab td{border:0;padding:0;text-align:center}
+.sem-tab td.rot{text-align:left;font-weight:700;color:var(--c4);width:52px}
+.sem-tab{min-width:300px}
+.sem-tab span{display:flex;align-items:center;justify-content:center;height:26px;border-radius:6px;font-weight:800}
+.sem-tab .T{background:var(--roxo);color:#fff}
+.sem-tab .F{background:var(--creme);color:var(--vinho)}
+.sem-tab .V{background:var(--c2);color:#999}
+.sem-tab .A{background:var(--rosa-bg);color:var(--vinho)}
+.sem-tab .x{box-shadow:0 0 0 2px var(--pink)}
+.res{border-radius:10px;padding:10px 14px;font-size:14px;margin-bottom:10px}
+.res.ok{background:var(--roxo-bg);color:var(--roxo)}
+.res.erro{background:var(--rosa-bg);color:var(--vinho)}
+.upload{border:2px dashed var(--c3);border-radius:14px;padding:28px;text-align:center;background:#fff;margin-bottom:16px}
+.upload input{display:block;margin:12px auto 0}
+.dif{font-family:inherit;letter-spacing:2px;font-weight:800;font-size:12px;word-break:break-all}
+@media (max-width:600px){.modal{padding:16px}.previa-p{padding:8px}.sem-tab{border-spacing:2px;min-width:0}.sem-tab td.rot{width:40px;font-size:10px}.sem-tab th{font-size:10px;padding:1px}.sem-tab span{height:24px;font-size:11px}}
+</style>
+<script>
+Object.assign(ACOES, {TROCA_SOLICITADA:'Troca solicitada',TROCA_ACEITA:'Troca aceita pelo colega',TROCA_RECUSADA:'Troca recusada pelo colega',TROCA_CANCELADA:'Troca cancelada',TROCA_APROVADA:'Troca aprovada',TROCA_REJEITADA:'Troca recusada pela coordenação',TROCA_EFETIVADA:'Troca efetivada na escala',TROCA_BLOQUEADA:'Troca bloqueada por regra',TROCA_INVALIDADA:'Troca invalidada',REVERSAO:'Reversão administrativa'});
+var SEL_TROCA={AGUARDANDO_COLEGA:'ras',AGUARDANDO_GESTAO:'alt',APROVADA:'pub',RECUSADA_COLEGA:'sem',REJEITADA:'sem',CANCELADA:'sem',BLOQUEADA:'erro',INVALIDADA:'erro'};
+
+/* ---------- prévia (mesma para agente, colega e gestão) ---------- */
+function htmlPrevia(pv){
+  if(!pv.pessoas) return '<div class="res erro">'+esc((pv.motivos||[]).join(' '))+'</div>';
+  var cel=function(c,af,x){ var k=af?'A':(c==='T'?'T':c==='F'?'F':'V'); return '<td><span class="'+k+(x?' x':'')+'">'+(af?'FÉ/LI':(c==='.'?'·':c))+'</span></td>'; };
+  var h=pv.ok?'<div class="res ok">A troca respeita todas as regras para as duas pessoas.</div>':'<div class="res erro"><b>Troca bloqueada.</b><br>'+pv.motivos.map(esc).join('<br>')+'</div>';
+  pv.pessoas.forEach(function(p){
+    h+='<div class="previa-p"><h4>'+esc(p.nome)+'<small>Domingos de folga: '+p.domAntes+' → '+p.domDepois+' · Dias de trabalho: '+p.trabAntes+' → '+p.trabDepois+'</small></h4>';
+    p.semanas.forEach(function(s){
+      h+='<table class="sem-tab"><thead><tr><th></th>'+s.dias.map(function(d){ return '<th>'+SEM[new Date(d.data+'T12:00:00Z').getUTCDay()]+'<br>'+d.data.slice(8)+'/'+d.data.slice(5,7)+'</th>'; }).join('')+'</tr></thead><tbody>'+
+        '<tr><td class="rot">Hoje</td>'+s.dias.map(function(d){ return cel(d.antes,d.afast,false); }).join('')+'</tr>'+
+        '<tr><td class="rot">Depois</td>'+s.dias.map(function(d){ return cel(d.depois,d.afast,d.antes!==d.depois); }).join('')+'</tr></tbody></table>';
+    });
+    if(p.avisos.length) h+='<div class="dica">'+p.avisos.map(esc).join('<br>')+'</div>';
+    h+='</div>';
+  });
+  return h;
+}
+
+/* ---------- agente ---------- */
+function secaoTrocasAgente(d){
+  var el=$('secTrocas'); if(!el) return;
+  el.innerHTML='<div class="secao"><div class="carregando" style="min-height:60px"><div class="giro"></div> Carregando trocas…</div></div>';
+  Promise.all([chamar('apiTrocas', estado.token, null), chamar('apiTrocaOpcoes', estado.token, d.mes)]).then(function(r){
+    var lista=r[0].itens, op=r[1], eu=r[0].eu;
+    el.innerHTML='<div class="secao"><div class="secao-cab"><div><h2>Trocas de escala</h2><p>A troca vale depois do aceite do colega e da aprovação da coordenação.</p></div>'+
+      (op.publicada?'<button class="btn" id="bNovaTroca">Solicitar troca</button>':'<span class="dica">Disponível quando sua escala do mês for publicada.</span>')+'</div>'+
+      '<div class="trocas">'+(lista.length?lista.map(function(t){ return itemTrocaAgente(t,eu); }).join(''):'<div class="dica" style="text-align:center;padding:12px">Você ainda não tem trocas.</div>')+'</div></div>';
+    if($('bNovaTroca')) $('bNovaTroca').onclick=function(){ modalNovaTroca(d, op); };
+    el.querySelectorAll('[data-tacao]').forEach(function(b){ b.onclick=function(){ acaoTrocaAgente(b.dataset.tacao, b.dataset.id, d); }; });
+  }).catch(falhaGeral);
+}
+function itemTrocaAgente(t, eu){
+  var souColega = t.colega===eu, outro = souColega ? t.nomeSolicitante : t.nomeColega;
+  var minha = souColega ? t.dataColega : t.dataSolicitante, dele = souColega ? t.dataSolicitante : t.dataColega;
+  var acoes='';
+  if(souColega && t.status==='AGUARDANDO_COLEGA') acoes='<button class="btn sec peq" data-tacao="recusar" data-id="'+t.id+'">Recusar</button><button class="btn peq" data-tacao="aceitar" data-id="'+t.id+'">Ver e aceitar</button>';
+  else if(!souColega && (t.status==='AGUARDANDO_COLEGA'||t.status==='AGUARDANDO_GESTAO')) acoes='<button class="btn sec peq" data-tacao="cancelar" data-id="'+t.id+'">Cancelar</button>';
+  var extra = t.status==='APROVADA' ? ' · aprovada por '+esc(t.decisaoPor)+' em '+dhBr(t.decisaoEm) : (t.obsDecisao? ' · '+esc(t.obsDecisao) : '') + (t.obsResposta && t.status==='RECUSADA_COLEGA' ? ' · '+esc(t.obsResposta):'');
+  return '<div class="troca"><div><b>'+(souColega?'Pedido de '+esc(outro):'Troca com '+esc(outro))+'</b><small>'+dBr(minha)+' e '+dBr(dele)+' · pedido em '+dhBr(t.criadaEm)+extra+'</small></div><div class="acoes"><span class="selo '+(SEL_TROCA[t.status]||'sem')+'">'+esc(t.rotulo)+'</span>'+acoes+'</div></div>';
+}
+function opcoesDias(mes, minimo){ var n=diasMes(mes), o='<option value="">Escolha</option>'; for(var d=1; d<=n; d++){ var id=dataDe(mes,d); if(id<minimo) continue; o+='<option value="'+id+'">'+('0'+d).slice(-2)+'/'+mes.slice(5)+' ('+SEM[wdDe(mes,d)]+')</option>'; } return o; }
+function modalNovaTroca(d, op){
+  var grupos={}; op.colegas.forEach(function(c){ (grupos[c.coord]=grupos[c.coord]||[]).push(c); });
+  var w=abrirModal('<h3>Solicitar troca</h3><p class="sub">Vocês trocam a situação (trabalho ou folga) nas duas datas. Ex.: você folga na quinta e trabalha na quarta, e o colega faz o contrário.</p>'+
+    '<div class="campo"><label for="tCol">Colega</label><select id="tCol"><option value="">Escolha</option>'+Object.keys(grupos).sort().map(function(g){ return '<optgroup label="'+esc(g)+'">'+grupos[g].map(function(c){ return '<option value="'+esc(c.email)+'">'+esc(c.nome)+'</option>'; }).join('')+'</optgroup>'; }).join('')+'</select></div>'+
+    '<div class="dois"><div class="campo"><label for="tD1">Primeira data</label><select id="tD1">'+opcoesDias(d.mes, op.hoje)+'</select></div><div class="campo"><label for="tD2">Segunda data</label><select id="tD2">'+opcoesDias(d.mes, op.hoje)+'</select></div></div>'+
+    '<div class="campo"><label for="tMot">Motivo (opcional)</label><input id="tMot" type="text" maxlength="200"></div>'+
+    '<div id="tPrev"></div>'+
+    '<div class="acoes"><button class="btn sec" data-fechar>Cancelar</button><button class="btn sec" id="tVer">Ver prévia</button><button class="btn" id="tEnviar" disabled>Enviar pedido</button></div>', true);
+  var limpar=function(){ w.querySelector('#tEnviar').disabled=true; w.querySelector('#tPrev').innerHTML=''; };
+  ['tCol','tD1','tD2'].forEach(function(id){ w.querySelector('#'+id).onchange=limpar; });
+  w.querySelector('#tVer').onclick=function(){
+    var c=w.querySelector('#tCol').value, a=w.querySelector('#tD1').value, b=w.querySelector('#tD2').value;
+    if(!c||!a||!b){ toast('Escolha o colega e as duas datas.', true); return; }
+    var bt=this; ocupado(bt,true,'Calculando…');
+    chamar('apiTrocaPrevia', estado.token, c, a, b).then(function(pv){ ocupado(bt,false,'Ver prévia'); w.querySelector('#tPrev').innerHTML=htmlPrevia(pv); w.querySelector('#tEnviar').disabled=!pv.ok; }).catch(function(e){ ocupado(bt,false,'Ver prévia'); falhaGeral(e); });
+  };
+  w.querySelector('#tEnviar').onclick=function(){
+    var bt=this; ocupado(bt,true,'Enviando…');
+    chamar('apiTrocaSolicitar', estado.token, w.querySelector('#tCol').value, w.querySelector('#tD1').value, w.querySelector('#tD2').value, w.querySelector('#tMot').value).then(function(r){
+      if(!r.ok){ ocupado(bt,true,'Enviar pedido'); w.querySelector('#tPrev').innerHTML='<div class="res erro">'+r.motivos.map(esc).join('<br>')+'</div>'; return; }
+      w.remove(); toast('Pedido enviado. O colega foi avisado por e-mail.'); secaoTrocasAgente(d); atualizarSino();
+    }).catch(function(e){ ocupado(bt,false,'Enviar pedido'); falhaGeral(e); });
+  };
+}
+function acaoTrocaAgente(acao, id, d){
+  if(acao==='cancelar'){ if(!confirm('Cancelar este pedido de troca?')) return; chamar('apiTrocaCancelar', estado.token, id).then(function(r){ if(!r.ok){ toast(r.msg,true); return; } toast('Pedido cancelado.'); secaoTrocasAgente(d); }).catch(falhaGeral); return; }
+  if(acao==='recusar'){ var m=prompt('Recusar a troca? Se quiser, diga o motivo:'); if(m===null) return; chamar('apiTrocaResponder', estado.token, id, false, m).then(function(r){ if(!r.ok){ toast(r.msg,true); return; } toast('Troca recusada.'); secaoTrocasAgente(d); }).catch(falhaGeral); return; }
+  var w=abrirModal('<h3>Aceitar troca</h3><p class="sub">Confira como fica a escala de vocês dois. Depois do seu aceite, a coordenação ainda precisa aprovar.</p><div id="aPrev"><div class="carregando" style="min-height:80px"><div class="giro"></div></div></div><div class="acoes"><button class="btn sec" data-fechar>Voltar</button><button class="btn" id="aOk" disabled>Aceitar troca</button></div>', true);
+  chamar('apiTrocaPreviaPorId', estado.token, id).then(function(pv){ w.querySelector('#aPrev').innerHTML=htmlPrevia(pv); w.querySelector('#aOk').disabled=!pv.ok; }).catch(function(e){ w.remove(); falhaGeral(e); });
+  w.querySelector('#aOk').onclick=function(){ var bt=this; ocupado(bt,true,'Aceitando…'); chamar('apiTrocaResponder', estado.token, id, true, '').then(function(r){ w.remove(); if(!r.ok){ toast(r.msg,true); } else toast('Troca aceita. Agora falta a aprovação da coordenação.'); secaoTrocasAgente(d); }).catch(function(e){ w.remove(); falhaGeral(e); }); };
+}
+
+/* ---------- gestão: trocas ---------- */
+function telaTrocasGestao(filtro){
+  gCarregando(); filtro = filtro===undefined ? (estado.fTrocas===undefined?'AGUARDANDO_GESTAO':estado.fTrocas) : filtro; estado.fTrocas=filtro;
+  chamar('apiTrocas', estado.token, {status:filtro}).then(function(r){
+    var c=r.contagem, chips=[['AGUARDANDO_GESTAO','Aguardando aprovação'],['AGUARDANDO_COLEGA','Aguardando o colega'],['APROVADA','Aprovadas'],['REJEITADA','Rejeitadas'],['RECUSADA_COLEGA','Recusadas pelo colega'],['CANCELADA','Canceladas'],['BLOQUEADA','Bloqueadas por regra'],['INVALIDADA','Invalidadas'],['','Todas']];
+    gc().innerHTML='<div class="cab"><div><h1>Trocas de escala</h1><p>Qualquer pessoa da gestão pode aprovar ou rejeitar. Antes de efetivar, as regras são validadas de novo.</p></div></div>'+
+      '<div class="chips">'+chips.map(function(x){ var n=x[0]?(c[x[0]]||0):0; return '<button data-f="'+x[0]+'" class="'+(filtro===x[0]?'ativa':'')+'">'+x[1]+(x[0]==='AGUARDANDO_GESTAO'&&n?'<i>'+n+'</i>':(x[0]&&n?' ('+n+')':''))+'</button>'; }).join('')+'</div>'+
+      '<div class="tabela"><table><thead><tr><th class="esq">Quem pediu</th><th class="esq">Colega</th><th>Datas</th><th>Situação</th><th class="esq">Decisão</th><th></th></tr></thead><tbody>'+
+      (r.itens.length?r.itens.map(function(t){ return '<tr><td class="esq"><b>'+esc(t.nomeSolicitante)+'</b><br><small>'+dhBr(t.criadaEm)+'</small></td><td class="esq">'+esc(t.nomeColega)+(t.aceiteEm?'<br><small>respondeu em '+dhBr(t.aceiteEm)+'</small>':'')+'</td><td>'+dBr(t.dataSolicitante)+'<br>'+dBr(t.dataColega)+'</td><td><span class="selo '+(SEL_TROCA[t.status]||'sem')+'">'+esc(t.rotulo)+'</span></td><td class="esq" style="font-size:12px;color:#6D6D6D;white-space:normal;max-width:240px">'+(t.decisaoPor?esc(t.decisaoPor)+' em '+dhBr(t.decisaoEm)+(t.obsDecisao?' · '+esc(t.obsDecisao):''):'')+(t.status==='BLOQUEADA'||t.status==='INVALIDADA'?esc(t.validacao):'')+'</td><td>'+(t.status==='AGUARDANDO_GESTAO'?'<button class="btn peq" data-analisar="'+t.id+'">Analisar</button>':'')+'</td></tr>'; }).join(''):'<tr><td colspan="6" style="padding:28px;color:#6D6D6D">Nenhuma troca nesta situação.</td></tr>')+'</tbody></table></div>';
+    gc().querySelectorAll('[data-f]').forEach(function(b){ b.onclick=function(){ telaTrocasGestao(b.dataset.f); }; });
+    gc().querySelectorAll('[data-analisar]').forEach(function(b){ var t=r.itens.filter(function(x){return x.id===b.dataset.analisar;})[0]; b.onclick=function(){ modalDecidirTroca(t); }; });
+  }).catch(falhaGeral);
+}
+function modalDecidirTroca(t){
+  var w=abrirModal('<h3>Troca entre '+esc(primeiro(t.nomeSolicitante))+' e '+esc(primeiro(t.nomeColega))+'</h3><p class="sub">'+dBr(t.dataSolicitante)+' e '+dBr(t.dataColega)+(t.motivo?' · Motivo: '+esc(t.motivo):'')+'</p><div id="dPrev"><div class="carregando" style="min-height:80px"><div class="giro"></div></div></div>'+
+    '<div class="campo"><label for="dObs">Observação (vai para o histórico e para os agentes)</label><input id="dObs" type="text" maxlength="200"></div>'+
+    '<div class="acoes"><button class="btn sec" data-fechar>Voltar</button><button class="btn sec" id="dRej">Rejeitar</button><button class="btn roxo" id="dApr" disabled>Aprovar e efetivar</button></div>', true);
+  chamar('apiTrocaPreviaPorId', estado.token, t.id).then(function(pv){ w.querySelector('#dPrev').innerHTML=htmlPrevia(pv); w.querySelector('#dApr').disabled=!pv.ok; }).catch(function(e){ w.remove(); falhaGeral(e); });
+  var decidir=function(apr, bt){ ocupado(bt,true,apr?'Efetivando…':'Rejeitando…'); chamar('apiTrocaDecidir', estado.token, t.id, apr, w.querySelector('#dObs').value).then(function(r){ w.remove(); toast(r.ok?(apr?(r.parcial?r.msg:'Troca aprovada e aplicada nas duas escalas.'):'Troca recusada.'):r.msg, !r.ok); telaTrocasGestao(); atualizarSino(); }).catch(function(e){ w.remove(); falhaGeral(e); }); };
+  w.querySelector('#dApr').onclick=function(){ decidir(true,this); };
+  w.querySelector('#dRej').onclick=function(){ if(!w.querySelector('#dObs').value.trim()){ toast('Escreva o motivo da rejeição na observação.', true); return; } decidir(false,this); };
+}
+
+/* ---------- gestão: reversão ---------- */
+function modalReversao(logId){
+  var w=abrirModal('<h3>Reverter alteração</h3><p class="sub">A escala volta ao estado anterior a esta operação, como rascunho. O registro original continua no histórico.</p><div id="rPrev"><div class="carregando" style="min-height:80px"><div class="giro"></div></div></div>'+
+    '<div class="campo"><label for="rMot">Motivo (obrigatório)</label><input id="rMot" type="text" maxlength="200"></div>'+
+    '<div class="acoes"><button class="btn sec" data-fechar>Cancelar</button><button class="btn" id="rOk" disabled>Reverter</button></div>', true);
+  chamar('apiReversaoPrevia', estado.token, logId).then(function(p){
+    if(p.msg && !p.diferencas){ w.querySelector('#rPrev').innerHTML='<div class="res erro">'+esc(p.msg)+'</div>'; return; }
+    var difs=p.diferencas.map(function(x){ return ('0'+x.dia).slice(-2)+': '+(x.atual==='.'?'vazio':x.atual==='T'?'trabalho':'folga')+' → '+(x.restaurado==='.'?'vazio':x.restaurado==='T'?'trabalho':'folga'); });
+    w.querySelector('#rPrev').innerHTML='<div class="ficha" style="grid-template-columns:repeat(3,1fr)"><div><small>Profissional</small><strong>'+esc(p.nome)+'</strong></div><div><small>Mês</small><strong>'+rotuloMes(p.mes)+'</strong></div><div><small>Operação revertida</small><strong>'+esc(ACOES[p.operacao]||p.operacao)+'</strong></div></div>'+
+      (p.mudouDepois?'<div class="res erro">A escala mudou depois dessa operação. A reversão também desfaz essas mudanças posteriores.</div>':'')+
+      (p.diferencas.length?'<div class="lista-mini"><div><b>'+p.diferencas.length+' dia(s) mudam</b>'+difs.join(' · ')+'</div></div>':'<div class="res ok">A escala já está igual ao estado anterior. Nada a reverter.</div>')+
+      (p.erros.length?'<div class="res erro" style="margin-top:10px"><b>Reversão bloqueada:</b> o estado anterior violaria as regras.<br>'+p.erros.map(esc).join('<br>')+'</div>':'')+
+      (p.status==='PUBLICADA'||p.status==='ALTERADA'?'<div class="dica" style="margin-top:8px">A escala já foi publicada: depois de reverter, publique de novo para o agente ver a versão restaurada.</div>':'');
+    w.querySelector('#rOk').disabled=!p.ok;
+  }).catch(function(e){ w.remove(); falhaGeral(e); });
+  w.querySelector('#rOk').onclick=function(){ var bt=this; if(!w.querySelector('#rMot').value.trim()){ toast('Informe o motivo.', true); return; } ocupado(bt,true,'Revertendo…');
+    chamar('apiReverter', estado.token, logId, w.querySelector('#rMot').value).then(function(r){ w.remove(); toast(r.ok?'Alteração revertida. A escala ficou como '+(r.status==='ALTERADA'?'alterada (publique de novo)':'rascunho')+'.':r.msg, !r.ok); telaLogs(); }).catch(function(e){ w.remove(); falhaGeral(e); }); };
+}
+
+/* ---------- gestão: headcount ---------- */
+function telaHeadcount(){
+  gc().innerHTML='<div class="cab"><div><h1>Atualizar headcount</h1><p>Envie o CSV do "Headcount - Customer - Consolidado". Escalas, trocas, afastamentos e histórico são preservados.</p></div></div>'+
+    '<div class="upload"><b>Escolha o arquivo CSV</b><div class="dica">Entram só pessoas com status Ativo, Férias ou Licença. Quem sair do arquivo fica inativo, sem perder o histórico.</div><input type="file" id="hcArq" accept=".csv,text/csv"></div><div id="hcRes"></div>';
+  $('hcArq').onchange=function(){
+    var f=this.files[0]; if(!f) return;
+    var rd=new FileReader(); rd.onload=function(){ var txt=String(rd.result);
+      $('hcRes').innerHTML='<div class="carregando" style="min-height:80px"><div class="giro"></div> Comparando com o banco…</div>';
+      chamar('apiHeadcountPrevia', estado.token, txt).then(function(d){
+        if(!d.ok){ $('hcRes').innerHTML='<div class="res erro">'+esc(d.msg)+'</div>'; return; }
+        var lista=function(t,arr,fn){ return '<div class="secao"><div class="secao-cab"><h2>'+t+' ('+arr.length+')</h2></div>'+(arr.length?'<div class="lista-mini" style="max-height:260px">'+arr.map(fn).join('')+'</div>':'<div class="dica">Nenhuma.</div>')+'</div>'; };
+        $('hcRes').innerHTML='<div class="numeros" style="--cols:4"><div class="numero"><b>'+d.ativosNoArquivo+'</b><span>Pessoas ativas no arquivo</span></div><div class="numero'+(d.novos.length?' alerta':'')+'"><b>'+d.novos.length+'</b><span>Novas (entram sem acesso)</span></div><div class="numero'+(d.saem.length?' alerta':'')+'"><b>'+d.saem.length+'</b><span>Saem do headcount</span></div><div class="numero"><b>'+d.mudam.length+'</b><span>Com dados alterados</span></div></div>'+
+          lista('Novas pessoas',d.novos,function(n){ return '<div><b>'+esc(n.nome)+'</b>'+esc(n.email)+' · '+esc(n.cargo)+' · '+esc(n.coord)+(n.voltando?' · voltando ao headcount':'')+'</div>'; })+
+          lista('Saem do headcount',d.saem,function(n){ return '<div><b>'+esc(n.nome)+'</b>'+esc(n.email)+' · perde o acesso; histórico mantido</div>'; })+
+          lista('Dados alterados',d.mudam,function(n){ return '<div><b>'+esc(n.nome)+'</b>'+n.mudancas.map(esc).join(' · ')+'</div>'; })+
+          '<div class="acoes" style="display:flex;justify-content:center;gap:10px;margin-top:16px"><button class="btn sec" id="hcCanc">Cancelar</button><button class="btn" id="hcOk">Aplicar atualização</button></div>';
+        $('hcCanc').onclick=telaHeadcount;
+        $('hcOk').onclick=function(){ var bt=this; ocupado(bt,true,'Aplicando…'); chamar('apiHeadcountAplicar', estado.token, txt).then(function(r){ if(!r.ok){ ocupado(bt,false,'Aplicar atualização'); toast(r.msg,true); return; } estado.pessoas=null; $('hcRes').innerHTML='<div class="res ok">Headcount atualizado: '+r.resultado.novos+' nova(s), '+r.resultado.atualizados+' atualizada(s), '+r.resultado.sairamDoHeadcount+' saída(s).'+(r.novos.length?' As novas pessoas aguardam liberação de acesso.':'')+'</div>'; }).catch(function(e){ ocupado(bt,false,'Aplicar atualização'); falhaGeral(e); }); };
+      }).catch(falhaGeral);
+    }; rd.readAsText(f, 'UTF-8');
+  };
+}
+</script>

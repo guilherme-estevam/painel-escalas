@@ -1,0 +1,113 @@
+<style>
+/* ===================== Visão do Dia: cartões do topo como botões, separando agentes e gestão (11/11/2026) ===================== */
+.numeros.vdn{--cols:6!important}
+.numeros .numero.vdn-b{-webkit-appearance:none;appearance:none;font:inherit;color:inherit;width:100%;margin:0;box-sizing:border-box;cursor:pointer;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:4px;text-align:center;position:relative;transition:transform .2s cubic-bezier(.23,1,.32,1),box-shadow .2s cubic-bezier(.23,1,.32,1),border-color .2s}
+.numeros .numero.vdn-b small.ges{font-size:11.5px;font-weight:700;color:var(--c4)}
+.numeros .numero.vdn-b .ver{font-size:11.5px;font-weight:800;color:var(--rosa,#D80073);opacity:0;transform:translateY(2px);transition:opacity .18s,transform .18s}
+@media (hover:hover){ .numeros .numero.vdn-b:hover{transform:translateY(-2px);box-shadow:0 14px 28px -20px rgba(79,63,145,.55)} .numeros .numero.vdn-b:hover .ver{opacity:1;transform:none} }
+.numeros .numero.vdn-b:active{transform:scale(.98)}
+.numeros .numero.vdn-b:focus-visible{outline:2px solid var(--rosa,#D80073);outline-offset:2px}
+.numeros .numero.vdn-b.vazio{cursor:default}
+@media (max-width:1100px){ .numeros.vdn{grid-template-columns:repeat(3,minmax(0,1fr))!important} }
+@media (max-width:620px){ .numeros.vdn{grid-template-columns:repeat(2,minmax(0,1fr))!important} }
+/* janela com a lista de pessoas */
+.vdn-m{display:flex;flex-direction:column;gap:14px}
+.vdn-top{display:flex;align-items:center;gap:14px}
+.vdn-top .ic{width:46px;height:46px;border-radius:14px;display:grid;place-items:center;color:#fff;background:var(--k);flex:none}
+.vdn-top .ic svg{width:22px;height:22px}
+.vdn-top h2{margin:0;font-size:19px;font-weight:800;color:var(--preto)}
+.vdn-top p{margin:2px 0 0;font-size:13px;color:var(--c4)}
+.vdn-top .n{margin-left:auto;font-size:30px;font-weight:800;color:var(--preto);font-variant-numeric:tabular-nums}
+.vdn-exp{margin:0;padding:10px 12px;border-radius:12px;background:#F4F1FB;border:1px solid #E3DCF5;font-size:13px;line-height:1.45;color:var(--c5,#4a4458)}
+html[data-tema="escuro"] .vdn-exp{background:#1f1b2b;border-color:#3a3150;color:#cfc8dc}
+.vdn-f{display:flex;gap:10px;flex-wrap:wrap;align-items:center}
+.vdn-f input,.vdn-f select{width:auto!important;margin:0!important;height:40px;padding:0 12px;border-radius:11px;border:1.5px solid var(--c2,#E6DFEE);background:var(--sup,#fff);color:var(--preto);font:inherit;font-size:13.5px}
+.vdn-f input{flex:1 1 240px;min-width:180px}.vdn-f select{flex:0 1 220px}
+.vdn-f .cont{margin-left:auto;font-size:12.5px;font-weight:800;color:var(--c4)}
+.vdn-l{max-height:min(58vh,560px);overflow:auto;border:1px solid var(--c2,#E6DFEE);border-radius:14px}
+html[data-tema="escuro"] .vdn-l{border-color:#2c2636}
+.vdn-g{position:sticky;top:0;z-index:2;display:flex;justify-content:space-between;padding:8px 14px;font-size:11.5px;font-weight:800;letter-spacing:.05em;text-transform:uppercase;color:var(--c4);background:var(--c1,#F7F4FA);border-bottom:1px solid var(--c2,#E6DFEE)}
+html[data-tema="escuro"] .vdn-g{background:#211c29;border-color:#2c2636}
+.vdn-r{all:unset;box-sizing:border-box;cursor:pointer;display:grid;grid-template-columns:auto minmax(0,1fr) auto;gap:12px;align-items:center;width:100%;padding:10px 14px;border-bottom:1px solid var(--c2,#E6DFEE);transition:background-color .15s}
+html[data-tema="escuro"] .vdn-r{border-color:#2c2636}
+@media (hover:hover){ .vdn-r:hover{background:color-mix(in srgb,var(--rosa,#D80073) 5%,transparent)} }
+.vdn-r:focus-visible{outline:2px solid var(--rosa,#D80073);outline-offset:-2px}
+.vdn-r .av,.vdn-r img{width:40px!important;height:40px!important;border-radius:50%!important}
+.vdn-r .nm{min-width:0}.vdn-r .nm b{display:block;font-size:14px;font-weight:800;color:var(--preto);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.vdn-r .nm small{display:block;font-size:12px;color:var(--c4);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.vdn-r .ex{display:flex;align-items:center;gap:6px;flex-wrap:wrap;justify-content:flex-end}
+.vdn-t{display:inline-block;padding:3px 8px;border-radius:7px;font-size:11.5px;font-weight:800;white-space:nowrap;color:color-mix(in srgb,var(--k) 82%,#000);background:color-mix(in srgb,var(--k) 14%,transparent)}
+html[data-tema="escuro"] .vdn-t{color:color-mix(in srgb,var(--k) 55%,#fff)}
+.vdn-h{font-size:12.5px;font-weight:800;color:var(--preto);font-variant-numeric:tabular-nums;white-space:nowrap}
+.vdn-h small{font-weight:700;color:var(--c4)}
+.vdn-vz{padding:28px;text-align:center;color:var(--c4);font-weight:700}
+@media (max-width:620px){ .vdn-r{grid-template-columns:auto minmax(0,1fr)} .vdn-r .ex{grid-column:2;justify-content:flex-start} }
+</style>
+<script>
+/* ===================== Visão do Dia: "Considerando Presença" conta só quem está presente (11/11/2026) =====================
+   Antes contavam os presentes e quem ainda estava no prazo de registrar. Agora contam só os Presentes: quem ainda não registrou
+   e as ausências ficam na parte tracejada. Vale para o gráfico, a janela da meia hora e o cartão "agora". */
+if (typeof VD_CONTA !== 'undefined') VD_CONTA = ['PRESENTE'];
+var VDN_PRES_TXT = 'Só quem <b>já registrou presença</b> (Presente) conta. A <b>parte tracejada</b> é quem está escalado mas ainda não conta: quem ainda não registrou (no prazo) e as ausências (falta, atestado ou day off).';
+function vdnAjustarPresenca() { var raiz = typeof gc === 'function' ? gc() : null; if (!raiz) return; var pr = estado.vdPresR;
+  /* texto explicativo do gráfico */
+  var pp = raiz.querySelector('.vd-cob-cab p'); if (pp && estado.vdModo === 'pres' && /prazo de registrar/.test(pp.textContent) && !pp.dataset.vdn) { pp.innerHTML = pp.innerHTML.replace(/Só quem <b>conta hoje<\/b>: agentes presentes ou ainda dentro do prazo de registrar\. A <b>parte tracejada<\/b> são as <b>ausências<\/b> \(escalados com falta, atestado ou day off\)/, VDN_PRES_TXT.replace(/\.$/, '')); pp.dataset.vdn = '1'; }
+  /* resumo abaixo do gráfico: presentes, ainda sem registro e ausências separados */
+  var fx = raiz.querySelector('.vd-pres-fx'); if (fx && pr && !fx.dataset.vdn && /escalados contam/.test(fx.textContent)) { fx.dataset.vdn = '1';
+    var m = (fx.textContent.match(/dos (\d+) escalados/) || [])[1], nTot = +m || 0, fo = pr.fora || {}, nAgu = (fo.AGUARDANDO || 0) + (fo.SEM_REGISTRO || 0), nAus = 0; Object.keys(fo).forEach(function (k) { if (k !== 'AGUARDANDO' && k !== 'SEM_REGISTRO') nAus += fo[k]; });
+    var chips = [].slice.call(fx.querySelectorAll('.ch')).filter(function (c) { return !/Aguardando|Sem Registro/i.test(c.textContent); }).map(function (c) { return c.outerHTML; }).join(' ');
+    fx.innerHTML = '<b>' + (nTot - nAgu - nAus) + ' dos ' + nTot + ' escalados estão presentes</b>' + (nAgu ? ' · <span class="ch" style="--k:#3D7BE0"><i></i>' + nAgu + ' ainda sem registro (no prazo)</span>' : '') + (nAus ? ' · ' + nAus + ' ausência' + (nAus > 1 ? 's' : '') + ': ' + chips : ' · nenhuma ausência'); }
+  /* legenda: no modo presença a parte tracejada inclui quem ainda não registrou */
+  if (estado.vdModo === 'pres') raiz.querySelectorAll('.vd-cob .leg-fr span').forEach(function (e) { if (e.children.length <= 1 && /^\s*Ausências\s*$/.test(e.textContent)) { var t = [].slice.call(e.childNodes).filter(function (n) { return n.nodeType === 3 && /Ausências/.test(n.nodeValue); })[0]; if (t) t.nodeValue = t.nodeValue.replace('Ausências', 'Fora da Conta'); } });
+  /* cartão "agora" */
+  var ag = raiz.querySelector('.vd-agora'); if (ag && /prazo de registrar/.test(ag.title || '')) ag.title = 'Só quem já registrou presença (Presente). Quem ainda não registrou e as ausências ficam de fora.';
+  /* janela da meia hora */
+  var sl = $('slCorpo'); if (sl && estado.vdModo === 'pres') sl.querySelectorAll('.sl-aus .hd b').forEach(function (b) { if (b.dataset.vdn) return; b.dataset.vdn = '1'; (function tira(n) { if (!n) return; if (n.nodeType === 3) { if (/· Ausências/.test(n.nodeValue)) n.nodeValue = n.nodeValue.replace('· Ausências', '· Fora da Conta'); return; } [].slice.call(n.childNodes).forEach(tira); })(b);
+    var vz = b.closest('.sl-card').querySelector('.vz'); if (vz && /Nenhuma ausência/.test(vz.textContent)) vz.textContent = 'Ninguém fora da conta nesta atuação.'; }); }
+
+/* ===================== Cartões do topo: agentes e gestão separados, cada um abre a lista de pessoas ===================== */
+var VDN_IC = { ag: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="9" cy="8" r="3.4"/><path d="M2.5 20c.6-3.4 3.2-5.2 6.5-5.2s5.9 1.8 6.5 5.2M16 4.9a3.4 3.4 0 0 1 0 6.2M18.5 14.9c1.7.7 2.7 2.3 3 5.1"/></svg>',
+  fol: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3a6 6 0 0 0 9 9 9 9 0 1 1-9-9z"/></svg>',
+  ges: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="7" width="18" height="13" rx="2"/><path d="M8 7V5a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2M3 13h18"/></svg>',
+  fer: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.9 4.9l1.4 1.4M17.7 17.7l1.4 1.4M2 12h2M20 12h2M4.9 19.1l1.4-1.4M17.7 6.3l1.4-1.4"/></svg>',
+  sem: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="5" width="18" height="16" rx="2"/><path d="M3 10h18M8 3v4M16 3v4M10 15l4 4M14 15l-4 4"/></svg>' };
+var VDN_GR = [
+  ['agEsc', 'Agentes Escalados', 'Agentes com escala de trabalho neste dia.', '#4F3F91', 'ag', function (x) { return x.perfil === 'AGENTE' && x.sit === 'T'; }],
+  ['agFol', 'Agentes de Folga', 'Agentes com folga na escala deste dia.', '#7B61C9', 'fol', function (x) { return x.perfil === 'AGENTE' && x.sit === 'F'; }],
+  ['geEsc', 'Gestão Trabalhando', 'Coordenação e gestão com escala de trabalho neste dia.', '#0E8A8A', 'ges', function (x) { return x.perfil !== 'AGENTE' && x.sit === 'T'; }],
+  ['geFol', 'Gestão de Folga', 'Coordenação e gestão com folga na escala deste dia.', '#3D7BE0', 'fol', function (x) { return x.perfil !== 'AGENTE' && x.sit === 'F'; }],
+  ['fer', 'Férias ou Licença', 'Agentes de férias ou licença neste dia. Quem é da gestão aparece na lista com a etiqueta Gestão.', '#C98A00', 'fer', function (x) { return x.sit === 'FERIAS' || x.sit === 'LICENCA'; }],
+  ['sem', 'Sem Escala Publicada', 'Agentes que ainda não têm escala publicada neste dia. Quem é da gestão aparece na lista com a etiqueta Gestão.', '#C62828', 'sem', function (x) { return x.sit === 'V' || x.sit === 'SEM'; }]];
+function vdnCartoes(r) { var raiz = gc(), nums = raiz && raiz.querySelector('.numeros'); if (!nums || !r || !r.itens || !raiz.querySelector('.vd-cob')) return;
+  var it = r.itens; nums.classList.add('vdn'); nums.style.setProperty('--cols', '6');
+  nums.innerHTML = VDN_GR.map(function (g) { var l = it.filter(g[5]), ag = l.filter(function (x) { return x.perfil === 'AGENTE'; }).length, ges = l.length - ag, so = g[0] === 'fer' || g[0] === 'sem', n = so ? ag : l.length;
+    return '<button type="button" class="numero vdn-b' + (g[0] === 'sem' && n ? ' alerta' : '') + (l.length ? '' : ' vazio') + '" data-vdn="' + g[0] + '" aria-label="' + g[1] + ': ' + n + '. Ver a lista"><b>' + n + '</b><span>' + g[1] + '</span>' + (so && ges ? '<small class="ges">+' + ges + ' da gestão</small>' : '') + (l.length ? '<small class="ver">Ver lista ›</small>' : '') + '</button>'; }).join('');
+  nums.querySelectorAll('[data-vdn]').forEach(function (b) { b.onclick = function () { if (!b.classList.contains('vazio')) vdnModal(b.getAttribute('data-vdn')); }; }); }
+function vdnAtuacoes(x) { var t = {}; (x.blocos || []).forEach(function (b) { t[b[0]] = 1; }); return [['0800', '0800', '#D80073'], ['chat', 'Chat', '#4F3F91'], ['ass', 'Assíncrono', '#A51E5B']].filter(function (a) { return t[a[0]]; }).map(function (a) { return '<span class="vdn-t" style="--k:' + a[2] + '">' + a[1] + '</span>'; }).join(''); }
+function vdnModal(qual) { var r = estado.vdUlt; if (!r) return; var g = VDN_GR.filter(function (x) { return x[0] === qual; })[0]; if (!g) return;
+  var lista = r.itens.filter(g[5]).slice().sort(function (a, b) { return String(a.coord || '').localeCompare(String(b.coord || ''), 'pt-BR') || a.nome.localeCompare(b.nome, 'pt-BR'); });
+  var coords = []; lista.forEach(function (x) { var c = x.coord || 'Sem coordenação'; if (coords.indexOf(c) < 0) coords.push(c); });
+  var pres = (estado.vdPres || {})[r.data], af = {}, st = { q: '', c: '' }; var nAg = lista.filter(function (x) { return x.perfil === 'AGENTE'; }).length;
+  var w = abrirModal('<div class="vdn-m" id="vdnM"><div class="vdn-top"><span class="ic" style="--k:' + g[3] + '">' + VDN_IC[g[4]] + '</span><div><h2>' + g[1] + '</h2><p>' + (typeof dataLonga === 'function' ? dataLonga(r.data) : r.data) + '</p></div><span class="n">' + (qual === 'fer' || qual === 'sem' ? nAg + (lista.length - nAg ? '<small style="display:block;font-size:12px;font-weight:700;color:var(--c4);text-align:right">+' + (lista.length - nAg) + ' da gestão</small>' : '') : lista.length) + '</span></div><p class="vdn-exp">' + g[2] + ' Clique numa pessoa para ver os detalhes.</p>' +
+    '<div class="vdn-f"><input type="search" id="vdnQ" placeholder="Buscar pessoa ou coordenação" autocomplete="off"><select id="vdnC" aria-label="Coordenação"><option value="">Todas as coordenações</option>' + coords.map(function (c) { return '<option>' + esc(c) + '</option>'; }).join('') + '</select><span class="cont" id="vdnN"></span></div><div class="vdn-l" id="vdnL"></div></div>', true);
+  try { w.querySelector('.modal').classList.add('modal-xl'); } catch (e) { }
+  var extra = function (x) { var h = '';
+    if (x.perfil !== 'AGENTE' && (qual === 'fer' || qual === 'sem')) h += '<span class="vdn-t" style="--k:#0E8A8A">Gestão</span>';
+    if (x.sit === 'T') { h += vdnAtuacoes(x) + (x.i ? '<span class="vdn-h">' + esc(x.i) + ' – ' + esc(x.f) + (x.a ? ' <small>· almoço ' + esc(x.a) + '</small>' : '') + '</span>' : ''); if (pres && x.perfil === 'AGENTE' && typeof vdpChip === 'function' && r.data === hojeLocal()) h += vdpChip(pres, pres.m[x.email]); }
+    else if (x.sit === 'F') h += '<span class="vdn-t" style="--k:#7B61C9">Folga</span>';
+    else if (x.sit === 'FERIAS' || x.sit === 'LICENCA') { var a = af[x.email]; h += '<span class="vdn-t" style="--k:' + (x.sit === 'FERIAS' ? '#C98A00' : '#3D7BE0') + '">' + (x.sit === 'FERIAS' ? 'Férias' : 'Licença') + '</span>' + (a ? '<span class="vdn-h">volta ' + dBr(somaDia(a.fim, 1)).slice(0, 5) + '</span>' : ''); }
+    else h += '<span class="vdn-t" style="--k:#C62828">Sem escala</span>';
+    return h; };
+  var desenhar = function () { var q = st.q.toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, ''), vis = lista.filter(function (x) { if (st.c && (x.coord || 'Sem coordenação') !== st.c) return false; if (q && (x.nome + ' ' + (x.coord || '') + ' ' + x.email).toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, '').indexOf(q) < 0) return false; return true; });
+    var grupos = {}; vis.forEach(function (x) { var c = x.coord || 'Sem coordenação'; (grupos[c] = grupos[c] || []).push(x); });
+    $('vdnN').textContent = vis.length + ' de ' + lista.length;
+    $('vdnL').innerHTML = vis.length ? Object.keys(grupos).map(function (c) { return '<div class="vdn-g"><span>' + esc(c) + '</span><span>' + grupos[c].length + '</span></div>' + grupos[c].map(function (x) { return '<button type="button" class="vdn-r" data-ag="' + esc(x.email) + '">' + avatarHtml(x.email, x.nome, '') + '<span class="nm"><b>' + esc(x.nome) + '</b><small>' + esc([x.cargo, x.email].filter(Boolean).join(' · ')) + '</small></span><span class="ex">' + extra(x) + '</span></button>'; }).join(''); }).join('') : '<div class="vdn-vz">Ninguém com esses filtros.</div>';
+    $('vdnL').querySelectorAll('[data-ag]').forEach(function (b) { b.onclick = function () { modalAgente(b.getAttribute('data-ag')); }; });
+    if (typeof atualizarAvatares === 'function') atualizarAvatares(); };
+  $('vdnQ').oninput = function () { st.q = this.value; desenhar(); }; $('vdnC').onchange = function () { st.c = this.value; desenhar(); }; desenhar();
+  if (qual === 'fer' && typeof vdfAfast === 'function') vdfAfast(r.data.slice(0, 7)).then(function (l) { (l || []).forEach(function (a) { if (a.inicio <= r.data && a.fim >= r.data) af[a.email] = a; }); if ($('vdnL')) desenhar(); }); }
+(function () {
+  if (typeof desenharVisaoDia === 'function') { var _d = desenharVisaoDia; desenharVisaoDia = function (r) { var x = _d.apply(this, arguments); try { vdnCartoes(r || estado.vdUlt); } catch (e) { if (window.console) console.warn('cartoes', e); } return x; }; }
+  var pend = 0; new MutationObserver(function () { if (pend) return; pend = requestAnimationFrame(function () { pend = 0; try { vdnAjustarPresenca(); } catch (e) { } try { var n = gc() && gc().querySelector('.numeros:not(.vdn)'); if (n && gc().querySelector('.vd-cob') && estado.vdUlt) vdnCartoes(estado.vdUlt); } catch (e) { } }); }).observe(document.body, { childList: true, subtree: true });
+})();
+</script>

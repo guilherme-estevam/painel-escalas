@@ -1,0 +1,154 @@
+<style>
+/* ===================== tela de entrada: visual novo ===================== */
+/* ---- lado esquerdo ---- */
+.lado.lg2{position:relative;overflow:hidden;isolation:isolate;background:#0D0A12}
+.lg2-bg{position:absolute;inset:0;z-index:-1;overflow:hidden;pointer-events:none}
+.lg2-bg i{position:absolute;border-radius:50%;filter:blur(90px);animation:lg2Aurora 22s ease-in-out infinite alternate}
+.lg2-bg .b1{width:540px;height:540px;background:#D80073;top:-190px;right:-170px;opacity:.50}
+.lg2-bg .b2{width:480px;height:480px;background:#4F3F91;bottom:-190px;left:-150px;opacity:.60;animation-duration:27s;animation-delay:-7s}
+.lg2-bg .b3{width:300px;height:300px;background:#A51E5B;top:42%;left:52%;opacity:.28;animation-duration:31s;animation-delay:-12s}
+.lg2-bg .pontos{position:absolute;inset:0;background-image:radial-gradient(rgba(255,255,255,.10) 1px,transparent 1.3px);background-size:22px 22px;
+  -webkit-mask-image:radial-gradient(ellipse 75% 65% at 50% 42%,#000 25%,transparent 78%);mask-image:radial-gradient(ellipse 75% 65% at 50% 42%,#000 25%,transparent 78%)}
+@keyframes lg2Aurora{0%{transform:translate(0,0) scale(1)}50%{transform:translate(-46px,34px) scale(1.08)}100%{transform:translate(32px,-22px) scale(.95)}}
+.lg2 .ph-login{border-color:rgba(255,255,255,.22);color:#E9DDEF;background:rgba(255,255,255,.04)}
+/* palco: prévia do painel */
+.lg2-palco{flex:1;display:flex;align-items:center;justify-content:center;position:relative;margin:64px 0 46px;min-height:300px}
+.lg2-card{position:relative;width:min(100%,470px);padding:20px 20px 18px;border-radius:22px;color:#fff;
+  background:linear-gradient(160deg,rgba(255,255,255,.11),rgba(255,255,255,.035));border:1px solid rgba(255,255,255,.14);
+  -webkit-backdrop-filter:blur(16px);backdrop-filter:blur(16px);box-shadow:0 34px 70px -24px rgba(0,0,0,.7),inset 0 1px 0 rgba(255,255,255,.10)}
+.lg2-cab{display:flex;align-items:center;justify-content:space-between;margin-bottom:22px}
+.lg2-cab b{display:flex;align-items:center;gap:9px;font-size:14px}
+.lg2-cab b svg{color:#FF8AD0}
+.lg2-mes{font-size:11px;font-weight:800;letter-spacing:.08em;text-transform:uppercase;color:#FFC2E5;background:rgba(216,0,115,.18);border:1px solid rgba(255,89,193,.32);border-radius:20px;padding:3px 10px}
+.lg2-card .tira{max-width:none;gap:7px}
+.lg2-card .tira div{position:relative;padding:11px 0 12px;transition:transform .3s}
+.lg2-card .tira .t{background:linear-gradient(180deg,#5B4AA6,#4F3F91);box-shadow:inset 0 1px 0 rgba(255,255,255,.14)}
+.lg2-card .tira .hoje{transform:translateY(-4px);box-shadow:0 0 0 2px #fff,0 12px 24px -8px rgba(255,89,193,.7)}
+.lg2-card .tira .hoje::before{content:'hoje';position:absolute;top:-19px;left:50%;transform:translateX(-50%);font-size:10px;font-weight:800;letter-spacing:.06em;text-transform:uppercase;color:#FF8AD0}
+.lg2-hoje{margin-top:18px;padding-top:14px;border-top:1px solid rgba(255,255,255,.10)}
+.lg2-hoje .l1{display:flex;align-items:baseline;justify-content:space-between;font-size:12.5px;color:rgba(255,255,255,.7)}
+.lg2-hoje .l1 b{font-size:15px;color:#fff}
+.lg2-trilho{position:relative;margin:12px 0 6px}
+.lg2-barra{display:flex;gap:3px;height:12px;border-radius:8px;overflow:hidden}
+.lg2-barra span{display:block;height:100%}
+.lg2-barra .c{background:#7C6BD6} .lg2-barra .a{background:#F4C7A9} .lg2-barra .z{background:#FF3D9A}
+.lg2-agora{position:absolute;top:-6px;bottom:-6px;width:2px;background:#fff;border-radius:2px;box-shadow:0 0 0 3px rgba(255,255,255,.18)}
+.lg2-agora::before{content:'';position:absolute;top:-4px;left:-3px;width:8px;height:8px;border-radius:50%;background:#fff}
+.lg2-horas{display:flex;justify-content:space-between;font-size:10.5px;color:rgba(255,255,255,.5);font-weight:700}
+.lg2-leg{display:flex;gap:14px;margin-top:10px;font-size:11.5px;color:rgba(255,255,255,.75)}
+.lg2-leg i{display:inline-block;width:8px;height:8px;border-radius:50%;margin-right:6px;vertical-align:1px}
+/* cartões flutuando */
+.lg2-notif{position:absolute;top:-78px;right:-60px;z-index:2}
+.lg2-notif .in{display:flex;gap:11px;align-items:flex-start;width:262px;padding:12px 14px;border-radius:16px;background:rgba(255,255,255,.97);color:#262626;box-shadow:0 22px 44px -14px rgba(0,0,0,.6);animation:lg2Flutua 7s ease-in-out infinite alternate}
+.lg2-notif .ok{flex:none;width:32px;height:32px;border-radius:50%;background:#DDF4E8;color:#1E7A4F;display:flex;align-items:center;justify-content:center}
+.lg2-notif b{display:block;font-size:13px}
+.lg2-notif span{display:block;font-size:12px;color:#6D6D6D;line-height:1.4}
+.lg2-notif small{display:block;font-size:10.5px;color:#A09AA6;margin-top:2px;font-weight:700}
+.lg2-chip{position:absolute;bottom:-42px;left:-46px;z-index:2}
+.lg2-chip .in{display:flex;gap:9px;align-items:center;padding:10px 15px;border-radius:14px;background:linear-gradient(135deg,#FF59C1,#D80073 60%,#B5005F);color:#fff;font-weight:800;font-size:12.5px;box-shadow:0 18px 36px -12px rgba(216,0,115,.7);animation:lg2Flutua 8s ease-in-out infinite alternate-reverse}
+.lg2-chip .in small{font-weight:700;opacity:.85}
+@keyframes lg2Flutua{from{transform:translateY(0) rotate(var(--r,0deg))}to{transform:translateY(-10px) rotate(var(--r,0deg))}}
+.lg2-notif .in{--r:1.5deg} .lg2-chip .in{--r:-1.5deg}
+/* texto de baixo */
+.lg2 .semana h1{font-size:40px;letter-spacing:-.02em;line-height:1.08;max-width:none;margin:0 0 12px}
+.lg2-grad{background:linear-gradient(90deg,#FFB3DD,#FF59C1 45%,#FF3D9A);-webkit-background-clip:text;background-clip:text;color:transparent}
+.lg2 .semana p{color:#CFC7D7;max-width:44ch;margin:0 0 18px}
+.lg2-feat{display:flex;gap:10px;flex-wrap:wrap}
+.lg2-feat span{display:inline-flex;align-items:center;gap:8px;font-size:12.5px;font-weight:700;color:#EDE6F2;background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.10);border-radius:20px;padding:6px 12px 6px 8px}
+.lg2-feat svg{color:#FF8AD0}
+.lg2 .legenda-lado{color:#9C93A6;margin-top:22px}
+/* entrada suave */
+.lg2 .marca,.lg2-card,.lg2-notif,.lg2-chip,.lg2 .semana,.lg2 .legenda-lado{animation:lg2Entra .9s cubic-bezier(.2,.7,.2,1) both}
+.lg2-card{animation-delay:.12s} .lg2-notif{animation-delay:.45s} .lg2-chip{animation-delay:.6s} .lg2 .semana{animation-delay:.25s} .lg2 .legenda-lado{animation-delay:.35s}
+@keyframes lg2Entra{from{opacity:0;transform:translateY(16px)}to{opacity:1;transform:none}}
+
+/* ---- lado direito: formulário ---- */
+.formulario.lg2-form{flex-direction:column;gap:18px;background:radial-gradient(900px 520px at 100% 0%,rgba(216,0,115,.07),transparent 60%),radial-gradient(700px 460px at 0% 100%,rgba(79,63,145,.07),transparent 60%),#FBF9FC}
+.lg2-form .caixa{max-width:420px;background:#fff;border:1px solid #EEE7F1;border-radius:24px;padding:34px 34px 28px;box-shadow:0 1px 2px rgba(38,20,48,.04),0 28px 64px -22px rgba(60,20,70,.22);animation:lg2Entra .8s cubic-bezier(.2,.7,.2,1) both .1s}
+.lg2-selo{width:52px;height:52px;border-radius:16px;background:linear-gradient(135deg,#FF59C1,#D80073 55%,#A51E5B);display:flex;align-items:center;justify-content:center;color:#fff;margin-bottom:18px;box-shadow:0 12px 26px -10px rgba(216,0,115,.65)}
+.lg2-form .caixa h2{font-size:28px;letter-spacing:-.01em}
+.lg2-form .caixa .sub{margin-bottom:24px}
+.lg2-form .campo label{display:block;font-weight:700;font-size:13px;color:#3A3340;margin-bottom:7px}
+.lg2-inp{position:relative}
+.lg2-form .lg2-inp input{width:100%;height:50px;border-radius:12px;border:1.5px solid #E4DCE8;background:#FCFAFD;padding:0 14px 0 44px;font-size:15px;transition:border-color .15s,box-shadow .15s,background .15s}
+.lg2-form .lg2-inp input:hover{border-color:#D3C8D9}
+.lg2-form .lg2-inp input:focus{outline:none;border-color:var(--rosa);background:#fff;box-shadow:0 0 0 4px rgba(216,0,115,.12)}
+.lg2-form .lg2-inp input[type=password],.lg2-form .lg2-inp input.lg2-vis{padding-right:48px}
+.lg2-ic{position:absolute;left:15px;top:50%;transform:translateY(-50%);color:#A398AC;pointer-events:none;display:flex}
+.lg2-inp:focus-within .lg2-ic{color:var(--rosa)}
+.lg2-olho{position:absolute;right:7px;top:50%;transform:translateY(-50%);border:0;background:none;padding:8px;border-radius:9px;color:#8C8296;cursor:pointer;display:flex}
+.lg2-olho:hover{background:#F4EFF6;color:var(--rosa)}
+.lg2-form .check{margin:2px 0 20px}
+.lg2-form .caixa .btn.largo{height:50px;border-radius:12px;font-size:15.5px;background:linear-gradient(135deg,#E3127F,#C4006A);box-shadow:0 14px 26px -12px rgba(216,0,115,.75);transition:transform .15s,box-shadow .15s,filter .15s}
+.lg2-form .caixa .btn.largo::after{content:'';width:18px;height:18px;flex:none;transition:transform .2s;background:no-repeat center/contain url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='white' stroke-width='2.4' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M5 12h14M13 6l6 6-6 6'/%3E%3C/svg%3E")}
+.lg2-form .caixa .btn.largo:hover{filter:brightness(1.06);box-shadow:0 18px 30px -12px rgba(216,0,115,.85)}
+.lg2-form .caixa .btn.largo:hover::after{transform:translateX(3px)}
+.lg2-form .caixa .btn.largo:active{transform:translateY(1px)}
+.lg2-form .links{margin-top:20px}
+.lg2-rodape{display:flex;align-items:center;gap:7px;font-size:12.5px;color:#8C8296;animation:lg2Entra .8s cubic-bezier(.2,.7,.2,1) both .3s}
+.lg2-rodape svg{color:#B3A9BB}
+/* tema escuro */
+html[data-tema="escuro"] .formulario.lg2-form{background:radial-gradient(900px 520px at 100% 0%,rgba(216,0,115,.10),transparent 60%),#100E14}
+html[data-tema="escuro"] .lg2-form .caixa{background:#1A1720;border-color:#2B2632;box-shadow:0 28px 64px -22px rgba(0,0,0,.6)}
+html[data-tema="escuro"] .lg2-form .campo label{color:#DCD5E2}
+html[data-tema="escuro"] .lg2-form .lg2-inp input{background:#15121A;border-color:#3A3342;color:#F1EDF4}
+html[data-tema="escuro"] .lg2-olho:hover{background:#26212D}
+/* telas mais baixas e celular */
+@media (min-width:901px) and (max-height:820px){ .lg2-palco{min-height:0;margin:60px 0 40px} .lg2-hoje{display:none} .lg2 .semana h1{font-size:34px} }
+@media (min-width:901px) and (max-height:690px){ .lg2-notif,.lg2-chip,.lg2-feat{display:none} }
+@media (min-width:1600px) and (min-height:980px){ .lg2-card{width:min(100%,540px);padding:24px 24px 22px} .lg2 .semana h1{font-size:46px} .lg2-notif .in{width:280px} }
+@media (max-width:900px){ .lg2-palco{margin:20px 0 22px;min-height:0} .lg2-notif,.lg2-chip,.lg2-hoje,.lg2-feat{display:none} .lg2-card{padding:14px 14px 12px} .lg2-cab{margin-bottom:20px}
+  .lg2 .semana h1{font-size:28px} .formulario.lg2-form{padding:28px 16px 36px} .lg2-form .caixa{padding:26px 20px 22px;border-radius:20px} }
+@media (prefers-reduced-motion: reduce){ .lg2-bg i,.lg2-notif .in,.lg2-chip .in{animation:none} .lg2 .marca,.lg2-card,.lg2-notif,.lg2-chip,.lg2 .semana,.lg2 .legenda-lado,.lg2-form .caixa,.lg2-rodape{animation:none} }
+</style>
+<script>
+/* ===================== tela de entrada: visual novo ===================== */
+(function(){
+  var IC={
+    cal:'<svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="5" width="18" height="16" rx="2.5"/><path d="M3 10h18M8 3v4M16 3v4"/></svg>',
+    calG:'<svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="5" width="18" height="16" rx="2.5"/><path d="M3 10h18M8 3v4M16 3v4"/><path d="m9 15 2 2 4-4"/></svg>',
+    ok:'<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m5 12.5 4.5 4.5L19 7.5"/></svg>',
+    troca:'<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M7 7h12l-3-3M17 17H5l3 3"/></svg>',
+    relogio:'<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></svg>',
+    escudo:'<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 3l7 3v5c0 4.5-3 8-7 10-4-2-7-5.5-7-10V6z"/><path d="m9 12 2 2 4-4"/></svg>',
+    email:'<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="5" width="18" height="14" rx="2.5"/><path d="m4 7 8 6 8-6"/></svg>',
+    cadeado:'<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="4.5" y="10.5" width="15" height="10" rx="2.5"/><path d="M8 10.5V7.5a4 4 0 0 1 8 0v3"/></svg>',
+    olho:'<svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M2 12s3.5-7 10-7 10 7 10 7-3.5 7-10 7S2 12 2 12z"/><circle cx="12" cy="12" r="3"/></svg>',
+    olhoX:'<svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 3l18 18"/><path d="M10.6 5.1A10.7 10.7 0 0 1 12 5c6.5 0 10 7 10 7a17 17 0 0 1-3.2 4.1M6.6 6.6C3.8 8.4 2 12 2 12s3.5 7 10 7a9.7 9.7 0 0 0 5.4-1.6"/><path d="M9.9 9.9a3 3 0 0 0 4.2 4.2"/></svg>'
+  };
+  function ladoEsquerdo(){
+    var lado=document.querySelector('#telaEntrada .lado'); if(!lado || lado.dataset.v2) return; lado.dataset.v2='1'; lado.classList.add('lg2');
+    var bg=document.createElement('div'); bg.className='lg2-bg'; bg.setAttribute('aria-hidden','true'); bg.innerHTML='<i class="b1"></i><i class="b2"></i><i class="b3"></i><span class="pontos"></span>'; lado.insertBefore(bg, lado.firstChild);
+    var sem=lado.querySelector('.semana'); if(!sem) return;
+    var tira=sem.querySelector('.tira');
+    var palco=document.createElement('div'); palco.className='lg2-palco'; palco.setAttribute('aria-hidden','true');
+    palco.innerHTML='<div class="lg2-card"><div class="lg2-cab"><b>'+IC.cal+'Minha escala</b><span class="lg2-mes">Esta semana</span></div><div class="lg2-slot"></div>'+
+      '<div class="lg2-hoje"><div class="l1"><span>Seu turno hoje</span><b>09:00 às 18:00</b></div>'+
+      '<div class="lg2-trilho"><div class="lg2-barra"><span class="c" style="flex:240"></span><span class="a" style="flex:60"></span><span class="c" style="flex:40"></span><span class="z" style="flex:200"></span></div><span class="lg2-agora" style="left:16.7%"></span></div>'+
+      '<div class="lg2-horas"><span>09h</span><span>12h</span><span>15h</span><span>18h</span></div>'+
+      '<div class="lg2-leg"><span><i style="background:#7C6BD6"></i>Chat</span><span><i style="background:#FF3D9A"></i>0800</span><span><i style="background:#F4C7A9"></i>Almoço</span></div></div>'+
+      '<div class="lg2-notif"><div class="in"><span class="ok">'+IC.ok+'</span><div><b>Troca aprovada</b><span>A coordenação aprovou sua troca de sex, 13/11.</span><small>agora</small></div></div></div>'+
+      '<div class="lg2-chip"><div class="in">'+IC.troca+'Troca de dia <small>· sex ⇄ sáb</small></div></div></div>';
+    sem.parentNode.insertBefore(palco, sem);
+    if(tira){ palco.querySelector('.lg2-slot').appendChild(tira); var d=tira.children[1]; if(d) d.classList.add('hoje'); }
+    var h1=sem.querySelector('h1'); if(h1 && /^Sua escala, semana a semana\.?$/.test(h1.textContent.trim())) h1.innerHTML='Sua escala,<br><span class="lg2-grad">semana a semana.</span>';
+    var p=sem.querySelector('p'), f=document.createElement('div'); f.className='lg2-feat';
+    f.innerHTML='<span>'+IC.cal+'Dias e horários</span><span>'+IC.troca+'Trocas com colegas do mesmo horário</span><span>'+IC.escudo+'Aprovação da coordenação</span>';
+    if(p) p.parentNode.insertBefore(f, p.nextSibling); else sem.appendChild(f);
+  }
+  function formulario(){
+    var fm=document.querySelector('#telaEntrada .formulario'); if(!fm || fm.dataset.v2) return; fm.dataset.v2='1'; fm.classList.add('lg2-form');
+    fm.querySelectorAll('.caixa').forEach(function(c){ var s=document.createElement('div'); s.className='lg2-selo'; s.innerHTML=IC.calG; c.insertBefore(s, c.firstChild); });
+    fm.querySelectorAll('.campo input[type=email], .campo input[type=password]').forEach(function(inp){
+      var w=document.createElement('div'); w.className='lg2-inp'; inp.parentNode.insertBefore(w, inp); w.appendChild(inp);
+      var ic=document.createElement('span'); ic.className='lg2-ic'; ic.innerHTML=inp.type==='email'?IC.email:IC.cadeado; w.insertBefore(ic, inp);
+      if(inp.type==='password'){ var b=document.createElement('button'); b.type='button'; b.className='lg2-olho'; b.setAttribute('aria-label','Mostrar senha'); b.innerHTML=IC.olho;
+        b.onclick=function(){ var ver=inp.type==='password'; inp.type=ver?'text':'password'; inp.classList.toggle('lg2-vis', ver); b.innerHTML=ver?IC.olhoX:IC.olho; b.setAttribute('aria-label', ver?'Esconder senha':'Mostrar senha'); inp.focus(); };
+        w.appendChild(b); }
+    });
+    var r=document.createElement('div'); r.className='lg2-rodape'; r.innerHTML=IC.cadeado.replace(/18/g,'15')+'Acesso exclusivo para e-mails @exemplo.com'; fm.appendChild(r);
+  }
+  function montar(){ ladoEsquerdo(); formulario(); }
+  if(document.readyState==='loading') document.addEventListener('DOMContentLoaded', montar); else montar();
+})();
+</script>

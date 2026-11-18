@@ -1,0 +1,125 @@
+<style>
+/* ===================== grade do planejamento: visual novo ===================== */
+.grade{--gT:#4F3F91;--gTh:#6553b3;--gF:#FFF0F6;--gFb:#F5BFD8;--gFt:#D80073;--gFe1:#FFD3E7;--gFe2:#FFEFF6;--gLi1:#FFD9C7;--gLi2:#FFF0E8;--gFds:rgba(79,63,145,.045);--gHoje:rgba(216,0,115,.07)}
+html[data-tema="escuro"] .grade{--gT:#7b68d6;--gTh:#9584e6;--gF:#3a1f30;--gFb:#7a3460;--gFt:#ff7ac0;--gFe1:#6b2350;--gFe2:#3b1630;--gLi1:#6a3a26;--gLi2:#3a241a;--gFds:rgba(255,255,255,.035);--gHoje:rgba(255,89,193,.10)}
+.grade td.dc{padding:5px 0}
+.grade td.dc.fds{background:var(--gFds)}
+.grade td.dc.hoje{background:var(--gHoje)}
+.grade .cel{display:block;height:26px;width:calc(100% - 6px);min-width:0;margin:0 3px;border-radius:7px;font-size:11px;font-weight:800;position:relative;transition:filter .12s, transform .12s}
+.grade .cel.jl{margin-left:0;width:calc(100% - 3px);border-top-left-radius:0;border-bottom-left-radius:0}
+.grade .cel.jr{margin-right:0;width:calc(100% - 3px);border-top-right-radius:0;border-bottom-right-radius:0}
+.grade .cel.jl.jr{width:100%}
+/* trabalho: barra roxa contínua na semana */
+.grade .cel.T{background:var(--gT);color:transparent}
+.grade button.cel.T:hover{background:var(--gTh)}
+/* folga */
+.grade .cel.F{background:var(--gF);color:var(--gFt);box-shadow:inset 0 0 0 1.5px var(--gFb)}
+.grade button.cel.F:hover{filter:brightness(.96);box-shadow:inset 0 0 0 2px var(--gFt)}
+/* não definido */
+.grade .cel.V{background:transparent;color:transparent;box-shadow:none;border:0}
+.grade .cel.V::before{content:"";position:absolute;left:50%;top:50%;width:5px;height:5px;margin:-2.5px 0 0 -2.5px;border-radius:50%;background:var(--c3)}
+.grade button.cel.V:hover{box-shadow:inset 0 0 0 1.5px var(--c3)}
+/* férias e licença: faixa listrada contínua */
+.grade .cel.FERIAS{background:repeating-linear-gradient(135deg,var(--gFe1) 0 5px,var(--gFe2) 5px 10px);color:transparent}
+.grade .cel.LICENCA{background:repeating-linear-gradient(135deg,var(--gLi1) 0 5px,var(--gLi2) 5px 10px);color:transparent}
+/* feriado não trabalhado */
+.grade .cel.FER{background:transparent;color:var(--vinho);box-shadow:inset 0 0 0 1.5px var(--vinho);font-size:10px}
+/* alteração ainda não salva: pontinho */
+.grade .cel.mud{box-shadow:none}
+.grade .cel.F.mud{box-shadow:inset 0 0 0 1.5px var(--gFb)}
+.grade .cel.mud::after{content:"";position:absolute;top:-3px;right:-3px;width:9px;height:9px;border-radius:50%;background:#FF59C1;border:2px solid var(--sup,#fff);z-index:1}
+.grade .cel.trava{cursor:not-allowed}
+/* cabeçalho dos dias */
+.grade th.dcol{font-size:13px;font-weight:800}
+.grade th.dcol small{font-size:10.5px;letter-spacing:.02em}
+.grade th.feriado{box-shadow:none;position:sticky}
+/* área de rolagem maior: a grade ocupa a altura da tela, abaixo da barra do topo */
+.grade-wrap{max-height:calc(100vh - 84px);min-height:420px}
+.grade th.feriado::after{content:"";position:absolute;left:50%;bottom:3px;width:6px;height:6px;margin-left:-3px;border-radius:50%;background:var(--pink)}
+.grade th.dcol.hoje b.hj{display:inline-flex;align-items:center;justify-content:center;width:24px;height:24px;border-radius:50%;background:var(--rosa);color:#fff}
+.grade th.dcol.hl,.grade tfoot td.hl{background:var(--rosa-bg)!important;color:var(--rosa)}
+html[data-tema="escuro"] .grade th.dcol.hl,html[data-tema="escuro"] .grade tfoot td.hl{background:#4a1d3a!important;color:#ff7ac0}
+.grade tbody tr.hl td{background-color:var(--c1)}
+.grade tbody tr.hl td.dc.fds,.grade tbody tr.hl td.dc.hoje{background-image:linear-gradient(var(--gFds),var(--gFds))}
+/* linha com regra violada */
+.grade tr.erro td.col-nome{box-shadow:inset 4px 0 0 #E5484D}
+/* totais à direita */
+.grade th.tt{font-size:11px;line-height:1.15;white-space:normal;min-width:64px}
+.grade td.tot.zero b{display:inline-block;min-width:24px;border-radius:8px;background:#FDE2E2;color:#C42B2B;padding:1px 6px}
+html[data-tema="escuro"] .grade td.tot.zero b{background:#4a1f22;color:#ff8f8f}
+/* rodapé: mini-gráfico */
+.grade tfoot td.br{padding:4px 0 6px;vertical-align:bottom}
+.grade tfoot .tb{height:30px;display:flex;align-items:flex-end;justify-content:center;margin-bottom:3px}
+.grade tfoot .tb i{display:block;width:60%;max-width:16px;border-radius:4px 4px 1px 1px;background:var(--gT);opacity:.55;min-height:2px}
+.grade tfoot td.baixo .tb i{background:var(--rosa);opacity:1}
+.grade tfoot td.baixo{color:var(--rosa)}
+.grade tfoot td.col-nome small{display:block;font-weight:600;font-size:11px;color:var(--c4)}
+/* legenda nova */
+.legenda.lg2{display:flex;flex-wrap:wrap;gap:6px 16px;justify-content:center;align-items:center}
+.legenda.lg2 span{display:inline-flex;align-items:center;gap:6px;font-size:12.5px}
+.legenda.lg2 .sw{display:inline-block;width:26px;height:16px;border-radius:5px;position:relative}
+.legenda.lg2 .sw.T{background:var(--roxo);width:34px}
+.legenda.lg2 .sw.F{background:#FFF0F6;box-shadow:inset 0 0 0 1.5px #F5BFD8;color:#D80073;font-size:10px;font-weight:800;display:inline-flex;align-items:center;justify-content:center}
+.legenda.lg2 .sw.FE{background:repeating-linear-gradient(135deg,#FFD3E7 0 5px,#FFEFF6 5px 10px);width:34px}
+.legenda.lg2 .sw.LI{background:repeating-linear-gradient(135deg,#FFD9C7 0 5px,#FFF0E8 5px 10px);width:34px}
+.legenda.lg2 .sw.V{width:14px}
+.legenda.lg2 .sw.V::before{content:"";position:absolute;left:50%;top:50%;width:5px;height:5px;margin:-2.5px 0 0 -2.5px;border-radius:50%;background:var(--c3)}
+.legenda.lg2 .sw.FER{box-shadow:inset 0 0 0 1.5px var(--vinho)}
+.legenda.lg2 .sw.MUD{background:var(--roxo)}
+.legenda.lg2 .sw.MUD::after{content:"";position:absolute;top:-3px;right:-3px;width:8px;height:8px;border-radius:50%;background:#FF59C1;border:2px solid var(--sup,#fff)}
+.legenda.lg2 .sw.HOJE{width:16px;height:16px;border-radius:50%;background:var(--rosa)}
+.legenda.lg2 .sw.FERD{width:7px;height:7px;border-radius:50%;background:var(--pink)}
+</style>
+<script>
+/* ===================== grade do planejamento: barras por semana, hoje, fins de semana ===================== */
+var _linhaGradeUI9 = linhaGrade;
+linhaGrade = function(p){
+  var h=_linhaGradeUI9(p), d=estado.plan, mes=d.mes, hoje=hojeLocal(), tipos=[], m, re=/<td class="dc[^"]*">[\s\S]*?<\/td>/g;
+  while((m=re.exec(h))){ var k=/class="cel (\w+)/.exec(m[0]); tipos.push(k?k[1]:''); }
+  var junta=function(t){ return t==='T'||t==='FERIAS'||t==='LICENCA'; };
+  var dd=0;
+  h=h.replace(/<td class="dc([^"]*)">([\s\S]*?)<\/td>/g, function(_, extra, dentro){
+    dd++; var t=tipos[dd-1], wd=wdDe(mes,dd), cls=[];
+    if(junta(t)){ if(dd>1 && wd!==0 && tipos[dd-2]===t) cls.push('jl'); if(dd<tipos.length && wdDe(mes,dd+1)!==0 && tipos[dd]===t) cls.push('jr'); }
+    if(cls.length) dentro=dentro.replace('class="cel ', 'class="cel '+cls.join(' ')+' ');
+    var tdc=extra+((wd===0||wd===6)?' fds':'')+(dataDe(mes,dd)===hoje?' hoje':'');
+    return '<td class="dc'+tdc+'">'+dentro+'</td>';
+  });
+  // domingos de folga zerados em destaque
+  var s=situacao(p.email);
+  if(!s.vazio && !p.segSex && s.v.resumo.domingosFolga===0){ h=h.replace(/<td class="tot">(\d+)<\/td><\/tr>$/, '<td class="tot zero" title="Nenhum domingo de folga no mês"><b>$1</b></td></tr>'); }
+  return h;
+};
+var _desenharGradeUI9 = desenharGrade;
+desenharGrade = function(){
+  _desenharGradeUI9();
+  var g=$('grade'); if(!g) return; var d=estado.plan, mes=d.mes, hoje=hojeLocal();
+  // cabeçalho: hoje e nomes completos dos totais
+  g.querySelectorAll('thead th.dcol').forEach(function(th,i){ var dd=i+1, wd=wdDe(mes,dd);
+    th.innerHTML='<small>'+SEM[wd].charAt(0)+'</small>'+(dataDe(mes,dd)===hoje?'<b class="hj">'+dd+'</b>':dd);
+    if(dataDe(mes,dd)===hoje){ th.classList.add('hoje'); th.title='Hoje'+(th.title?' · '+th.title:''); }
+    if(!th.title) th.title=dSem(dataDe(mes,dd)); });
+  var ths=g.querySelectorAll('thead tr th'), nT=ths.length;
+  if(nT>=3){ var rot=[['Dias de<br>trabalho','Dias de trabalho no mês'],['Folgas','Folgas no mês'],['Domingos<br>de folga','Domingos de folga no mês (mínimo 1)']];
+    for(var k=0;k<3;k++){ var th=ths[nT-3+k]; th.innerHTML=rot[k][0]; th.title=rot[k][1]; th.classList.add('tt'); } }
+  // rodapé como mini-gráfico
+  var tf=g.querySelector('tfoot tr');
+  if(tf){ var tds=tf.querySelectorAll('td'), vals=[], max=1;
+    for(var dd=1; dd<=d.dias; dd++){ var v=+(tds[2+dd]?tds[2+dd].textContent:0)||0; vals.push(v); if(v>max) max=v; }
+    for(var dd2=1; dd2<=d.dias; dd2++){ var td=tds[2+dd2]; if(!td) continue; var v2=vals[dd2-1]; td.classList.add('br');
+      td.innerHTML='<div class="tb"><i style="height:'+Math.max(4,v2/max*100)+'%"></i></div>'+v2;
+      if(td.classList.contains('baixo')) td.title=v2+' trabalhando · abaixo do normal para este mês'; }
+    tds[1].innerHTML='Trabalhando no dia<small>rosa = abaixo do normal</small>'; }
+  // legenda com as mesmas peças da grade
+  var lg=gc().querySelector('.legenda'); if(lg){ lg.classList.add('lg2'); lg.innerHTML=
+    '<span><i class="sw T"></i>Trabalho</span><span><i class="sw F">F</i>Folga</span><span><i class="sw FE"></i>Férias</span><span><i class="sw LI"></i>Licença</span><span><i class="sw FER"></i>Feriado não trabalhado</span><span><i class="sw V"></i>Não definido</span><span><i class="sw MUD"></i>Alteração não salva</span><span><i class="sw HOJE"></i>Hoje</span><span><i class="sw FERD"></i>Feriado</span>'; }
+  // passar o mouse: acende a linha e o dia
+  if(!g._hl){ g._hl=1; var ultimo=null;
+    g.addEventListener('mouseover', function(e){ var td=e.target.closest('td,th'); if(!td || !g.contains(td)) return;
+      var tr=td.parentNode, col=td.cellIndex; if(ultimo){ ultimo.forEach(function(x){ x.classList.remove('hl'); }); }
+      var acesos=[]; if(tr.parentNode.tagName==='TBODY'){ tr.classList.add('hl'); acesos.push(tr); }
+      if(td.classList.contains('dc')){ var h1=g.tHead && g.tHead.rows[0].cells[col]; if(h1){ h1.classList.add('hl'); acesos.push(h1); } var f1=g.tFoot && g.tFoot.rows[0].cells[col]; if(f1){ f1.classList.add('hl'); acesos.push(f1); } }
+      ultimo=acesos; });
+    g.addEventListener('mouseleave', function(){ if(ultimo) ultimo.forEach(function(x){ x.classList.remove('hl'); }); ultimo=null; }); }
+};
+</script>

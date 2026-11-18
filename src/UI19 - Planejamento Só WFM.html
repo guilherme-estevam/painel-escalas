@@ -1,0 +1,17 @@
+<script>
+/* ===================== Planejamento: só para o WFM (a aba Acessos é de toda a gestão) ===================== */
+var SUBS_RESTRITAS = ['plan', 'hc'];
+var _telaGestao_19 = telaGestao;
+telaGestao = function(){
+  if(estado.superadmin===undefined){ carregando(); chamar('apiMeuAcesso', estado.token).then(function(r){ estado.superadmin=!!r.superadmin; telaGestao(); }).catch(falhaGeral); return; }
+  if(!estado.superadmin && SUBS_RESTRITAS.indexOf(estado.sub)>=0) estado.sub='dia';
+  return _telaGestao_19();
+};
+var _desenharSubnav_19 = desenharSubnav;
+desenharSubnav = function(){
+  _desenharSubnav_19();
+  if(estado.superadmin) return;
+  var el=$('subnav'); if(!el) return;
+  el.querySelectorAll('[data-sub="plan"],[data-sub="hc"]').forEach(function(b){ b.remove(); });
+};
+</script>

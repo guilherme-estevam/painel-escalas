@@ -1,0 +1,79 @@
+<style>
+/* ===================== regras da troca, explicadas para o agente ===================== */
+.rgx{margin-top:14px;border:1px solid var(--c2);border-radius:16px;padding:16px;background:var(--sup,#fff)}
+.rgx-cab{display:flex;align-items:center;gap:10px;margin-bottom:12px}
+.rgx-cab b{font-size:15px}
+.rgx-cab span{font-size:13px;color:var(--c4)}
+.rgx-g{display:grid;grid-template-columns:repeat(3,1fr);gap:10px}
+.rgx-i{display:flex;gap:10px;align-items:flex-start;background:var(--c1);border-radius:12px;padding:12px}
+.rgx-i .ic{width:34px;height:34px;border-radius:10px;flex:none;display:flex;align-items:center;justify-content:center;background:var(--roxo-bg);color:var(--roxo)}
+.rgx-i b{display:block;font-size:13.5px;margin-bottom:2px}
+.rgx-i p{margin:0;font-size:12.5px;color:var(--c4);line-height:1.45}
+.rgx-i.destaque{background:#FFF4D6;box-shadow:inset 0 0 0 1.5px #F2C14E}
+.rgx-i.destaque .ic{background:#F2C14E;color:#5a3d00}
+.rgx-i.destaque p{color:#6b4e00}
+html[data-tema="escuro"] .rgx-i.destaque{background:#3d3214;box-shadow:inset 0 0 0 1.5px #8a6d1f}
+html[data-tema="escuro"] .rgx-i.destaque p{color:#f3d98c}
+/* aviso no modal de pedir troca */
+.ax48{display:flex;gap:12px;align-items:flex-start;background:#FFF4D6;border:1.5px solid #F2C14E;border-radius:14px;padding:12px 14px;margin:4px 0 14px}
+.ax48 .ic{width:38px;height:38px;border-radius:50%;flex:none;display:flex;align-items:center;justify-content:center;background:#F2C14E;color:#5a3d00}
+.ax48 b{display:block;font-size:14.5px;color:#5a3d00}
+.ax48 span{font-size:13px;color:#6b4e00}
+.ax48 .lim{display:inline-block;margin-top:6px;background:#fff;border-radius:9px;padding:3px 9px;font-weight:800;color:#5a3d00;font-size:13px}
+.ax48 button{margin-top:8px;border:0;background:none;padding:0;font:inherit;font-size:13px;font-weight:800;color:#8a5a00;text-decoration:underline;cursor:pointer}
+html[data-tema="escuro"] .ax48{background:#3d3214;border-color:#8a6d1f}
+html[data-tema="escuro"] .ax48 b,html[data-tema="escuro"] .ax48 .lim{color:#ffe08a}
+html[data-tema="escuro"] .ax48 span,html[data-tema="escuro"] .ax48 button{color:#f3d98c}
+html[data-tema="escuro"] .ax48 .lim{background:rgba(0,0,0,.25)}
+.tq .rgx{margin:0 0 14px} .tq .rgx-g{grid-template-columns:1fr 1fr}
+@media (max-width:900px){ .rgx-g{grid-template-columns:1fr 1fr} }
+@media (max-width:600px){ .rgx-g,.tq .rgx-g{grid-template-columns:1fr} }
+</style>
+<script>
+/* ===================== regras da troca ===================== */
+var RG_IC={
+  relogio:'<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></svg>',
+  semana:'<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="5" width="18" height="16" rx="2"/><path d="M3 10h18M8 3v4M16 3v4"/></svg>',
+  pessoas:'<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="9" cy="8" r="3.2"/><path d="M3 20c0-3.3 2.7-5.5 6-5.5s6 2.2 6 5.5"/><circle cx="17" cy="9" r="2.6"/><path d="M16.5 14.6c2.6.2 4.5 2.1 4.5 4.9"/></svg>',
+  troca:'<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M7 7h12l-3-3M17 17H5l3 3"/></svg>',
+  escudo:'<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 3l7 3v5c0 4.5-3 8-7 10-4-2-7-5.5-7-10V6z"/><path d="m9 12 2 2 4-4"/></svg>',
+  check:'<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="m8 12 3 3 5-6"/></svg>'
+};
+var REGRAS_TROCA=[
+  {ic:'relogio', t:'72 horas de antecedência', p:'O pedido e o aceite do colega precisam ser feitos até 72 horas corridas antes do início do turno. Exemplo: turno de sexta às 09:00, peça até quarta às 09:00.', destaque:true},
+  {ic:'semana', t:'Na mesma semana', p:'O dia em que você folga e o dia em que você trabalha ficam na mesma semana, de domingo a sábado.'},
+  {ic:'pessoas', t:'Com a mesma atuação', p:'Quem atua no 0800 e no chat troca com quem atua no 0800 e no chat. Assíncrono troca com assíncrono.'},
+  {ic:'troca', t:'Mesmo horário, só muda o dia', p:'A troca é só com quem tem o mesmo horário que você. No dia em que trabalhar, você cumpre o seu horário de sempre, com as atuações que estavam planejadas para o colega. Em troca, o colega cobre o seu turno.'},
+  {ic:'check', t:'As regras da escala continuam valendo', p:'A semana continua com 5 dias de trabalho e 2 folgas. Não vale para dias de férias, licença ou com outra troca pendente.'},
+  {ic:'escudo', t:'A coordenação aprova', p:'Depois que o colega aceita, a coordenação confere e aprova. Só então a escala muda. Até lá, vale a escala de hoje.'}
+];
+function regrasTrocaHtml(){
+  return '<div class="rgx-g">'+REGRAS_TROCA.map(function(r){ return '<div class="rgx-i'+(r.destaque?' destaque':'')+'"><span class="ic">'+RG_IC[r.ic]+'</span><div><b>'+r.t+'</b><p>'+r.p+'</p></div></div>'; }).join('')+'</div>';
+}
+function limiteTrocaTxt(){ var d=new Date(Date.now()+PRAZO_TROCA_H*3600000), id=d.getFullYear()+'-'+('0'+(d.getMonth()+1)).slice(-2)+'-'+('0'+d.getDate()).slice(-2); return dSem(id)+' às '+('0'+d.getHours()).slice(-2)+':'+('0'+d.getMinutes()).slice(-2); }
+
+/* Minha escala: quadro de regras logo abaixo dos 4 passos */
+var _secaoTrocasAgente_17 = secaoTrocasAgente;
+secaoTrocasAgente = function(d){
+  var r=_secaoTrocasAgente_17(d), el=$('secTrocas'); if(!el) return r;
+  var por=function(){ var como=el.querySelector('.como'); if(!como || el.querySelector('.rgx')) return !!como; var box=document.createElement('div'); box.className='rgx';
+    box.innerHTML='<div class="rgx-cab"><span class="hx-ic">'+RG_IC.relogio+'</span><div><b>Regras para trocar</b><br><span>Leia antes de pedir. Os pedidos que não seguem essas regras não são aceitos pelo painel.</span></div></div>'+regrasTrocaHtml();
+    como.parentNode.insertBefore(box, como.nextSibling); return true; };
+  if(!por()){ var ob=new MutationObserver(function(){ if(por()) ob.disconnect(); }); ob.observe(el,{childList:true,subtree:true}); }
+  return r;
+};
+
+/* Pedir troca: aviso das 72 horas com o limite de agora e as regras completas */
+var _modalNovaTroca_17 = modalNovaTroca;
+modalNovaTroca = function(dFolga){
+  var r=_modalNovaTroca_17(dFolga);
+  var tq=[].slice.call(document.querySelectorAll('#modais .tq')).pop(); if(!tq) return r;
+  var sub=tq.querySelector('.sub'), av=document.createElement('div');
+  av.innerHTML='<div class="ax48"><span class="ic">'+RG_IC.relogio+'</span><div><b>Peça com pelo menos 72 horas de antecedência</b><span>O pedido e o aceite do colega precisam acontecer até 72 horas corridas antes do início do turno.</span><br><button type="button" class="ax-ver">Ver todas as regras da troca</button></div></div><div class="rgx" style="display:none"><div class="rgx-cab"><b>Regras para trocar</b></div>'+regrasTrocaHtml()+'</div>';
+  sub.parentNode.insertBefore(av, sub.nextSibling);
+  var bt=av.querySelector('.ax-ver'), box=av.querySelector('.rgx');
+  bt.onclick=function(){ var ab=box.style.display==='none'; box.style.display=ab?'':'none'; bt.textContent=ab?'Esconder as regras':'Ver todas as regras da troca'; };
+  var antigo=tq.querySelector('.regra48'); if(antigo) antigo.textContent='Dias apagados no calendário: já passaram, são folga ou começam em menos de 72 horas.';
+  return r;
+};
+</script>

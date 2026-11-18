@@ -1,0 +1,128 @@
+<style>
+/* ===================== trocas: andamento e situação ===================== */
+.tr2 td{vertical-align:top;white-space:normal}
+.tr2 td .pessoa-cel{max-width:230px}
+.tr2 td .pessoa-cel b{white-space:normal;display:block;line-height:1.3}
+.tr2 td:last-child{width:1%;white-space:nowrap}
+.and{display:grid;gap:0;min-width:200px}
+.and .p{display:grid;grid-template-columns:18px 1fr;gap:8px;position:relative;padding-bottom:8px}
+.and .p:last-child{padding-bottom:0}
+.and .p::before{content:"";position:absolute;left:8px;top:16px;bottom:-2px;width:2px;background:var(--c2)}
+.and .p:last-child::before{display:none}
+.and .p.ok::before{background:#c9bfe9}
+.and .dot{width:18px;height:18px;border-radius:50%;display:flex;align-items:center;justify-content:center;background:var(--c2);color:var(--c4);font-size:10px;font-weight:800;z-index:1}
+.and .p.ok .dot{background:var(--roxo);color:#fff}
+.and .p.agora .dot{background:#fff;box-shadow:inset 0 0 0 2px var(--rosa)}
+html[data-tema="escuro"] .and .p.agora .dot{background:var(--sup)}
+.and .p.ruim .dot{background:#E5484D;color:#fff}
+.and b{font-size:12.5px;display:block;line-height:1.25}
+.and small{font-size:11.5px;color:var(--c4)}
+.and .p.agora b{color:var(--rosa)}
+.sit{display:grid;gap:8px;justify-items:center;text-align:center;min-width:190px}
+.sit .quem{display:flex;align-items:center;gap:8px;text-align:left;background:var(--c1);border-radius:12px;padding:6px 10px 6px 6px}
+.sit .quem .av{width:32px;height:32px;font-size:12px;flex:none}
+.sit .quem b{font-size:12.5px;display:block}
+.sit .quem small{font-size:11.5px;color:var(--c4)}
+.sit .obs{font-size:12px;color:var(--c4);font-style:italic;max-width:230px}
+.sit .espera{font-size:12px;font-weight:800;color:var(--c4)}
+.sit .espera.atrasada{color:#C42B2B}
+.motivo-q{font-size:12px;color:var(--c4);font-style:italic;margin-top:6px;display:block}
+/* modal: etapas */
+.etapas{display:grid;grid-template-columns:repeat(3,1fr);gap:0;margin:10px 0 14px;position:relative}
+.etapas .e{position:relative;text-align:center;padding:0 6px}
+.etapas .e::before{content:"";position:absolute;top:13px;left:-50%;right:50%;height:3px;background:var(--c2);z-index:0}
+.etapas .e:first-child::before{display:none}
+.etapas .e.ok::before,.etapas .e.agora::before{background:var(--roxo)}
+.etapas .c{position:relative;z-index:1;width:28px;height:28px;margin:0 auto 6px;border-radius:50%;display:flex;align-items:center;justify-content:center;background:var(--c2);color:var(--c4);font-weight:800;font-size:13px}
+.etapas .e.ok .c{background:var(--roxo);color:#fff}
+.etapas .e.agora .c{background:var(--sup,#fff);box-shadow:inset 0 0 0 3px var(--rosa);color:var(--rosa)}
+.etapas b{display:block;font-size:13px}
+.etapas small{font-size:12px;color:var(--c4)}
+.motivo-box{background:var(--c1);border-radius:12px;padding:10px 12px;font-size:13px;margin-bottom:12px}
+.motivo-box b{display:block;font-size:12px;color:var(--c4);margin-bottom:2px}
+/* fotos de quem pede e de quem cobre */
+.tr2 .pc{display:flex;gap:10px;align-items:flex-start}
+.tr2 .pc .av{width:40px;height:40px;font-size:14px;flex:none;box-shadow:0 0 0 2px var(--sup,#fff),0 0 0 3px var(--c2)}
+.tr2 .pc .pessoa-cel small{display:block;font-size:11.5px;color:var(--c4);margin-top:2px}
+.tr2 .av.vaga{display:flex;align-items:center;justify-content:center;width:40px;height:40px;border-radius:50%;border:2px dashed var(--c3);background:transparent;color:var(--c4);font-weight:800;box-shadow:none}
+.tr2 td.sw{vertical-align:middle;text-align:center;width:1%;padding-left:0;padding-right:0}
+.tr2 td.sw span{display:inline-flex;align-items:center;justify-content:center;width:30px;height:30px;border-radius:50%;background:var(--c1);color:var(--roxo)}
+.tr2 tr.pend td:first-child{box-shadow:inset 4px 0 0 var(--rosa)}
+.tr2 tr.pend td{background:rgba(216,0,115,.03)}
+html[data-tema="escuro"] .tr2 tr.pend td{background:rgba(255,89,193,.05)}
+.dupla.cf{grid-template-columns:32px minmax(0,1fr) auto auto}
+.dupla.cf .av{width:32px;height:32px;font-size:12px}
+</style>
+<script>
+/* ===================== trocas: andamento, quem decidiu e observação opcional ===================== */
+function dhCurta(iso){ return iso ? iso.slice(8,10)+'/'+iso.slice(5,7)+' às '+iso.slice(11,16) : ''; }
+function esperaDesde(iso){ if(!iso) return ''; var min=Math.max(0, Math.round((Date.now()-new Date(iso.replace(' ','T')).getTime())/60000));
+  return min<60 ? min+' min' : min<1440 ? Math.floor(min/60)+' h' : Math.floor(min/1440)+' dia'+(min>=2880?'s':''); }
+var SWAP='<span title="Trocam entre si"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M7 4 3 8l4 4"/><path d="M3 8h14"/><path d="m17 20 4-4-4-4"/><path d="M21 16H7"/></svg></span>';
+var CHK='<svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 6 9 17l-5-5"/></svg>';
+var XIS='<svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="4" stroke-linecap="round" aria-hidden="true"><path d="M18 6 6 18M6 6l12 12"/></svg>';
+function etapasTroca(t){ // [{rot, quando, est: ok|agora|ruim|fut}]
+  var s=t.status, e=[];
+  e.push({rot:'Pedido feito', quando:dhCurta(t.criadaEm), quem:primeiro(t.nomeSolicitante), est:'ok'});
+  if(s==='ABERTA') e.push({rot:'Esperando alguém aceitar', quando:'', est:'agora'});
+  else if(s==='AGUARDANDO_COLEGA') e.push({rot:'Esperando '+primeiro(t.nomeColega)+' aceitar', quando:'', est:'agora'});
+  else if(s==='RECUSADA_COLEGA') e.push({rot:(t.colega? primeiro(t.nomeColega)+' recusou' : 'Todos recusaram'), quando:(t.colega? dhCurta(t.aceiteEm) : ''), est:'ruim'});
+  else if(t.aceiteEm) e.push({rot:primeiro(t.nomeColega)+' aceitou', quando:dhCurta(t.aceiteEm), est:'ok'});
+  else if(s==='CANCELADA'||s==='EXPIRADA') e.push({rot:s==='CANCELADA'?'Cancelada antes do aceite':'Expirou sem aceite', quando:'', est:'ruim'});
+  else e.push({rot:'Colega', quando:'', est:'fut'});
+  if(s==='AGUARDANDO_GESTAO') e.push({rot:'Esperando a coordenação', quando:'', est:'agora'});
+  else if(s==='APROVADA') e.push({rot:'Gestão aprovou', quando:dhCurta(t.decisaoEm), est:'ok'});
+  else if(s==='REJEITADA') e.push({rot:'Gestão rejeitou', quando:dhCurta(t.decisaoEm), est:'ruim'});
+  else if(s==='BLOQUEADA'||s==='INVALIDADA') e.push({rot:s==='BLOQUEADA'?'Bloqueada por regra':'Invalidada', quando:dhCurta(t.decisaoEm), est:'ruim'});
+  else if(s==='CANCELADA' && t.aceiteEm) e.push({rot:'Cancelada', quando:'', est:'ruim'});
+  else e.push({rot:'Aprovação da coordenação', quando:'', est:'fut'});
+  return e;
+}
+function andamentoHtml(t){
+  return '<div class="and">'+etapasTroca(t).map(function(p){ var ic=p.est==='ok'?CHK:p.est==='ruim'?XIS:'';
+    return '<div class="p '+p.est+'"><span class="dot">'+ic+'</span><span><b>'+esc(p.rot)+'</b>'+(p.quando?'<small>'+p.quando+'</small>':'')+'</span></div>'; }).join('')+'</div>';
+}
+function situacaoHtml(t){
+  var h='<div class="sit"><span class="selo '+(SEL_TROCA[t.status]||'sem')+'">'+esc(t.rotulo)+'</span>';
+  if(t.decisaoPor){ var nm=nomeDe(t.decisaoPor), verbo=t.status==='APROVADA'?'aprovou':t.status==='REJEITADA'?'rejeitou':'decidiu';
+    h+='<div class="quem">'+avatarHtml(t.decisaoPor, nm, '')+'<span><b>'+esc(nm)+'</b><small>'+verbo+' em '+dhCurta(t.decisaoEm)+'</small></span></div>';
+    if(t.obsDecisao) h+='<div class="obs">“'+esc(t.obsDecisao)+'”</div>'; }
+  if(t.status==='AGUARDANDO_GESTAO' || t.status==='AGUARDANDO_COLEGA' || t.status==='ABERTA'){
+    var desde=t.status==='AGUARDANDO_GESTAO' ? (t.aceiteEm||t.criadaEm) : t.criadaEm, min=(Date.now()-new Date(String(desde).replace(' ','T')).getTime())/60000;
+    h+='<div class="espera'+(min>1440?' atrasada':'')+'">Esperando há '+esperaDesde(desde)+'</div>';
+    if(t.status==='AGUARDANDO_GESTAO' && t.aprovadores) h+='<div class="quem-aprova"><b>Aprovação:</b> '+esc(t.aprovadores)+'</div>'; }
+  if(t.status==='BLOQUEADA'||t.status==='INVALIDADA') h+='<div class="obs">'+esc(t.validacao||'')+'</div>';
+  return h+'</div>';
+}
+telaTrocasGestao = function(filtro){
+  gCarregando(); filtro = filtro===undefined ? (estado.fTrocas===undefined?'AGUARDANDO_GESTAO':estado.fTrocas) : filtro; estado.fTrocas=filtro;
+  chamar('apiTrocasV2', estado.token, {status:filtro}).then(function(r){
+    var c=r.contagem, chips=[['AGUARDANDO_GESTAO','Aguardando aprovação'],['ABERTA','Em aberto'],['AGUARDANDO_COLEGA','Aguardando o colega'],['APROVADA','Aprovadas'],['REJEITADA','Rejeitadas'],['RECUSADA_COLEGA','Recusadas pelos colegas'],['CANCELADA','Canceladas'],['EXPIRADA','Expiradas'],['BLOQUEADA','Bloqueadas por regra'],['INVALIDADA','Invalidadas'],['','Todas']];
+    var lado=function(email, nome, folga, trab){ return '<div class="pc">'+avatarHtml(email, nome, '')+'<div class="pessoa-cel"><b>'+esc(nome)+'</b><div class="frase" style="margin-top:4px"><span class="chip f" style="font-size:12px;padding:3px 8px">folga <b>'+dSem(folga)+'</b></span><span class="chip t" style="font-size:12px;padding:3px 8px">trabalha <b>'+dSem(trab)+'</b></span></div></div></div>'; };
+    gc().innerHTML='<div class="cab"><div><h1>Trocas de Escala</h1><p>'+(r.escopo==='todas'?'Você vê e pode aprovar <b>todas as trocas</b> (WFM). Também pode aprovar o coordenador de uma das duas pessoas; a primeira aprovação vale.':r.escopo==='time'?'Você vê todas as trocas do Customer e aprova ou rejeita as do <b>seu time</b>. Nas outras, aparece quem pode decidir.':'Você pode <b>acompanhar todas as trocas</b>. Aprovar ou rejeitar é com o coordenador de uma das duas pessoas ou com o WFM.')+' Antes de efetivar, as regras são conferidas de novo.</p></div></div>'+
+      '<div class="chips">'+chips.map(function(x){ var n=x[0]?(c[x[0]]||0):0; return '<button data-f="'+x[0]+'" class="'+(filtro===x[0]?'ativa':'')+'">'+x[1]+(x[0]==='AGUARDANDO_GESTAO'&&n?'<i>'+n+'</i>':(x[0]&&n?' ('+n+')':''))+'</button>'; }).join('')+'</div>'+
+      '<div class="tabela"><table class="tr2"><thead><tr><th class="esq">Quem pediu</th><th></th><th class="esq">Quem cobre</th><th class="esq">Andamento</th><th>Situação</th><th></th></tr></thead><tbody>'+
+      (r.itens.length?r.itens.map(function(t){ return '<tr class="'+(t.status==='AGUARDANDO_GESTAO'?'pend':'')+'"><td class="esq">'+lado(t.solicitante, t.nomeSolicitante, t.dataSolicitante, t.dataColega)+(t.motivo?'<span class="motivo-q">“'+esc(t.motivo)+'”</span>':'')+'</td><td class="sw">'+SWAP+'</td><td class="esq">'+(t.colega?lado(t.colega, t.nomeColega, t.dataColega, t.dataSolicitante):'<div class="pc"><span class="av vaga">?</span><div class="pessoa-cel"><b>Ainda sem colega</b><small>Pedido em aberto: o primeiro que aceitar cobre</small></div></div>')+'</td><td class="esq">'+andamentoHtml(t)+'</td><td>'+situacaoHtml(t)+'</td><td>'+(t.status==='AGUARDANDO_GESTAO'?(t.podeDecidir===false?'<span class="sem-perm">Você não aprova esta troca</span>':'<button class="btn peq" data-analisar="'+t.id+'">Analisar</button>'):'')+'</td></tr>'; }).join(''):'<tr><td colspan="6" style="padding:28px;color:#6D6D6D">Nenhuma troca nesta situação.</td></tr>')+'</tbody></table></div>';
+    atualizarAvatares();
+    gc().querySelectorAll('[data-f]').forEach(function(b){ b.onclick=function(){ telaTrocasGestao(b.dataset.f); }; });
+    gc().querySelectorAll('[data-analisar]').forEach(function(b){ var t=r.itens.filter(function(x){return x.id===b.dataset.analisar;})[0]; b.onclick=function(){ modalDecidirTroca(t); }; });
+  }).catch(falhaGeral);
+};
+modalDecidirTroca = function(t){
+  var et=etapasTroca(t);
+  var etapas='<div class="etapas">'+et.map(function(p,i){ return '<div class="e '+p.est+'"><span class="c">'+(p.est==='ok'?CHK.replace(/10/g,'14'):(i+1))+'</span><b>'+esc(p.est==='agora'&&i===2?'Sua decisão':p.rot)+'</b><small>'+(p.quando||(p.est==='agora'?'agora':''))+'</small></div>'; }).join('')+'</div>';
+  var w=abrirModal('<h3>Aprovar troca</h3>'+etapas+
+    (t.motivo?'<div class="motivo-box"><b>Motivo de '+esc(primeiro(t.nomeSolicitante))+'</b>“'+esc(t.motivo)+'”</div>':'')+
+    '<div class="resumo" style="display:grid;gap:10px">'+
+      '<div class="dupla cf">'+avatarHtml(t.solicitante, t.nomeSolicitante, '')+'<b>'+esc(t.nomeSolicitante)+'</b><span class="chip f">folga <b>'+dSem(t.dataSolicitante)+'</b></span><span class="chip t">trabalha <b>'+dSem(t.dataColega)+'</b></span></div>'+
+      '<div class="dupla cf">'+avatarHtml(t.colega, t.nomeColega, '')+'<b>'+esc(t.nomeColega)+'</b><span class="chip f">folga <b>'+dSem(t.dataColega)+'</b></span><span class="chip t">trabalha <b>'+dSem(t.dataSolicitante)+'</b></span></div></div>'+
+    '<div id="dPrev"><div class="carregando" style="min-height:80px"><div class="giro"></div></div></div>'+
+    '<div class="campo"><label for="dObs">Observação (opcional, aparece no histórico e para os agentes)</label><input id="dObs" type="text" maxlength="200" placeholder="Ex.: aprovado conforme combinado com a coordenação"></div>'+
+    '<div class="acoes"><button class="btn sec" data-fechar>Voltar</button><button class="btn sec" id="dRej">Rejeitar</button><button class="btn roxo" id="dApr" disabled>Aprovar e aplicar</button></div>', true);
+  atualizarAvatares();
+  chamar('apiTrocaPreviaPorId', estado.token, t.id).then(function(pv){ w.querySelector('#dPrev').innerHTML=htmlPrevia(pv); w.querySelector('#dApr').disabled=!pv.ok; }).catch(function(e){ w.remove(); falhaGeral(e); });
+  var decidir=function(apr, bt){ ocupado(bt,true,apr?'Aplicando…':'Rejeitando…'); chamar('apiTrocaDecidir', estado.token, t.id, apr, w.querySelector('#dObs').value.trim()).then(function(r){ w.remove(); toast(r.ok?(apr?(r.parcial?r.msg:'Troca aprovada e aplicada nas duas escalas.'):'Troca recusada.'):r.msg, !r.ok); telaTrocasGestao(); atualizarSino(); }).catch(function(e){ w.remove(); falhaGeral(e); }); };
+  w.querySelector('#dApr').onclick=function(){ decidir(true,this); };
+  w.querySelector('#dRej').onclick=function(){ decidir(false,this); };
+};
+</script>

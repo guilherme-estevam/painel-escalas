@@ -1,0 +1,41 @@
+<style>
+/* ===================== Planejamento: baixar a escala atual em CSV ===================== */
+.pl-csv{position:relative;display:inline-flex}
+.pl-csv-menu{position:absolute;z-index:60;top:calc(100% + 8px);right:0;width:330px;padding:8px;border-radius:16px;background:var(--sup,#fff);border:1px solid var(--c2,#E6DFEE);box-shadow:0 24px 50px -20px rgba(40,20,70,.45);transform-origin:top right;animation:plCsvEntra .16s cubic-bezier(.23,1,.32,1)}
+html[data-tema="escuro"] .pl-csv-menu{background:#1c1823;border-color:#2c2636}
+@keyframes plCsvEntra{from{opacity:0;transform:scale(.96)}to{opacity:1;transform:none}}
+.pl-csv-menu .t{padding:6px 10px 8px;font-size:12px;font-weight:700;color:var(--c4)}
+.pl-csv-menu button{all:unset;box-sizing:border-box;cursor:pointer;display:block;width:100%;padding:10px 12px;border-radius:12px;transition:background-color .15s}
+.pl-csv-menu button:hover,.pl-csv-menu button:focus-visible{background:var(--c1,#F4F1F7)}
+html[data-tema="escuro"] .pl-csv-menu button:hover{background:#2a2333}
+.pl-csv-menu button b{display:block;font-size:13.5px;font-weight:800;color:var(--preto)}
+.pl-csv-menu button span{display:block;margin-top:2px;font-size:12px;color:var(--c4);line-height:1.4}
+@media (prefers-reduced-motion:reduce){ .pl-csv-menu{animation:none} }
+</style>
+<script>
+/* ===================== Planejamento: baixar a escala atual em CSV (escala publicada, com as trocas já aplicadas) ===================== */
+function plCsvBotao() {
+  var ac = document.querySelector('.pl-acoes'); if (!ac || document.getElementById('plCsv')) return;
+  var w = document.createElement('span'); w.className = 'pl-csv';
+  w.innerHTML = '<button type="button" class="btn sec" id="plCsv" aria-haspopup="menu" title="Baixar a escala publicada do mês, já com as trocas aprovadas">' + (typeof CSV_IC !== 'undefined' ? CSV_IC + ' ' : '') + 'Baixar CSV</button>';
+  var imp = document.getElementById('bImportar'); if (imp && imp.parentNode === ac) imp.after(w); else ac.insertBefore(w, ac.firstChild);
+  var bt = w.querySelector('#plCsv');
+  bt.onclick = function (e) { e.stopPropagation(); var v = w.querySelector('.pl-csv-menu'); if (v) { v.remove(); return; }
+    var mes = (document.getElementById('pMes') || {}).value || estado.mes;
+    var m = document.createElement('div'); m.className = 'pl-csv-menu'; m.setAttribute('role', 'menu');
+    m.innerHTML = '<div class="t">Escala publicada de ' + esc(typeof rotuloMes === 'function' ? rotuloMes(mes) : mes) + ', já com as trocas aprovadas</div>' +
+      '<button type="button" role="menuitem" data-f="grade"><b>Grade do Mês</b><span>Uma linha por pessoa e uma coluna por dia (horário, folga, férias, licença ou feriado).</span></button>' +
+      '<button type="button" role="menuitem" data-f="dias"><b>Dia a Dia com Atuações</b><span>Uma linha por pessoa e dia, com entrada, almoço, saída e as atuações do dia.</span></button>';
+    w.appendChild(m);
+    m.querySelectorAll('[data-f]').forEach(function (o) { o.onclick = function () { var f = o.getAttribute('data-f'); m.remove(); plCsvBaixar(mes, f, bt); }; });
+    setTimeout(function () { document.addEventListener('click', function fora(ev) { if (!m.contains(ev.target)) { m.remove(); document.removeEventListener('click', fora); } }); }, 0); };
+}
+function plCsvBaixar(mes, formato, bt) {
+  var txt = bt.innerHTML; bt.disabled = true; bt.textContent = 'Gerando CSV…';
+  chamar('apiExportarEscala', estado.token, mes, formato).then(function (r) { bt.disabled = false; bt.innerHTML = txt;
+    if (!r || !r.linhas) { try { toast('Não foi possível gerar o CSV.'); } catch (e) { } return; }
+    if (typeof csvBaixar === 'function') csvBaixar(r.nome, r.cab, r.linhas); })
+  .catch(function (e) { bt.disabled = false; bt.innerHTML = txt; if (typeof falhaGeral === 'function') falhaGeral(e); });
+}
+(function () { if (typeof desenharPlano !== 'function') return; var _d = desenharPlano; desenharPlano = function () { var x = _d.apply(this, arguments); try { plCsvBotao(); } catch (e) { } return x; }; })();
+</script>

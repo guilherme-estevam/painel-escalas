@@ -1,0 +1,30 @@
+<style>
+/* ===================== Ajustes de fila: abrir a escala da pessoa e voltar ===================== */
+#afCorpo .af-row .af-id{cursor:pointer;border-radius:10px;transition:background-color .15s}
+@media (hover:hover){ #afCorpo .af-row .af-id:hover b{text-decoration:underline;text-underline-offset:3px;text-decoration-color:color-mix(in srgb,var(--rosa,#D80073) 55%,transparent)} }
+#afCorpo .af-row .af-id:focus-visible{outline:2px solid var(--rosa,#D80073);outline-offset:2px}
+.af-volta{display:inline-flex;align-items:center;gap:7px;margin:0 0 12px;padding:7px 12px 7px 9px;border-radius:10px;border:1.5px solid var(--c2,#E6DFEE);background:var(--sup,#fff);color:var(--preto);font:inherit;font-size:13px;font-weight:800;cursor:pointer;transition:border-color .15s,background-color .15s,transform .12s}
+.af-volta svg{width:16px;height:16px}
+@media (hover:hover){ .af-volta:hover{border-color:#B7A8E6;background:color-mix(in srgb,#4F3F91 5%,var(--sup,#fff))} }
+.af-volta:active{transform:scale(.97)}
+.af-volta:focus-visible{outline:2px solid var(--rosa,#D80073);outline-offset:2px}
+html[data-tema="escuro"] .af-volta{border-color:#3a3150;background:#1c1823}
+</style>
+<script>
+/* ===================== Ajustes de fila na Twilio: clicar na pessoa abre a escala dela (atuação do dia, semana e mês) ===================== */
+var AFV_IC = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M15 18l-6-6 6-6"/></svg>';
+function afvAbrir(email) { var aj = $('afModal'), fundoAj = aj && aj.closest('.modal-fundo'); if (!fundoAj || typeof modalAgente !== 'function') return;
+  var r = estado.afModalR || {}, antes = estado.vd; estado.vd = Object.assign({}, antes || {}, { data: r.data || ((antes || {}).data) || hojeLocal() });
+  var n0 = $('modais').children.length; try { modalAgente(email); } finally { estado.vd = antes; }
+  var fundoAg = $('modais').children[$('modais').children.length - 1]; if (!fundoAg || fundoAg === fundoAj || $('modais').children.length <= n0) return;
+  fundoAj.style.display = 'none'; fundoAg.dataset.afv = '1';
+  var voltar = function () { if (fundoAg.parentNode) fundoAg.remove(); };
+  var botao = function () { var md = fundoAg.querySelector('.modal'); if (!md || md.querySelector('.af-volta')) return; md.insertAdjacentHTML('afterbegin', '<button type="button" class="af-volta">' + AFV_IC + 'Voltar para Ajustes de Fila</button>'); md.querySelector('.af-volta').onclick = voltar; };
+  botao(); var ob = new MutationObserver(function () { if (!document.body.contains(fundoAg)) { ob.disconnect(); if (document.body.contains(fundoAj)) { fundoAj.style.display = ''; var q = $('afQ'); if (q) try { q.focus({ preventScroll: true }); } catch (e) { } } return; } botao(); });
+  ob.observe(document.body, { childList: true, subtree: true });
+  var esc1 = function (ev) { if (ev.key === 'Escape' && document.body.contains(fundoAg) && $('modais').lastElementChild === fundoAg) { ev.stopPropagation(); voltar(); } if (!document.body.contains(fundoAg)) document.removeEventListener('keydown', esc1, true); }; document.addEventListener('keydown', esc1, true); }
+(function () { var pend = 0; new MutationObserver(function () { if (pend) return; pend = requestAnimationFrame(function () { pend = 0; var c = $('afCorpo'), r = estado.afModalR; if (!c || !r) return; var por = {}; (r.itens || []).forEach(function (it) { por[it.chave] = it; });
+  c.querySelectorAll('.af-row').forEach(function (row) { var id = row.querySelector('.af-id'); if (!id || id.dataset.afv) return; var b = row.querySelector('[data-afok],[data-afdes]'), it = b && por[b.getAttribute('data-afok') || b.getAttribute('data-afdes')]; if (!it) return; id.dataset.afv = '1'; id.setAttribute('role', 'button'); id.tabIndex = 0; id.title = 'Ver a escala de ' + it.nome;
+    var abrir = function (ev) { if (ev.target.closest('button, a, [data-copiar]')) return; afvAbrir(it.email); };
+    id.addEventListener('click', abrir); id.addEventListener('keydown', function (ev) { if (ev.key === 'Enter' || ev.key === ' ') { ev.preventDefault(); abrir(ev); } }); var av = row.querySelector('.af-av, .av, img'); if (av && !id.contains(av)) { av.style.cursor = 'pointer'; av.addEventListener('click', abrir); } }); }); }).observe(document.body, { childList: true, subtree: true }); })();
+</script>

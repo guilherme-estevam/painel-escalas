@@ -1,0 +1,29 @@
+<style>
+/* ===================== Minha Escala: aviso de presença registrada (agente) ===================== */
+.pzok{display:flex;align-items:center;gap:14px;margin:0 0 16px;padding:14px 18px;border-radius:16px;background:linear-gradient(135deg,#E9F8EF,#F3FBF6);border:1.5px solid #A9DFC0;color:#14532D;animation:pzokEntra .45s cubic-bezier(.23,1,.32,1) backwards}
+html[data-tema="escuro"] .pzok{background:linear-gradient(135deg,#132a1d,#16241c);border-color:#2f6b47;color:#bfeccf}
+@keyframes pzokEntra{from{opacity:0;transform:translateY(-6px)}to{opacity:1;transform:none}}
+.pzok .ic{width:42px;height:42px;border-radius:13px;flex:none;display:grid;place-items:center;color:#fff;background:#1E9E58;box-shadow:0 8px 18px -10px rgba(30,158,88,.8)}
+.pzok .ic svg{width:22px;height:22px}
+.pzok .tx{flex:1;min-width:0}
+.pzok .tx b{display:block;font-size:15px;font-weight:800;color:#0F5132}
+html[data-tema="escuro"] .pzok .tx b{color:#d6f5e2}
+.pzok .tx span{display:block;margin-top:2px;font-size:13px;line-height:1.45;color:#2D6A47}
+html[data-tema="escuro"] .pzok .tx span{color:#9fd8b5}
+.pzok .tx span strong{font-weight:800;color:inherit}
+.pzok .tag{flex:none;display:inline-flex;align-items:center;gap:6px;padding:6px 12px;border-radius:999px;font-size:12.5px;font-weight:800;color:#0F5132;background:#fff;border:1px solid #A9DFC0}
+html[data-tema="escuro"] .pzok .tag{color:#bfeccf;background:#0f2017;border-color:#2f6b47}
+.pzok .tag i{width:8px;height:8px;border-radius:50%;background:#1E9E58;box-shadow:0 0 0 3px rgba(30,158,88,.18)}
+@media (max-width:620px){ .pzok{flex-wrap:wrap;padding:14px} .pzok .tag{margin-left:56px} }
+@media (prefers-reduced-motion:reduce){ .pzok{animation:none} }
+</style>
+<script>
+/* ===================== Minha Escala: aviso de presença registrada (11/11/2026) =====================
+   Só aparece quando a situação do dia é Presente e mostra o horário do registro (feito pela própria pessoa ou pela gestão).
+   Falta, atestado, compensa e outras situações não aparecem aqui. */
+var PZOK_IC = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12.5l4.2 4.2L19 7"/></svg>';
+function pzokHtml(p) { return '<div class="pzok" id="pzOk" role="status"><span class="ic">' + PZOK_IC + '</span><div class="tx"><b>Presença Registrada</b><span>' + (p.registradoEm ? 'Registrada hoje às ' + esc(p.registradoEm) + '.' : 'Sua presença de hoje já está registrada.') + '</span></div><span class="tag"><i></i>Presente</span></div>'; }
+(function () { if (typeof desenharMinhaEscala !== 'function') return; var _dm = desenharMinhaEscala; desenharMinhaEscala = function () { var x = _dm.apply(this, arguments);
+  try { var p = estado.presHoje; if (!ehGestao() && p && p.presente && p.data === hojeLocal()) { document.querySelectorAll('#conteudo .pz-chip').forEach(function (c) { c.remove(); }); var c = $('conteudo'), v = $('pzOk');
+      if (c) { if (v) v.outerHTML = pzokHtml(p); else c.insertAdjacentHTML('afterbegin', pzokHtml(p)); [60, 600].forEach(function (t) { setTimeout(function () { var a = $('pzOk'), cc = $('conteudo'); if (a && cc && cc.firstElementChild !== a) cc.insertBefore(a, cc.firstElementChild); }, t); }); } } } catch (e) { } return x; }; })();
+</script>

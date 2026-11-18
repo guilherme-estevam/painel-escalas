@@ -1,0 +1,156 @@
+<style>
+/* ===================== perguntas e confirmações em modal (no lugar das janelas do navegador) ===================== */
+.pq{text-align:left}
+.pq-ic{width:48px;height:48px;border-radius:14px;display:flex;align-items:center;justify-content:center;margin-bottom:14px}
+.pq-ic.aviso{background:#FFF4D6;color:#8a5a00} .pq-ic.perigo{background:var(--rosa-bg);color:var(--rosa)} .pq-ic.texto{background:var(--roxo-bg);color:var(--roxo)}
+html[data-tema="escuro"] .pq-ic.aviso{background:#3d3214;color:#ffd77a}
+.pq h3{margin:0 0 6px;font-size:19px}
+.pq p{margin:0 0 6px;color:var(--c4);font-size:14px;line-height:1.5}
+.pq textarea{width:100%;min-height:92px;margin-top:10px;border:1.5px solid var(--c3);border-radius:12px;padding:10px 12px;font:inherit;resize:vertical;background:var(--sup,#fff);color:var(--preto)}
+.pq textarea:focus{outline:none;border-color:var(--rosa);box-shadow:0 0 0 4px rgba(216,0,115,.12)}
+.pq .pq-obr{font-size:12px;color:var(--c4);margin-top:6px}
+.pq .pq-obr.erro{color:var(--rosa);font-weight:700}
+
+/* ===================== tela de entrada: movimentos suaves ===================== */
+.lg2-card .tira div{animation:lg2Dia .55s cubic-bezier(.2,.8,.3,1.25) both}
+.lg2-card .tira div:nth-child(1){animation-delay:.40s} .lg2-card .tira div:nth-child(2){animation-delay:.47s} .lg2-card .tira div:nth-child(3){animation-delay:.54s}
+.lg2-card .tira div:nth-child(4){animation-delay:.61s} .lg2-card .tira div:nth-child(5){animation-delay:.68s} .lg2-card .tira div:nth-child(6){animation-delay:.75s} .lg2-card .tira div:nth-child(7){animation-delay:.82s}
+@keyframes lg2Dia{from{opacity:0;transform:translateY(10px) scale(.85)}to{opacity:1;transform:none}}
+.lg2-card .tira .hoje{animation:lg2Dia .55s cubic-bezier(.2,.8,.3,1.25) both .47s, lg2Brilho 2.8s ease-in-out 1.3s infinite}
+@keyframes lg2Brilho{0%,100%{box-shadow:0 0 0 2px #fff,0 12px 24px -8px rgba(255,89,193,.55);transform:translateY(-4px)}50%{box-shadow:0 0 0 2px #fff,0 0 0 7px rgba(255,89,193,.18),0 14px 30px -8px rgba(255,89,193,.85);transform:translateY(-5px)}}
+.lg2-barra span{transform-origin:left center;animation:lg2Cresce .8s cubic-bezier(.3,.7,.2,1) both}
+.lg2-barra span:nth-child(1){animation-delay:.95s} .lg2-barra span:nth-child(2){animation-delay:1.15s} .lg2-barra span:nth-child(3){animation-delay:1.3s} .lg2-barra span:nth-child(4){animation-delay:1.42s}
+@keyframes lg2Cresce{from{transform:scaleX(0);opacity:.4}to{transform:scaleX(1);opacity:1}}
+.lg2-agora{animation:lg2Aparece .4s ease both 1.9s}
+.lg2-agora::after{content:'';position:absolute;top:-8px;left:-7px;width:16px;height:16px;border-radius:50%;background:rgba(255,255,255,.35);animation:lg2Onda 2.2s ease-out 2.2s infinite}
+@keyframes lg2Aparece{from{opacity:0}to{opacity:1}}
+@keyframes lg2Onda{0%{transform:scale(.4);opacity:.9}100%{transform:scale(2.2);opacity:0}}
+/* profundidade: o palco inclina de leve com o mouse e os cartões flutuantes andam no sentido contrário */
+.lg2-palco{perspective:1000px}
+.lg2-card{transform-style:preserve-3d}
+.lg2-palco .lg2-card{rotate:none}
+.lg2-palco[data-mov] .lg2-card{transition:translate .5s cubic-bezier(.2,.7,.2,1)}
+.lg2-palco[data-mov]{transform:rotateX(calc(var(--py,0) * -3deg)) rotateY(calc(var(--px,0) * 4deg));transition:transform .6s cubic-bezier(.2,.7,.2,1)}
+.lg2-notif{translate:calc(var(--px,0) * -14px) calc(var(--py,0) * -10px);transition:translate .6s cubic-bezier(.2,.7,.2,1)}
+.lg2-chip{translate:calc(var(--px,0) * 12px) calc(var(--py,0) * 9px);transition:translate .6s cubic-bezier(.2,.7,.2,1)}
+.lg2-bg .b1{translate:calc(var(--px,0) * 18px) calc(var(--py,0) * 14px);transition:translate 1.2s ease-out}
+.lg2-bg .b2{translate:calc(var(--px,0) * -16px) calc(var(--py,0) * -12px);transition:translate 1.2s ease-out}
+/* aviso flutuante que troca de mensagem */
+.lg2-notif .in > div,.lg2-notif .ok{transition:opacity .45s ease,transform .45s ease}
+.lg2-notif.trocando .in > div,.lg2-notif.trocando .ok{opacity:0;transform:translateY(-6px)}
+.lg2-notif .ok.rosa{background:var(--rosa-bg);color:var(--rosa)} .lg2-notif .ok.roxo{background:var(--roxo-bg);color:var(--roxo)}
+/* brilho que passa pelo selo rosa */
+.lg2-chip .in{position:relative;overflow:hidden}
+.lg2-chip .in::after{content:'';position:absolute;top:0;bottom:0;left:-60%;width:45%;background:linear-gradient(100deg,transparent,rgba(255,255,255,.45),transparent);transform:skewX(-18deg);animation:lg2Reflexo 4.8s ease-in-out 2.4s infinite}
+@keyframes lg2Reflexo{0%{left:-60%}35%,100%{left:130%}}
+.lg2-feat span{transition:transform .2s,background .2s,border-color .2s}
+.lg2-feat span:hover{transform:translateY(-2px);background:rgba(255,255,255,.10);border-color:rgba(255,138,208,.35)}
+@media (prefers-reduced-motion: reduce){
+  .lg2-card .tira div,.lg2-card .tira .hoje,.lg2-barra span,.lg2-agora,.lg2-agora::after,.lg2-chip .in::after{animation:none}
+  .lg2-palco[data-mov]{transform:none} .lg2-notif,.lg2-chip,.lg2-bg .b1,.lg2-bg .b2{translate:none}
+}
+</style>
+<script>
+/* ===================== perguntas em modal: confirm() e prompt() do navegador viram modais do painel ===================== */
+(function(){
+  var ultimo=null, liberado={};
+  ['click','change'].forEach(function(t){ document.addEventListener(t, function(ev){ var el=ev.target; if(el && el.closest && el.closest('.pq')) return; ultimo={alvo:el, tipo:t, valor:(el && 'value' in el) ? el.value : undefined}; }, true); });
+  function repetir(u){ if(!u || !u.alvo || !document.contains(u.alvo)) return; if(u.tipo==='change'){ if(u.valor!==undefined) u.alvo.value=u.valor; u.alvo.dispatchEvent(new Event('change', {bubbles:true})); } else u.alvo.click(); }
+  var IC={aviso:'<svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 9v4M12 17h.01"/><path d="M10.3 3.9 1.8 18a2 2 0 0 0 1.7 3h17a2 2 0 0 0 1.7-3L13.7 3.9a2 2 0 0 0-3.4 0z"/></svg>',
+    perigo:'<svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 6h18M8 6V4h8v2M6 6l1 14h10l1-14"/></svg>',
+    texto:'<svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 20h9"/><path d="M16.5 3.5a2.1 2.1 0 0 1 3 3L7 19l-4 1 1-4z"/></svg>'};
+  // título e botões de acordo com a pergunta
+  function estilo(msg){
+    if(/não salvas/i.test(msg)) return {ic:'aviso', tit:'Alterações não salvas', ok:/Trocar de mês/i.test(msg)?'Trocar de mês sem salvar':'Sair sem salvar', nao:'Continuar editando'};
+    if(/Descartar/i.test(msg)) return {ic:'perigo', tit:'Descartar alterações?', ok:'Descartar', nao:'Voltar'};
+    if(/Esvaziar|vazio/i.test(msg)) return {ic:'perigo', tit:'Esvaziar o mês?', ok:'Esvaziar', nao:'Voltar'};
+    if(/Fechar sem salvar/i.test(msg)) return {ic:'aviso', tit:'Fechar sem salvar?', ok:'Fechar sem salvar', nao:'Continuar editando'};
+    if(/Cancelar este pedido/i.test(msg)) return {ic:'perigo', tit:'Cancelar o pedido de troca?', ok:'Cancelar pedido', nao:'Manter pedido'};
+    if(/^Recusar/i.test(msg)) return {ic:'texto', tit:'Recusar a troca?', ok:'Recusar troca', nao:'Voltar'};
+    if(/^Remover/i.test(msg)) return {ic:'perigo', tit:msg.split('?')[0]+'?', ok:'Remover', nao:'Voltar'};
+    return {ic:'aviso', tit:'Confirmar', ok:'Confirmar', nao:'Voltar'};
+  }
+  function texto(msg){ return msg.replace(/\s*(Se quiser, diga o motivo:|Informe o motivo:)\s*$/i,'').trim(); }
+  function abrir(msg, comCampo){
+    var e=estilo(msg), obrig=comCampo && /Informe o motivo/i.test(msg), corpo=texto(msg);
+    var desc = /não salvas/i.test(msg) ? 'Você fez mudanças na grade que ainda não foram salvas. Se continuar, elas serão perdidas.' : (corpo===e.tit ? '' : corpo);
+    return new Promise(function(res){
+      var w=abrirModal('<div class="pq"><div class="pq-ic '+e.ic+'">'+IC[comCampo?'texto':e.ic]+'</div><h3>'+esc(e.tit)+'</h3>'+(desc?'<p>'+esc(desc)+'</p>':'')+
+        (comCampo?'<textarea id="pqTxt" maxlength="200" placeholder="'+(obrig?'Escreva o motivo':'Motivo (opcional)')+'"></textarea><div class="pq-obr" id="pqObr">'+(obrig?'O motivo é obrigatório e fica no histórico.':'Se quiser, explique o motivo. Ele aparece para a outra pessoa.')+'</div>':'')+
+        '<div class="acoes"><button class="btn sec" id="pqNao">'+esc(e.nao)+'</button><button class="btn'+(e.ic==='perigo'?' perigo':'')+'" id="pqSim">'+esc(e.ok)+'</button></div></div>');
+      var fim=function(v){ w.remove(); res(v); };
+      w.querySelector('#pqNao').onclick=function(){ fim(null); };
+      w.addEventListener('click', function(ev){ if(ev.target===w) res(null); });
+      w.querySelector('#pqSim').onclick=function(){
+        if(comCampo){ var t=w.querySelector('#pqTxt').value.trim(); if(obrig && !t){ var o=w.querySelector('#pqObr'); o.classList.add('erro'); o.textContent='Escreva o motivo para continuar.'; w.querySelector('#pqTxt').focus(); return; } fim(t); }
+        else fim(true); };
+      var c=w.querySelector(comCampo?'#pqTxt':'#pqSim'); if(c) setTimeout(function(){ c.focus(); }, 50);
+    });
+  }
+  window.confirm=function(msg){ msg=String(msg==null?'':msg); if(liberado.hasOwnProperty('c:'+msg)){ delete liberado['c:'+msg]; return true; }
+    var u=ultimo; abrir(msg, false).then(function(v){ if(v===true){ liberado['c:'+msg]=true; repetir(u); setTimeout(function(){ delete liberado['c:'+msg]; }, 1500); } }); return false; };
+  window.prompt=function(msg){ msg=String(msg==null?'':msg); if(liberado.hasOwnProperty('p:'+msg)){ var t=liberado['p:'+msg]; delete liberado['p:'+msg]; return t; }
+    var u=ultimo; abrir(msg, true).then(function(v){ if(v!==null && v!==undefined){ liberado['p:'+msg]=v; repetir(u); setTimeout(function(){ delete liberado['p:'+msg]; }, 1500); } }); return null; };
+  window.alert=function(msg){ toast(String(msg==null?'':msg)); };
+})();
+
+/* ===================== chamadas ao servidor: nova tentativa automática quando o Google está ocupado ===================== */
+(function(){
+  var _chamar_22=chamar, ultimaChamada=0;
+  var SO_LEITURA=/^api(Minha|Mes$|Notificacoes|Pendencias|Presenca|VisaoDia|AgenteDia|Trocas$|TrocasV2|TrocaOfertas|TrocaPrevia|TrocaHorarios|TrocaCompativeis|TrocaHorarioOpcoes|Inicio|Acessos|Logs|Feriados|FeriadosOff|Pessoas|Afastamentos|MeuAcesso|AtuacaoDe|PlanoInfo|Colaborador$|Nomes|PresencaPainel)/;
+  chamar=function(fn){
+    var args=arguments, tent=0;
+    if(fn==='apiPresenca' && args[3]!==true && Date.now()-ultimaChamada<100000) return Promise.resolve({ok:true}); // o painel já falou com o servidor há pouco: não precisa do sinal extra
+    if(fn!=='apiPresenca') ultimaChamada=Date.now();
+    function vai(){ return _chamar_22.apply(null, args).catch(function(e){
+      var m=String(e && e.message || e), ocupado=/too many|simultaneous|invoked too many|limite|Rate Limit|Lock timeout|lock for too long/i.test(m), rede=/NetworkError|HTTP 0|Failed to fetch|timed? ?out|tempo limite/i.test(m);
+      if(tent<2 && (ocupado || (rede && SO_LEITURA.test(fn)))){ tent++; return new Promise(function(ok){ setTimeout(ok, 1200*tent + Math.random()*900); }).then(vai); }
+      throw e; }); }
+    return vai();
+  };
+})();
+
+/* ===================== mensagens de erro em português (nunca o texto técnico do Google) ===================== */
+var _falhaGeral_22 = falhaGeral;
+falhaGeral = function(e){
+  var m=String(e && e.message || e || '');
+  if(/SESSAO_INVALIDA|SEM_PERMISSAO/.test(m)) return _falhaGeral_22(e);
+  var amigavel = /Lock timeout|lock for too long|too many|simultaneous|invoked too many|Rate Limit/i.test(m) ? 'Muitas pessoas estão usando o painel agora. Espere alguns segundos e tente de novo.'
+    : /NetworkError|HTTP 0|Failed to fetch|network/i.test(m) ? 'Sem conexão com o servidor. Confira sua internet e tente de novo.'
+    : /timed? ?out|Tempo limite|exceeded maximum execution|Tempo de execução/i.test(m) ? 'O servidor demorou para responder. Tente de novo em alguns segundos.'
+    : /\b(TypeError|ReferenceError|SyntaxError)\b|is not defined|Cannot read prop/i.test(m) ? 'Não foi possível concluir agora. Tente de novo; se continuar, avise o WFM.'
+    : null;
+  if(amigavel){ toast(amigavel, true); return; }
+  toast(m.replace(/^(Exception|Error):\s*/,'') || 'Não foi possível concluir. Tente de novo.', true); // avisos do próprio painel, sem o prefixo técnico
+};
+
+/* ===================== tela de entrada: movimentos suaves ===================== */
+(function(){
+  var MSG=[{ic:'ok', cls:'', t:'Troca aprovada', s:'A coordenação aprovou sua troca de sex, 13/11.'},
+           {ic:'troca', cls:'rosa', t:'Novo pedido de troca', s:'Ana quer folgar na qui, 12/11 e trabalhar na sua folga.'},
+           {ic:'cal', cls:'roxo', t:'Escala publicada', s:'Sua escala do mês já está disponível.'}];
+  var SVG={ok:'<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m5 12.5 4.5 4.5L19 7.5"/></svg>',
+    troca:'<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M7 7h12l-3-3M17 17H5l3 3"/></svg>',
+    cal:'<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="5" width="18" height="16" rx="2.5"/><path d="M3 10h18M8 3v4M16 3v4"/></svg>'};
+  var reduzir = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  function iniciar(){
+    var lado=document.querySelector('#telaEntrada .lado.lg2'), palco=lado && lado.querySelector('.lg2-palco'); if(!palco || palco.dataset.mov) return;
+    palco.dataset.mov='1';
+    if(!reduzir){
+      var alvo={x:0,y:0}, raf=null;
+      lado.addEventListener('mousemove', function(ev){ var r=lado.getBoundingClientRect(); alvo.x=((ev.clientX-r.left)/r.width-.5)*2; alvo.y=((ev.clientY-r.top)/r.height-.5)*2;
+        if(!raf) raf=requestAnimationFrame(function(){ raf=null; lado.style.setProperty('--px', alvo.x.toFixed(3)); lado.style.setProperty('--py', alvo.y.toFixed(3)); }); });
+      lado.addEventListener('mouseleave', function(){ lado.style.setProperty('--px','0'); lado.style.setProperty('--py','0'); });
+    }
+    var n=lado.querySelector('.lg2-notif'); if(!n || reduzir) return;
+    var i=0, inner=n.querySelector('.in');
+    setInterval(function(){
+      var t=document.getElementById('telaEntrada'); if(!t || t.classList.contains('oculto') || document.hidden) return;
+      i=(i+1)%MSG.length; var m=MSG[i]; n.classList.add('trocando');
+      setTimeout(function(){ var ok=inner.querySelector('.ok'), tx=inner.querySelector('.in > div'); ok.className='ok '+m.cls; ok.innerHTML=SVG[m.ic];
+        tx.innerHTML='<b>'+m.t+'</b><span>'+m.s+'</span><small>agora</small>'; n.classList.remove('trocando'); }, 460);
+    }, 6000);
+  }
+  if(document.readyState==='loading') document.addEventListener('DOMContentLoaded', function(){ setTimeout(iniciar, 50); }); else setTimeout(iniciar, 50);
+})();
+</script>

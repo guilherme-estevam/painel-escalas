@@ -1,0 +1,8 @@
+<style>
+/* ===================== Animações de entrada terminam sem deixar camada própria (10/11/2026) =====================
+   As animações de entrada mantinham o estado final ("both"). Esse estado final é um deslocamento zero, que ainda
+   conta como transform e prende cada bloco numa camada própria: janelas, menus e quadros de dentro do bloco
+   ficavam presos a ele (ex.: as janelas da Aderência abriam embaixo do fundo escuro). Agora o estado só é mantido
+   antes de começar; ao terminar, o bloco fica exatamente onde já estava, sem transform. */
+.ds-troca>*,.ds-entra,.ds-chegou #conteudo,.ds-chegou .topo,.caixa,.pz-dia>div{animation-fill-mode:backwards!important}
+</style>

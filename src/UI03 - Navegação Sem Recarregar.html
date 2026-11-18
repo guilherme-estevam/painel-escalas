@@ -1,0 +1,382 @@
+<style>
+.topo .marca{display:flex;align-items:center;gap:12px;white-space:nowrap}
+.ph{font-size:10.5px;font-weight:800;letter-spacing:.14em;text-transform:uppercase;color:#a9a9a9;border-left:1px solid #4a4a4a;padding-left:12px}
+.ph-login{display:inline-block;margin-top:10px;font-size:11px;font-weight:800;letter-spacing:.14em;text-transform:uppercase;color:#d9d9d9;border:1px solid #4a4a4a;border-radius:20px;padding:4px 12px}
+.eu>button{display:flex;align-items:center;gap:10px;padding:4px 14px 4px 4px;border-radius:24px}
+.av{width:32px;height:32px;border-radius:50%;background:linear-gradient(135deg,var(--rosa),var(--roxo));color:#fff;display:inline-flex;align-items:center;justify-content:center;font-weight:800;font-size:12.5px;flex:none;letter-spacing:.02em}
+.av.g{width:58px;height:58px;font-size:20px;box-shadow:0 6px 18px rgba(216,0,115,.25)}
+.eu .nm{display:flex;flex-direction:column;line-height:1.15;text-align:left}
+.eu .nm small{font-size:11px;color:#bdbdbd;font-weight:600}
+.menu .quem{display:flex;gap:12px;align-items:center}
+.ola2{display:flex;align-items:center;gap:16px}
+/* atuação */
+.atu{background:#fff;border:1px solid var(--c2);border-radius:14px;padding:18px 20px;margin-top:18px}
+.atu-cab{display:flex;justify-content:space-between;align-items:flex-end;gap:12px;flex-wrap:wrap;margin-bottom:14px}
+.atu-cab h2{margin:0;font-size:18px}
+.atu-cab p{margin:2px 0 0;color:var(--c4);font-size:14px}
+.semtabs{display:flex;gap:6px;flex-wrap:wrap}
+.semtabs button{border:1.5px solid var(--c3);background:#fff;border-radius:20px;padding:6px 12px;font-weight:700;cursor:pointer;color:var(--c4);font-size:13px}
+.semtabs button.ativa{background:var(--preto);border-color:var(--preto);color:#fff}
+.atu-tot{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:10px;margin-bottom:14px}
+.atu-tot div{border-radius:12px;padding:10px 12px;text-align:center}
+.atu-tot b{display:block;font-size:20px;font-weight:800}
+.atu-tot span{font-size:12.5px;font-weight:700}
+.t0800{background:var(--rosa-bg);color:var(--vinho)}
+.tdig{background:var(--roxo-bg);color:var(--roxo)}
+.tass{background:var(--creme);color:var(--vinho)}
+.tdias{background:var(--c1);color:var(--preto)}
+.eixo{display:grid;grid-template-columns:130px 1fr 250px;gap:14px;font-size:11px;color:var(--c4);font-weight:700}
+.eixo .regua{position:relative;height:16px}
+.eixo .regua span{position:absolute;transform:translateX(-50%)}
+.atu-dia{display:grid;grid-template-columns:130px 1fr 250px;gap:14px;align-items:center;padding:9px 0;border-top:1px solid var(--c2)}
+.atu-dia .qd b{display:block;font-size:14px}
+.atu-dia .qd small{color:var(--c4);font-size:12px}
+.atu-dia.hojed .qd b{color:var(--rosa)}
+.barra{position:relative;height:30px;background:var(--c1);border-radius:8px;overflow:hidden}
+.barra .grade{position:absolute;top:0;bottom:0;width:1px;background:#e2e2e2}
+.seg{position:absolute;top:3px;bottom:3px;border-radius:6px;color:#fff;font-size:11px;font-weight:800;display:flex;align-items:center;justify-content:center;overflow:hidden;white-space:nowrap}
+.seg.trab{background:var(--roxo)}
+.seg.ass{background:var(--vinho)}
+.seg.alm{background:repeating-linear-gradient(45deg,#fbe9d9,#fbe9d9 5px,#f5d7bd 5px,#f5d7bd 10px);color:var(--vinho)}
+.barra .rot{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:700;color:var(--c4)}
+.barra.folga{background:var(--creme)} .barra.folga .rot{color:var(--vinho)}
+.barra.af{background:var(--rosa-bg)} .barra.af .rot{color:var(--vinho)}
+.atu-dia .info{font-size:12.5px;line-height:1.45}
+.atu-dia .info b{font-size:13px}
+.fr{display:inline-block;border-radius:8px;padding:1px 7px;font-weight:800;font-size:11.5px;margin:2px 4px 0 0}
+.fr.f0800{background:var(--rosa-bg);color:var(--vinho)} .fr.fdig{background:var(--roxo-bg);color:var(--roxo)} .fr.fass{background:var(--creme);color:var(--vinho)}
+.atu-nota{font-size:12.5px;color:var(--c4);margin-top:12px;background:var(--c1);border-radius:10px;padding:10px 12px}
+/* modais */
+.mcab{display:flex;gap:14px;align-items:center;margin-bottom:16px}
+.mcab .ic{width:46px;height:46px;border-radius:14px;display:flex;align-items:center;justify-content:center;flex:none}
+.mcab .ic.ferias{background:var(--rosa-bg);color:var(--vinho)} .mcab .ic.hora{background:var(--roxo-bg);color:var(--roxo)} .mcab .ic.imp{background:var(--c1);color:var(--preto)}
+.mcab h3{margin:0;font-size:20px} .mcab p{margin:2px 0 0;color:var(--c4);font-size:14px}
+.tipos{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:14px}
+.tipo{border:2px solid var(--c3);border-radius:14px;padding:14px;cursor:pointer;background:#fff;text-align:left}
+.tipo b{display:block;font-size:15px} .tipo span{font-size:13px;color:var(--c4)}
+.tipo.on.FERIAS{border-color:var(--rosa);background:var(--rosa-bg)} .tipo.on.LICENCA{border-color:var(--vinho);background:var(--salmao)}
+.busca-p{position:relative}
+.lista-p{max-height:190px;overflow:auto;border:1.5px solid var(--c3);border-radius:10px;margin-top:6px}
+.lista-p button{display:flex;justify-content:space-between;width:100%;border:0;background:#fff;padding:9px 12px;cursor:pointer;text-align:left;font-weight:600;border-bottom:1px solid var(--c2)}
+.lista-p button small{color:var(--c4);font-weight:600}
+.lista-p button:hover{background:var(--c1)} .lista-p button.on{background:var(--rosa-bg);color:var(--vinho)}
+.escolhido{display:flex;justify-content:space-between;align-items:center;border:1.5px solid var(--rosa);background:var(--rosa-bg);border-radius:12px;padding:10px 12px}
+.escolhido b{display:block} .escolhido small{color:var(--vinho)}
+.periodo{border-radius:14px;padding:14px 16px;margin:4px 0 14px;display:flex;justify-content:space-between;align-items:center;gap:12px;flex-wrap:wrap}
+.periodo.FERIAS{background:var(--rosa-bg);color:var(--vinho)} .periodo.LICENCA{background:var(--salmao);color:var(--vinho)} .periodo.vazio{background:var(--c1);color:var(--c4)}
+.periodo b{font-size:22px;font-weight:800} .periodo span{font-size:14px;font-weight:600}
+.antes-depois{display:flex;align-items:center;justify-content:center;gap:12px;background:var(--c1);border-radius:14px;padding:14px;margin:12px 0;flex-wrap:wrap}
+.antes-depois .bx{background:#fff;border-radius:10px;padding:8px 14px;text-align:center}
+.antes-depois .bx small{display:block;color:var(--c4);font-size:12px;font-weight:700}
+.antes-depois .bx b{font-size:18px}
+.antes-depois .bx.novo{background:var(--roxo);color:#fff} .antes-depois .bx.novo small{color:#ddd8f2}
+.rapidos{display:flex;gap:8px;flex-wrap:wrap;margin:6px 0 12px}
+.rapidos button{border:1.5px solid var(--c3);background:#fff;border-radius:20px;padding:6px 12px;font-weight:700;cursor:pointer;font-size:13px}
+.rapidos button:hover{border-color:var(--roxo);color:var(--roxo)}
+.tab-prev{width:100%;font-size:13px}
+.tab-prev td,.tab-prev th{padding:7px 8px;border-bottom:1px solid var(--c2)}
+.tab-prev th{position:sticky;top:0;background:var(--c1)}
+.tab-prev td.esq,.tab-prev th.esq{text-align:left}
+.tab-prev .mud{color:var(--roxo);font-weight:800}
+@media (max-width:900px){
+  .ph{display:none} .eu .nm{display:none} .eu>button{padding:3px}
+  .atu-tot{grid-template-columns:repeat(2,minmax(0,1fr))}
+  .eixo{display:none}
+  .atu-dia{grid-template-columns:1fr;gap:6px}
+  .tipos{grid-template-columns:1fr}
+}
+</style>
+<script>
+/* ============ navegação sem telas trocadas ============ */
+var EPOCA = 0;
+var LEITURAS_TELA = {apiMes:1,apiMinhaEscala:1,apiMinhaJornada:1,apiPessoas:1,apiAfastamentos:1,apiFeriados:1,apiLogs:1,apiTrocasV2:1,apiTrocaOfertas:1,apiAcessos:1};
+var _chamarBase = chamar;
+chamar = function(fn){
+  var args = arguments, ep = EPOCA, tela = !!LEITURAS_TELA[fn] && !document.querySelector('#modais .modal-fundo');
+  return new Promise(function(ok, falha){
+    _chamarBase.apply(null, args).then(function(r){ if(tela && ep !== EPOCA) return; ok(r); }, function(e){ if(tela && ep !== EPOCA) return; falha(e); });
+  });
+};
+var _carregandoBase = carregando; carregando = function(){ EPOCA++; _carregandoBase(); };
+var _gCarregandoBase = gCarregando; gCarregando = function(){ EPOCA++; _gCarregandoBase(); };
+var _abrirModalBase = abrirModal; abrirModal = function(h, g){ return _abrirModalBase(String(h).replace('>Ver jornada<','>Ver escala<'), g); };
+
+/* ============ identidade: WFM e usuário ============ */
+function iniciais(n){ var p=String(n||'').trim().split(/\s+/); return ((p[0]||'').charAt(0)+(p.length>1?p[p.length-1].charAt(0):'')).toUpperCase(); }
+function nomeExib(n){ var p=String(n||'').trim().split(/\s+/); return p.length>1 ? p[0]+' '+p[p.length-1] : p[0]||''; }
+(function(){
+  var mt=document.querySelector('.topo .marca'); if(mt) mt.innerHTML='<span>Painel\1Escalas\3</span><span class="ph">WFM</span>';
+  var ml=document.querySelector('.lado .marca'); if(ml) ml.innerHTML='Painel\1Escalas\3 · Atendimento<br><span class="ph-login">WFM</span>';
+  var leg=document.querySelector('.legenda-lado'); if(leg) leg.textContent='Semana de domingo a sábado: 5 dias de trabalho e 2 de folga · WFM';
+  try{ document.title='Escalas · WFM'; }catch(e){}
+})();
+var _montarAppUI2 = montarApp;
+montarApp = function(){
+  _montarAppUI2();
+  var eu=estado.dados.eu;
+  var b=$('abas').querySelector('[data-aba="jornada"]'); if(b) b.textContent='Minha Escala';
+  $('bEu').innerHTML=avatarHtml(eu.email, eu.nome, '')+'<span class="nm">'+esc(nomeDoEmail(eu.email))+'<small>'+(eu.perfil==='GESTAO'?'Gestão':'Agente')+'</small></span>';
+  $('bEu').setAttribute('aria-label','Menu de '+eu.nome);
+  $('quem').innerHTML=avatarHtml(eu.email, eu.nome, 'm')+'<div><strong>'+esc(nomeDoEmail(eu.email))+'</strong><br><small>'+esc(eu.nome)+'</small><br>'+esc(eu.email)+'<br>'+esc(eu.cargo||'')+(eu.coordenacao?' · '+esc(eu.coordenacao):'')+'</div>';
+};
+
+/* ============ Minha escala: dois calendários ============ */
+function fichaComAtuacao(p, st, atu){ var h=fichaPessoa(p, st); if(!(atu && atu.d && Object.keys(atu.d).length)) return h;
+  var hs={}; Object.keys(atu.d).forEach(function(k){ var x=atu.d[k]; if(x && x[0] && x[2]) hs[x[0]+' às '+x[2]]=1; }); var lst=Object.keys(hs); // só "varia por dia" quando a entrada ou a saída muda entre os dias
+  return h.replace('<small>Horário</small><strong>'+esc(p.entrada)+' às '+esc(p.saida)+'</strong>', '<small>Horário</small><strong>'+esc(lst.length===1 ? lst[0] : 'Varia por dia')+'</strong>'); }
+function hm(m){ return ('0'+Math.floor(m/60)).slice(-2)+':'+('0'+(m%60)).slice(-2); }
+function aMin(h){ var p=String(h||'').split(':'); return (+p[0])*60+(+p[1]||0); }
+function dur(m){ var h=Math.floor(m/60), r=m%60; return h+'h'+(r?('0'+r).slice(-2):''); }
+function horarioDia(atu, dd, p){ var x=atu && atu.d ? atu.d[String(dd)] : null; return x ? {i:x[0], a:x[1], f:x[2], det:true} : {i:p.entrada, a:'', f:p.saida, det:false}; }
+function calendario2(d,p,e,af,o){
+  var html=calendario(d,p,e,af,o);
+  if(!o.atu) return html;
+  // troca o horário padrão pelo horário de cada dia
+  var tmp=document.createElement('div'); tmp.innerHTML=html; var dias=tmp.querySelectorAll('.cal-sem .dia:not(.fora)');
+  dias.forEach(function(el, i){ var dd=i+1, h=horarioDia(o.atu, dd, p); if(!h.det) return; var l=el.querySelector('.hr.l'), c=el.querySelector('.hr.c'); if(l) l.textContent=h.i+' às '+h.f; if(c) c.textContent=h.i.slice(0,2)+'–'+h.f.slice(0,2); });
+  return tmp.innerHTML;
+}
+telaJornada = function(){ carregando(); chamar('apiMinhaEscala', estado.token, estado.mes).then(desenharMinhaEscala).catch(falhaGeral); };
+function desenharMinhaEscala(d){
+  estado.jor=d; d.souAgente=true; var main=$('conteudo'); main.className='';
+  var eu=estado.dados.eu, sel='<select id="jMes" class="sel-mes" aria-label="Mês">'+opcoesMes(estado.mes)+'</select>';
+  var cab='<div class="ola"><div class="ola2">'+avatarHtml(eu.email, eu.nome, 'g')+'<div><h1>Minha Escala</h1><p>Olá, '+esc(primeiro(eu.nome))+'. Esta é a sua escala oficial de '+rotuloMes(d.mes).toLowerCase()+'.</p></div></div>'+sel+'</div>';
+  var p=d.pessoas[0];
+  if(!p){ main.innerHTML=cab+'<div class="vazio"><strong>Seu acesso ainda não tem escala vinculada.</strong>Fale com a sua coordenação.</div>'; ligarMes(); return; }
+  var e=d.escalas[p.email], af=d.afast[p.email]||[];
+  var h=cab+fichaComAtuacao(p, e.dias ? STATUS.PUBLICADA : ['Ainda não publicada','sem'], d.atuacao);
+  if(!e.dias){ h+='<div class="vazio"><strong>Sua escala de '+rotuloMes(d.mes).toLowerCase()+' ainda não foi publicada.</strong>Quando a gestão publicar, seus dias de trabalho, folgas e horários aparecem aqui.</div>'; }
+  else {
+    var v=validarEscala_({mes:d.mes,dias:e.dias,ant:e.ant,prox:e.prox,afast:af,segSex:p.segSex});
+    h+=cartoesResumo(v)+'<div class="dica-cal">Quer trocar um dia? <b>Clique num dia de trabalho</b> no calendário.</div>';
+    h+=calendario2(d,p,e,af,{clicavel:true, hoje:d.hoje, pend:d.trocasPendentes, atu:d.atuacao});
+    if(v.avisos.length) h+='<div class="alertas">'+v.avisos.map(function(x){return '<div class="a">'+esc(x.msg)+'</div>';}).join('')+'</div>';
+    h+='<div id="secAtuacao"></div>';
+  }
+  h+='<div id="secTrocas"></div>';
+  main.innerHTML=h; ligarMes();
+  main.querySelectorAll('[data-dia]').forEach(function(c){ var f=function(){ modalNovaTroca(c.dataset.dia); }; c.onclick=f; c.onkeydown=function(ev){ if(ev.key==='Enter'||ev.key===' '){ ev.preventDefault(); f(); } }; });
+  if(e.dias) desenharAtuacao($('secAtuacao'), d, p, e, af, d.atuacao, d.hoje);
+  secaoTrocasAgente(d);
+}
+function semanasDoMes(mes){ var n=diasMes(mes), ini=wdDe(mes,1), out=[], s=[]; for(var dd=1; dd<=n; dd++){ s.push(dd); if((ini+dd)%7===0||dd===n){ out.push(s); s=[]; } } return out; }
+function desenharAtuacao(el, d, p, e, af, atu, hoje){
+  if(!el) return;
+  var sems=semanasDoMes(d.mes), idxHoje=0;
+  sems.forEach(function(s,i){ if(s.some(function(dd){ return dataDe(d.mes,dd)===hoje; })) idxHoje=i; });
+  var semAtual = el.dataset.sem!==undefined ? +el.dataset.sem : idxHoje;
+  var g = atu ? atu.g : '', m = atu ? atu.m : [0,0,0], diasT=0;
+  for(var dd=1; dd<=diasMes(d.mes); dd++) if(e.dias.charAt(dd-1)==='T' && !tipoAfast(af,dataDe(d.mes,dd))) diasT++;
+  var tot = atu ? '<div class="atu-tot"><div class="tdias"><b>'+diasT+'</b><span>Dias de trabalho</span></div>'+
+     (m[0]?'<div class="t0800"><b>'+dur(m[0]*diasT)+'</b><span>No 0800 no mês</span></div>':'')+
+     (m[1]?'<div class="tdig"><b>'+dur(m[1]*diasT)+'</b><span>No digital (chat) no mês</span></div>':'')+
+     (m[2]?'<div class="tass"><b>'+dur(m[2]*diasT)+'</b><span>No assíncrono no mês</span></div>':'')+
+     '<div class="tdias"><b>1h</b><span>De almoço por dia</span></div></div>' : '';
+  var I=7*60, F=21*60, pct=function(x){ return ((x-I)/(F-I)*100).toFixed(2)+'%'; };
+  var regua=''; for(var hh=8; hh<=20; hh+=2) regua+='<span style="left:'+pct(hh*60)+'">'+hh+'h</span>';
+  var linhas=sems[semAtual].map(function(dd){
+    var id=dataDe(d.mes,dd), s=e.dias.charAt(dd-1), a=tipoAfast(af,id), hd=horarioDia(atu, dd, p);
+    var q='<div class="qd"><b>'+dSem(id)+'</b><small>'+(a?(a==='FERIAS'?'Férias':'Licença'):s==='T'?'Trabalho':s==='F'?'Folga':'Não definido')+'</small></div>';
+    var grade=''; for(var hh=8; hh<=20; hh+=2) grade+='<i class="grade" style="left:'+pct(hh*60)+'"></i>';
+    if(a) return '<div class="atu-dia">'+q+'<div class="barra af">'+grade+'<span class="rot">'+(a==='FERIAS'?'Férias':'Licença')+'</span></div><div class="info">Sem atuação neste dia.</div></div>';
+    if(s!=='T') return '<div class="atu-dia">'+q+'<div class="barra folga">'+grade+'<span class="rot">'+(s==='F'?'Folga':'Sem definição')+'</span></div><div class="info">'+(s==='F'?'Aproveite o descanso.':'')+'</div></div>';
+    var ini=aMin(hd.i), fim=aMin(hd.f), alm=hd.a?aMin(hd.a):0, cls=(m[2]&&!m[0]&&!m[1])?'ass':'trab', rot=cls==='ass'?'Assíncrono':'Atendimento';
+    var segs = alm ? '<span class="seg '+cls+'" style="left:'+pct(ini)+';width:calc('+pct(alm)+' - '+pct(ini)+')">'+rot+'</span><span class="seg alm" style="left:'+pct(alm)+';width:calc('+pct(alm+60)+' - '+pct(alm)+')">Almoço</span><span class="seg '+cls+'" style="left:'+pct(alm+60)+';width:calc('+pct(fim)+' - '+pct(alm+60)+')">'+rot+'</span>'
+      : '<span class="seg '+cls+'" style="left:'+pct(ini)+';width:calc('+pct(fim)+' - '+pct(ini)+')">'+rot+'</span>';
+    var info = '<b>'+hd.i+' às '+hd.f+'</b>'+(hd.a?' · almoço '+hd.a+'–'+hm(alm+60):'')+'<br>'+
+      (hd.det ? (m[0]?'<span class="fr f0800">0800 '+dur(m[0])+'</span>':'')+(m[1]?'<span class="fr fdig">Chat '+dur(m[1])+'</span>':'')+(m[2]?'<span class="fr fass">Assíncrono '+dur(m[2])+'</span>':'') : '<span style="color:#6D6D6D">Atuação a definir pela coordenação</span>');
+    return '<div class="atu-dia'+(id===hoje?' hojed':'')+'">'+q+'<div class="barra">'+grade+segs+'</div><div class="info">'+info+'</div></div>';
+  }).join('');
+  el.innerHTML='<div class="atu"><div class="atu-cab"><div><h2>Calendário de Atuação</h2><p>'+(atu?'Seus horários de cada dia, o almoço e o tempo em cada atuação'+(g?' · grupo '+esc(g):'')+'.':'Seus horários de cada dia.')+'</p></div>'+
+    '<div class="semtabs">'+sems.map(function(s,i){ return '<button data-s="'+i+'" class="'+(i===semAtual?'ativa':'')+'">'+('0'+s[0]).slice(-2)+'–'+('0'+s[s.length-1]).slice(-2)+'/'+d.mes.slice(5)+'</button>'; }).join('')+'</div></div>'+
+    tot+'<div class="eixo"><span></span><div class="regua">'+regua+'</div><span></span></div>'+linhas+
+    (atu&&m[0]&&m[1]?'<div class="atu-nota">Nos dias de atendimento, você divide o tempo entre o 0800 ('+dur(m[0])+') e o digital, que é o chat ('+dur(m[1])+'). A ordem das atuações ao longo do dia é combinada com a sua coordenação.</div>':'')+'</div>';
+  el.querySelectorAll('[data-s]').forEach(function(b){ b.onclick=function(){ el.dataset.sem=b.dataset.s; desenharAtuacao(el, d, p, e, af, atu, hoje); }; });
+}
+
+/* ============ Gestão: escala de alguém (modal) com atuação ============ */
+var _modalJornadaDeUI2 = modalJornadaDe;
+modalJornadaDe = function(email){
+  var w=abrirModal('<div id="mjCorpo"><div class="carregando" style="min-height:120px"><div class="giro"></div> Carregando…</div></div>', true);
+  w.querySelector('.modal').classList.add('xl'); var mes=estado.mes;
+  function carregar(){
+    Promise.all([chamar('apiMes', estado.token, mes, email), chamar('apiAtuacaoDe', estado.token, mes, email)]).then(function(r){
+      var d=r[0], atu=r[1].atuacao, p=d.pessoas[0]; if(!p){ w.querySelector('#mjCorpo').innerHTML='<div class="res erro">Pessoa não encontrada.</div>'; return; }
+      var e=d.escalas[p.email], af=d.afast[p.email]||[], st=STATUS[e.status]||STATUS.SEM_ESCALA;
+      var h='<div class="ola" style="margin-bottom:12px"><div class="ola2">'+avatarHtml(p.email, p.nome, 'g')+'<div><h1 style="font-size:22px">'+esc(p.nome)+'</h1><p>'+esc(p.email)+'</p></div></div><select id="mjMes" class="sel-mes" style="width:auto">'+opcoesMes(mes)+'</select></div>'+fichaComAtuacao(p, st, atu);
+      if(!e.dias) h+='<div class="vazio"><strong>Sem escala em '+rotuloMes(mes).toLowerCase()+'.</strong>Monte a escala na aba Planejamento ou importe a planilha.</div>';
+      else {
+        var v=validarEscala_({mes:d.mes,dias:e.dias,ant:e.ant,prox:e.prox,afast:af,segSex:p.segSex});
+        if(e.status==='ALTERADA') h+='<div class="alertas" style="margin:0 0 12px"><div class="a">Mostrando o rascunho. Há alterações ainda não publicadas: a pessoa continua vendo a versão publicada em '+dhBr(e.publicadaEm||'')+'.</div></div>';
+        h+=cartoesResumo(v)+calendario2(d,p,e,af,{atu:atu});
+        var al=v.erros.map(function(x){return '<div class="e">'+esc(x.msg)+'</div>';}).join('')+v.avisos.map(function(x){return '<div class="a">'+esc(x.msg)+'</div>';}).join('')+v.pendencias.map(function(x){return '<div class="p">'+esc(x.msg)+'</div>';}).join('');
+        if(al) h+='<div class="alertas">'+al+'</div>';
+        h+='<div id="mjAtu"></div>';
+      }
+      h+='<div class="acoes"><button class="btn sec" data-fechar>Fechar</button></div>';
+      w.querySelector('#mjCorpo').innerHTML=h;
+      if(e.dias) desenharAtuacao(w.querySelector('#mjAtu'), d, p, e, af, atu, '');
+      w.querySelector('#mjMes').onchange=function(){ mes=this.value; w.querySelector('#mjCorpo').innerHTML='<div class="carregando" style="min-height:120px"><div class="giro"></div> Carregando…</div>'; carregar(); };
+    }).catch(function(e){ w.remove(); falhaGeral(e); });
+  }
+  carregar();
+};
+
+/* ============ Gestão: férias e licenças com modal ============ */
+var ICONE_CAL='<svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="4" width="18" height="18" rx="3"/><path d="M16 2v4M8 2v4M3 10h18"/></svg>';
+var ICONE_REL='<svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 3"/></svg>';
+var ICONE_IMP='<svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 3v12M7 10l5 5 5-5"/><path d="M4 21h16"/></svg>';
+telaAfast = function(){
+  gCarregando();
+  Promise.all([chamar('apiAfastamentos', estado.token, estado.mes), estado.pessoas?Promise.resolve(null):chamar('apiPessoas', estado.token)]).then(function(r){
+    if(r[1]) estado.pessoas=r[1].pessoas;
+    var it=r[0].itens, mapa={}; it.forEach(function(a){ mapa[a.id]=a; });
+    var fer=it.filter(function(a){return a.tipo==='FERIAS';}).length, lic=it.length-fer;
+    gc().innerHTML='<div class="cab"><div><h1>Férias e Licenças</h1><p>Nesses dias, as regras de 5x2 e de domingo de folga não se aplicam à pessoa.</p></div><div class="acoes"><select id="aMes" class="sel-mes" aria-label="Mês">'+opcoesMes(estado.mes)+'</select><button class="btn" id="aNovo">Cadastrar férias ou licença</button></div></div>'+
+      '<div class="numeros" style="--cols:3"><div class="numero"><b>'+it.length+'</b><span>Afastamentos em '+rotuloMes(estado.mes).toLowerCase()+'</span></div><div class="numero"><b>'+fer+'</b><span>Férias</span></div><div class="numero"><b>'+lic+'</b><span>Licenças</span></div></div>'+
+      '<div class="tabela"><table><thead><tr><th class="esq">Colaborador</th><th>Tipo</th><th>Período</th><th>Dias</th><th class="esq">Observação</th><th>Ações</th></tr></thead><tbody>'+
+      (it.length?it.map(function(a){ var dias=Math.round((Date.parse(a.fim)-Date.parse(a.inicio))/864e5)+1; return '<tr><td class="esq"><b>'+esc(a.nome)+'</b></td><td><span class="selo '+(a.tipo==='FERIAS'?'alt':'ras')+'">'+(a.tipo==='FERIAS'?'Férias':'Licença')+'</span></td><td>'+dBr(a.inicio)+' a '+dBr(a.fim)+'</td><td><b>'+dias+'</b></td><td class="esq">'+esc(a.obs||'—')+'</td><td><button class="btn sec peq" data-ed="'+esc(a.id)+'">Editar</button> <button class="btn sec peq" data-rem="'+esc(a.id)+'">Remover</button></td></tr>'; }).join(''):'<tr><td colspan="6" style="padding:28px;color:#6D6D6D">Nenhuma férias ou licença em '+rotuloMes(estado.mes).toLowerCase()+'. Use o botão "Cadastrar férias ou licença".</td></tr>')+
+      '</tbody></table></div>';
+    $('aMes').onchange=function(){ estado.mes=this.value; telaAfast(); };
+    $('aNovo').onclick=function(){ modalAfast(null); };
+    gc().querySelectorAll('[data-ed]').forEach(function(b){ b.onclick=function(){ modalAfast(mapa[b.dataset.ed]); }; });
+    gc().querySelectorAll('[data-rem]').forEach(function(b){ b.onclick=function(){ modalRemoverAfast(mapa[b.dataset.rem]); }; });
+  }).catch(falhaGeral);
+};
+function modalAfast(a){
+  var ed=!!a, st={email:a?a.email:'', tipo:a?a.tipo:'FERIAS', ini:a?a.inicio:'', fim:a?a.fim:'', obs:a?a.obs||'':''};
+  var pessoas=estado.pessoas||[], porEmail={}; pessoas.forEach(function(p){ porEmail[p.email]=p; });
+  var w=abrirModal('<div class="mcab"><span class="ic ferias">'+ICONE_CAL+'</span><div><h3>'+(ed?'Editar férias ou licença':'Cadastrar férias ou licença')+'</h3><p>'+(ed?'Altere o que precisar. A mudança fica registrada no histórico.':'Escolha a pessoa, o tipo e o período.')+'</p></div></div>'+
+    '<div class="campo"><label>Colaborador</label><div id="mfPessoa"></div></div>'+
+    '<label>Tipo</label><div class="tipos"><button type="button" class="tipo FERIAS" data-tp="FERIAS"><b>Férias</b><span>Período de descanso remunerado</span></button><button type="button" class="tipo LICENCA" data-tp="LICENCA"><b>Licença</b><span>Afastamento por outros motivos</span></button></div>'+
+    '<div class="dois"><div class="campo"><label for="mfIni">Primeiro dia</label><input id="mfIni" type="date" value="'+st.ini+'"></div><div class="campo"><label for="mfFim">Último dia</label><input id="mfFim" type="date" value="'+st.fim+'"></div></div>'+
+    '<div id="mfPer"></div>'+
+    '<div class="campo"><label for="mfObs">Observação (opcional)</label><input id="mfObs" type="text" maxlength="200" placeholder="Ex.: férias programadas, licença médica" value="'+esc(st.obs)+'"></div>'+
+    '<div class="dica">Nesses dias a pessoa aparece com "'+'Férias ou Licença'+'" no calendário e as regras de 5x2 e de domingo de folga não se aplicam.</div>'+
+    '<div class="acoes"><button class="btn sec" data-fechar>Cancelar</button><button class="btn" id="mfOk">'+(ed?'Salvar alteração':'Cadastrar')+'</button></div>', true);
+  var q=function(s){ return w.querySelector(s); };
+  function pessoaUI(){
+    if(st.email && porEmail[st.email]){ var p=porEmail[st.email]; q('#mfPessoa').innerHTML='<div class="escolhido"><div><b>'+esc(p.nome)+'</b><small>'+esc(p.cargo)+' · '+esc(p.coord)+'</small></div><button type="button" class="btn sec peq" id="mfTroca">Trocar</button></div>'; q('#mfTroca').onclick=function(){ st.email=''; pessoaUI(); }; return; }
+    q('#mfPessoa').innerHTML='<div class="busca-p"><input id="mfBusca" type="text" placeholder="Digite o nome ou o e-mail" autocomplete="off"><div class="lista-p" id="mfLista"></div></div>';
+    var lista=function(){ var t=q('#mfBusca').value.toLowerCase(); var f=pessoas.filter(function(p){ return !t || p.nome.toLowerCase().indexOf(t)>=0 || p.email.indexOf(t)>=0; }).slice(0,60);
+      q('#mfLista').innerHTML=f.length?f.map(function(p){ return '<button type="button" data-p="'+esc(p.email)+'"><span>'+esc(p.nome)+'</span><small>'+esc(p.coord)+'</small></button>'; }).join(''):'<div class="vazio-mini">Ninguém encontrado.</div>';
+      q('#mfLista').querySelectorAll('[data-p]').forEach(function(b){ b.onclick=function(){ st.email=b.dataset.p; pessoaUI(); }; }); };
+    q('#mfBusca').oninput=lista; lista(); q('#mfBusca').focus();
+  }
+  function tipoUI(){ w.querySelectorAll('[data-tp]').forEach(function(b){ b.classList.toggle('on', b.dataset.tp===st.tipo); }); periodo(); }
+  function periodo(){
+    st.ini=q('#mfIni').value; st.fim=q('#mfFim').value;
+    if(!st.ini||!st.fim){ q('#mfPer').innerHTML='<div class="periodo vazio"><span>Escolha o primeiro e o último dia.</span></div>'; return; }
+    if(st.fim<st.ini){ q('#mfPer').innerHTML='<div class="periodo vazio" style="color:#A51E5B"><span>O último dia precisa ser igual ou depois do primeiro.</span></div>'; return; }
+    var n=Math.round((Date.parse(st.fim)-Date.parse(st.ini))/864e5)+1;
+    q('#mfPer').innerHTML='<div class="periodo '+st.tipo+'"><div><b>'+n+' dia'+(n>1?'s':'')+'</b><br><span>'+(st.tipo==='FERIAS'?'de férias':'de licença')+'</span></div><span>'+dSem(st.ini)+' até '+dSem(st.fim)+'<br>'+dBr(st.ini).slice(6)+'</span></div>';
+  }
+  w.querySelectorAll('[data-tp]').forEach(function(b){ b.onclick=function(){ st.tipo=b.dataset.tp; tipoUI(); }; });
+  q('#mfIni').onchange=function(){ if(!q('#mfFim').value || q('#mfFim').value<this.value) q('#mfFim').value=this.value; periodo(); }; q('#mfFim').onchange=periodo;
+  q('#mfOk').onclick=function(){
+    if(!st.email){ toast('Escolha a pessoa.', true); return; }
+    var bt=this; ocupado(bt,true,'Salvando…');
+    var dados={id:a?a.id:'', email:st.email, tipo:st.tipo, inicio:q('#mfIni').value, fim:q('#mfFim').value, obs:q('#mfObs').value};
+    chamar(ed?'apiEditarAfastamento':'apiSalvarAfastamento', estado.token, dados).then(function(r){
+      if(!r.ok){ ocupado(bt,false,ed?'Salvar alteração':'Cadastrar'); toast(r.msg,true); return; }
+      w.remove(); toast(ed?'Alteração salva.':'Afastamento cadastrado.'); telaAfast();
+    }).catch(function(e){ ocupado(bt,false,ed?'Salvar alteração':'Cadastrar'); falhaGeral(e); });
+  };
+  pessoaUI(); tipoUI();
+}
+function modalRemoverAfast(a){
+  var n=Math.round((Date.parse(a.fim)-Date.parse(a.inicio))/864e5)+1;
+  var w=abrirModal('<div class="mcab"><span class="ic ferias">'+ICONE_CAL+'</span><div><h3>Remover '+(a.tipo==='FERIAS'?'férias':'licença')+'</h3><p>'+esc(a.nome)+'</p></div></div>'+
+    '<div class="periodo '+a.tipo+'"><div><b>'+n+' dia'+(n>1?'s':'')+'</b></div><span>'+dSem(a.inicio)+' até '+dSem(a.fim)+'</span></div>'+
+    '<div class="campo"><label for="mrMot">Motivo da remoção (opcional)</label><input id="mrMot" type="text" maxlength="200"></div>'+
+    '<div class="dica">Depois de remover, esses dias voltam a seguir as regras de 5x2 e de domingo de folga.</div>'+
+    '<div class="acoes"><button class="btn sec" data-fechar>Cancelar</button><button class="btn" id="mrOk">Remover</button></div>');
+  w.querySelector('#mrOk').onclick=function(){ var m=w.querySelector('#mrMot').value.trim(); var bt=this; ocupado(bt,true,'Removendo…');
+    chamar('apiRemoverAfastamento', estado.token, a.id, m).then(function(r){ if(!r.ok){ ocupado(bt,false,'Remover'); toast(r.msg,true); return; } w.remove(); toast('Afastamento removido.'); telaAfast(); }).catch(function(e){ ocupado(bt,false,'Remover'); falhaGeral(e); }); };
+}
+
+/* ============ Gestão: alterar horário (1 pessoa ou várias) ============ */
+modalHorario = function(emails){
+  var d=estado.plan, ps=emails.map(function(e){ return d.porEmail[e]; }).filter(Boolean), um=ps.length===1;
+  var st={modo: um?'DEFINIR':'ESTENDER', ent: um?ps[0].entrada:'', sai: um?ps[0].saida:'', horas:2};
+  var cabec='<div class="mcab"><span class="ic hora">'+ICONE_REL+'</span><div><h3>'+(um?'Horário de '+esc(primeiro(ps[0].nome)):'Alterar horário de '+ps.length+' pessoas')+'</h3><p>'+(um?esc(ps[0].nome)+' · '+esc(ps[0].coord):'A mudança vale a partir de agora e fica registrada no histórico.')+'</p></div></div>';
+  var corpo = um ?
+    '<div class="dois"><div class="campo"><label for="hEnt">Entrada (24 h)</label><input id="hEnt" type="text" inputmode="numeric" maxlength="5" value="'+esc(st.ent)+'"></div><div class="campo"><label for="hSai">Saída (24 h)</label><input id="hSai" type="text" inputmode="numeric" maxlength="5" value="'+esc(st.sai)+'"></div></div>'+
+    '<div class="rapidos"><button type="button" data-r="+60">+1h na saída</button><button type="button" data-r="+120">+2h na saída</button><button type="button" data-r="-60">-1h na saída</button><button type="button" data-r="hc">Usar o do headcount ('+esc(ps[0].entradaHc)+' às '+esc(ps[0].saidaHc)+')</button></div>'
+    : '<div id="hOps">'+
+      '<label class="opcard'+(st.modo==='ESTENDER'?' on':'')+'" data-m="ESTENDER"><input type="radio" name="hm"'+(st.modo==='ESTENDER'?' checked':'')+'><div><b>Aumentar ou reduzir a saída de cada um</b><span>Cada pessoa mantém a própria entrada; a saída muda na mesma quantidade de horas.</span></div></label>'+
+      '<label class="opcard" data-m="DEFINIR"><input type="radio" name="hm"><div><b>Colocar todos no mesmo horário</b><span>Todos passam a ter a mesma entrada e saída.</span></div></label>'+
+      '<label class="opcard" data-m="HEADCOUNT"><input type="radio" name="hm"><div><b>Voltar ao horário do headcount</b><span>Cada pessoa volta ao horário que está no headcount.</span></div></label></div>'+
+      '<div id="hCampos"></div>';
+  var w=abrirModal(cabec+corpo+'<div id="hPrev"></div><div class="campo"><label for="hMot">Motivo (vai para o histórico)</label><input id="hMot" type="text" maxlength="200" placeholder="Ex.: ampliação de carga horária"></div><div class="acoes"><button class="btn sec" data-fechar>Cancelar</button><button class="btn roxo" id="hOk">Salvar horário</button></div>', true);
+  var q=function(s){ return w.querySelector(s); };
+  var valido=function(h){ return /^([01]\d|2[0-3]):[0-5]\d$/.test(h); };
+  function novo(p){ if(st.modo==='DEFINIR') return {e:st.ent, s:st.sai}; if(st.modo==='HEADCOUNT') return {e:p.entradaHc, s:p.saidaHc}; var s=aMin(p.saida)+Math.round(st.horas*60); return {e:p.entrada, s: (s>aMin(p.entrada) && s<24*60) ? hm(s) : ''}; }
+  function camposMulti(){
+    if(um) return;
+    q('#hCampos').innerHTML = st.modo==='ESTENDER' ? '<div class="campo"><label for="hHoras">Quantas horas na saída?</label><div class="rapidos" style="margin:0 0 6px"><button type="button" data-h="1">+1h</button><button type="button" data-h="2">+2h</button><button type="button" data-h="-1">-1h</button></div><input id="hHoras" type="number" step="0.5" min="-4" max="4" value="'+st.horas+'"></div>'
+      : st.modo==='DEFINIR' ? '<div class="dois"><div class="campo"><label for="hEnt">Entrada (24 h)</label><input id="hEnt" type="text" maxlength="5" placeholder="08:00" value="'+esc(st.ent)+'"></div><div class="campo"><label for="hSai">Saída (24 h)</label><input id="hSai" type="text" maxlength="5" placeholder="17:00" value="'+esc(st.sai)+'"></div></div>' : '';
+    if(q('#hHoras')) { q('#hHoras').oninput=function(){ st.horas=+this.value||0; prev(); }; w.querySelectorAll('[data-h]').forEach(function(b){ b.onclick=function(){ st.horas=+b.dataset.h; q('#hHoras').value=st.horas; prev(); }; }); }
+    if(q('#hEnt')) { q('#hEnt').oninput=function(){ st.ent=this.value.trim(); prev(); }; q('#hSai').oninput=function(){ st.sai=this.value.trim(); prev(); }; }
+  }
+  function prev(){
+    if(um){
+      var p=ps[0], ok=valido(st.ent)&&valido(st.sai)&&aMin(st.sai)>aMin(st.ent);
+      q('#hPrev').innerHTML='<div class="antes-depois"><div class="bx"><small>Hoje</small><b>'+esc(p.entrada)+' às '+esc(p.saida)+'</b></div><span style="font-weight:800;color:#6D6D6D">→</span><div class="bx novo"><small>Novo horário</small><b>'+(ok?esc(st.ent)+' às '+esc(st.sai):'—')+'</b></div></div>'+(ok?'<div class="dica" style="text-align:center">Jornada de '+dur(aMin(st.sai)-aMin(st.ent))+' (com o almoço).</div>':'<div class="dica" style="text-align:center;color:#A51E5B">Use o formato 24 h (ex.: 08:00) e a saída depois da entrada.</div>');
+      q('#hOk').disabled=!ok || (st.ent===p.entrada && st.sai===p.saida); return;
+    }
+    var muda=0, rows=ps.map(function(p){ var n=novo(p), m=n.s && (n.e!==p.entrada||n.s!==p.saida); if(m) muda++; return '<tr><td class="esq">'+esc(p.nome)+'</td><td>'+esc(p.entrada)+' às '+esc(p.saida)+'</td><td class="'+(m?'mud':'')+'">'+(n.s?esc(n.e)+' às '+esc(n.s):'<span style="color:#A51E5B">fora do limite</span>')+'</td></tr>'; }).join('');
+    var invalido = st.modo==='DEFINIR' && !(valido(st.ent)&&valido(st.sai)&&aMin(st.sai)>aMin(st.ent));
+    q('#hPrev').innerHTML='<div class="dica" style="margin:8px 0">'+(invalido?'<span style="color:#A51E5B">Informe entrada e saída no formato 24 h.</span>':muda+' de '+ps.length+' pessoa(s) mudam de horário.')+'</div><div class="lista-mini" style="max-height:240px"><table class="tab-prev"><thead><tr><th class="esq">Pessoa</th><th>Hoje</th><th>Novo</th></tr></thead><tbody>'+rows+'</tbody></table></div>';
+    q('#hOk').disabled = invalido || !muda;
+  }
+  if(um){
+    q('#hEnt').oninput=function(){ st.ent=this.value.trim(); prev(); }; q('#hSai').oninput=function(){ st.sai=this.value.trim(); prev(); };
+    w.querySelectorAll('[data-r]').forEach(function(b){ b.onclick=function(){ var p=ps[0], r=b.dataset.r; if(r==='hc'){ st.ent=p.entradaHc; st.sai=p.saidaHc; } else { var s=aMin(p.saida)+(+r); if(s>aMin(p.entrada)&&s<1440){ st.ent=p.entrada; st.sai=hm(s); } } q('#hEnt').value=st.ent; q('#hSai').value=st.sai; prev(); }; });
+  } else {
+    w.querySelectorAll('[data-m]').forEach(function(l){ l.onclick=function(ev){ ev.preventDefault(); st.modo=l.dataset.m; w.querySelectorAll('[data-m]').forEach(function(x){ var on=x===l; x.classList.toggle('on',on); x.querySelector('input').checked=on; }); camposMulti(); prev(); }; });
+    camposMulti();
+  }
+  prev();
+  q('#hOk').onclick=function(){
+    var bt=this; ocupado(bt,true,'Salvando…');
+    var modo = um ? 'DEFINIR' : st.modo;
+    chamar('apiAlterarHorarios', estado.token, emails, modo, st.ent, st.sai, st.horas, q('#hMot').value).then(function(r){
+      if(!r.ok){ ocupado(bt,false,'Salvar horário'); toast(r.msg,true); return; }
+      w.remove(); toast(r.alterados+' horário(s) alterado(s).'+(r.recusados.length?' Fora do limite: '+r.recusados.join(', '):''), r.recusados.length>0);
+      estado.pessoas=null; carregarPlanoMantendo();
+    }).catch(function(e){ ocupado(bt,false,'Salvar horário'); falhaGeral(e); });
+  };
+};
+
+/* ============ Planejamento: importar planilha ============ */
+var _desenharPlanoBase = desenharPlano;
+desenharPlano = function(){
+  _desenharPlanoBase();
+  var ac=gc().querySelector('.cab .acoes'); if(ac && !$('bImportar')){ var b=document.createElement('button'); b.className='btn sec'; b.id='bImportar'; b.textContent='Importar planilha'; ac.insertBefore(b, $('bDesfazer')); b.onclick=modalImportar; }
+};
+function modalImportar(){
+  if(temEdicoes()){ toast('Salve ou desfaça as alterações da grade antes de importar.', true); return; }
+  var w=abrirModal('<div class="mcab"><span class="ic imp">'+ICONE_IMP+'</span><div><h3>Importar escala de uma planilha</h3><p>Use o CSV com as colunas data, pessoa, grupo, inicio, almoco e fim (um mês por arquivo).</p></div></div>'+
+    '<div class="upload"><b>Escolha o arquivo CSV</b><div class="dica">Os dias de trabalho, as folgas e os horários de cada dia entram na escala de cada pessoa.</div><input type="file" id="impArq" accept=".csv,text/csv"></div><div id="impRes"></div>'+
+    '<div class="acoes"><button class="btn sec" data-fechar>Cancelar</button></div>', true);
+  var txt='';
+  w.querySelector('#impArq').onchange=function(){ var f=this.files[0]; if(!f) return; var rd=new FileReader(); rd.onload=function(){ txt=String(rd.result);
+    w.querySelector('#impRes').innerHTML='<div class="carregando" style="min-height:80px"><div class="giro"></div> Conferindo a planilha…</div>';
+    chamar('apiImportarEscalaPrevia', estado.token, txt).then(function(r){
+      if(!r.ok){ w.querySelector('#impRes').innerHTML='<div class="res erro">'+esc(r.msg)+'</div>'; return; }
+      var s=r.resumo;
+      w.querySelector('#impRes').innerHTML='<div class="numeros" style="--cols:4"><div class="numero"><b>'+s.mes.slice(5)+'/'+s.mes.slice(0,4)+'</b><span>Mês da planilha</span></div><div class="numero"><b>'+s.encontradas+'</b><span>Pessoas encontradas</span></div><div class="numero"><b>'+s.validas+'</b><span>Escalas válidas</span></div><div class="numero'+(s.comProblema.length?' alerta':'')+'"><b>'+s.comProblema.length+'</b><span>Com regra violada</span></div></div>'+
+        (s.semCadastro.length?'<div class="aviso erro">Não encontrei no painel: '+s.semCadastro.map(esc).join(', ')+'. Essas linhas serão ignoradas.</div>':'')+
+        (s.completadas?'<div class="aviso ok">'+s.completadas+' escala(s) tinham dias fora da planilha numa semana. Completei só quando havia uma única forma de fechar a semana em 5x2 (domingo ausente conta como folga). Isso fica anotado no histórico.</div>':'')+
+        (s.jaExistem?'<div class="dica">'+s.jaExistem+' pessoa(s) já tinham escala neste mês e serão substituídas.</div>':'')+
+        (s.comProblema.length?'<div class="lista-mini">'+s.comProblema.map(function(x){ return '<div><b>'+esc(x.nome)+'</b>'+esc(x.erros[0]||'')+'</div>'; }).join('')+'</div>':'')+
+        '<div class="opcoes" style="margin-top:12px"><label class="opcard on" data-pub="1"><input type="radio" name="ip" checked><div><b>Importar e publicar as válidas</b><span>As '+s.validas+' escalas válidas ficam visíveis para as pessoas, que recebem uma notificação com o seu nome.</span></div></label><label class="opcard" data-pub="0"><input type="radio" name="ip"><div><b>Importar como rascunho</b><span>Nada muda para as pessoas até você publicar.</span></div></label></div>'+
+        '<div class="acoes"><button class="btn" id="impOk">Importar '+s.encontradas+' escala(s)</button></div>';
+      var pub=true; w.querySelectorAll('[data-pub]').forEach(function(l){ l.onclick=function(ev){ ev.preventDefault(); pub=l.dataset.pub==='1'; w.querySelectorAll('[data-pub]').forEach(function(x){ var on=x===l; x.classList.toggle('on',on); x.querySelector('input').checked=on; }); }; });
+      w.querySelector('#impOk').onclick=function(){ var bt=this; ocupado(bt,true,'Importando…');
+        chamar('apiImportarEscalaAplicar', estado.token, txt, pub).then(function(r2){ if(!r2.ok){ ocupado(bt,false,'Importar'); toast(r2.msg,true); return; } w.remove(); toast(r2.resumo.publicadas+' escala(s) publicada(s) e '+r2.resumo.rascunhos+' em rascunho.'); carregarPlano(); atualizarSino(); }).catch(function(e){ ocupado(bt,false,'Importar'); falhaGeral(e); }); };
+    }).catch(falhaGeral);
+  }; rd.readAsText(f,'UTF-8'); };
+}
+</script>

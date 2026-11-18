@@ -1,0 +1,80 @@
+<style>
+/* ===================== pedidos de troca que esperam a minha resposta ===================== */
+.prr{position:relative;border-radius:18px;padding:18px 20px 16px;margin:0 0 18px;background:linear-gradient(135deg,#FFF0F7,#FFE3F0);border:1.5px solid #F7B5D6;box-shadow:0 10px 26px -14px rgba(216,0,115,.45);animation:prrEntra .45s cubic-bezier(.2,.7,.2,1) both}
+html[data-tema="escuro"] .prr{background:linear-gradient(135deg,#2a1420,#331627);border-color:#6b2a4c}
+@keyframes prrEntra{from{opacity:0;transform:translateY(-6px)}to{opacity:1;transform:none}}
+.prr-cab{display:flex;align-items:center;gap:12px;margin-bottom:12px}
+.prr-ic{position:relative;width:42px;height:42px;border-radius:13px;background:var(--rosa);color:#fff;display:flex;align-items:center;justify-content:center;flex:none;box-shadow:0 8px 18px -8px rgba(216,0,115,.8)}
+.prr-ic svg{color:#fff;stroke:#fff;opacity:1}
+.prr-ic .n{position:absolute;top:-7px;right:-7px;min-width:22px;height:22px;border-radius:11px;background:#E5303A;color:#fff;font-size:12px;font-weight:800;display:flex;align-items:center;justify-content:center;padding:0 6px;box-shadow:0 0 0 3px #FFE9F3}
+html[data-tema="escuro"] .prr-ic .n{box-shadow:0 0 0 3px #2a1420}
+.prr-cab b{display:block;font-size:17px;color:var(--preto)}
+.prr-cab span{font-size:13px;color:var(--c4)}
+.prr-lista{display:grid;gap:8px}
+.prr-item{display:flex;align-items:center;gap:12px;background:var(--sup,#fff);border-radius:14px;padding:10px 12px;border:1px solid rgba(216,0,115,.14)}
+html[data-tema="escuro"] .prr-item{background:#1c1720;border-color:#3a2431}
+.prr-item .av{width:38px;height:38px;font-size:12px;flex:none}
+.prr-item .txt{flex:1;min-width:0}
+.prr-item .txt b{font-size:14px}
+.prr-item .txt .linha2{display:flex;align-items:center;gap:8px;flex-wrap:wrap;margin-top:3px;font-size:12.5px;color:var(--c4)}
+.prr-chip{display:inline-flex;align-items:center;gap:6px;border-radius:20px;padding:2px 10px;font-size:12px;font-weight:800;background:var(--rosa-bg);color:var(--rosa)}
+.prr-chip.prr-tdia{background:var(--roxo-bg);color:var(--roxo)}
+.prr-item .bts{display:flex;gap:8px;flex:none}
+.prr-of{display:flex;align-items:center;gap:10px;flex-wrap:wrap;margin-top:12px;padding-top:12px;border-top:1px dashed rgba(216,0,115,.25);font-size:13px;color:var(--preto)}
+.prr-of button{border:0;background:none;padding:0;font:inherit;font-weight:800;color:var(--roxo);cursor:pointer;text-decoration:underline}
+.prr.so-oferta{background:var(--roxo-bg);border-color:#CFC7EC;box-shadow:none}
+.prr.so-oferta .prr-of{margin:0;padding:0;border:0}
+html[data-tema="escuro"] .prr.so-oferta{background:#1f1b2e;border-color:#3b3360}
+@media (max-width:700px){ .prr-item{flex-wrap:wrap} .prr-item .bts{width:100%} .prr-item .bts .btn{flex:1} }
+</style>
+<script>
+/* ===================== pedidos de troca que esperam a minha resposta ===================== */
+var PRR_IC={sino:'<svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 8a6 6 0 0 1 12 0c0 7 3 9 3 9H3s3-2 3-9"/><path d="M10.3 21a1.94 1.94 0 0 0 3.4 0"/></svg>',
+  aberto:'<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="9" cy="8" r="3.2"/><path d="M3 20c0-3.3 2.7-5.5 6-5.5s6 2.2 6 5.5"/><path d="M17 11h4M19 9v4"/></svg>'};
+function haQuanto(iso){ if(!iso) return ''; var min=Math.max(0, Math.round((Date.now()-new Date(String(iso).replace(' ','T')).getTime())/60000)); if(min<1) return 'agora'; if(min<60) return 'há '+min+' min'; var h=Math.floor(min/60); if(h<24) return 'há '+h+' h'; var d=Math.floor(h/24); return 'há '+d+' dia'+(d>1?'s':''); }
+
+/* contador vermelho na aba Minha escala (para todos que têm escala) */
+atualizarPendencias = function(){
+  chamar('apiPendencias', estado.token).then(function(r){ estado.pend=r.trocas||0; estado.histNovos=r.historico||0; estado.responder=r.responder||0; marcarPendencias(); }).catch(function(){});
+};
+var _atualizarSino_23 = atualizarSino;
+atualizarSino = function(){ _atualizarSino_23(); if(estado.token && !ehGestao()) atualizarPendencias(); };
+var _marcarPendencias_23 = marcarPendencias;
+marcarPendencias = function(){
+  _marcarPendencias_23();
+  var ab=$('abas') && $('abas').querySelector('[data-aba="jornada"]'); if(!ab) return;
+  var n=estado.responder||0; ab.innerHTML='Minha Escala'+(n?'<span class="pend-b" title="'+n+' pedido'+(n>1?'s':'')+' de troca esperando sua resposta">'+(n>99?'99+':n)+'</span>':'');
+};
+
+/* cartão no topo da Minha escala */
+function cartaoPedidos(){
+  var main=$('conteudo'); if(!main || !estado.token) return;
+  Promise.all([chamar('apiTrocasV2', estado.token, null), chamar('apiTrocaOfertas', estado.token)]).then(function(r){
+    if(estado.aba && estado.aba!=='jornada') return;
+    var eu=r[0].eu, todas=r[0].itens||[], ofertas=(r[1].itens||[]);
+    var resp=todas.filter(function(t){ return t.colega===eu && t.status==='AGUARDANDO_COLEGA'; });
+    estado.responder=resp.length; marcarPendencias();
+    var velho=main.querySelector('.prr'); if(velho) velho.remove();
+    if(!resp.length && !ofertas.length) return;
+    var of = ofertas.length ? '<div class="prr-of">'+PRR_IC.aberto+'<span>'+(resp.length?'Também há ':'Há ')+'<b>'+ofertas.length+' pedido'+(ofertas.length>1?'s':'')+' em aberto</b> que você pode aceitar.</span><button type="button" data-prr="ofertas">Ver pedidos em aberto</button></div>' : '';
+    var h;
+    if(resp.length){
+      h='<div class="prr" role="region" aria-label="Pedidos de troca esperando sua resposta"><div class="prr-cab"><span class="prr-ic">'+PRR_IC.sino+'<span class="n">'+resp.length+'</span></span><div><b>'+(resp.length===1?'1 pedido de troca esperando sua resposta':resp.length+' pedidos de troca esperando sua resposta')+'</b><span>Veja os detalhes e responda. Cada pedido tem prazo: até 72 horas antes do primeiro turno da troca.</span></div></div>'+
+        '<div class="prr-lista">'+resp.map(function(t){
+          var hor=ehHorarioT(t), chip = hor ? '<span class="prr-chip">Troca de horário · '+dSem(t.dataSolicitante)+'</span>' : '<span class="prr-chip prr-tdia">Troca de dia · '+dSem(t.dataSolicitante)+' ⇄ '+dSem(t.dataColega)+'</span>';
+          return '<div class="prr-item">'+avatarHtml(t.solicitante, t.nomeSolicitante, '')+'<div class="txt"><b>'+esc(t.nomeSolicitante)+'</b> quer trocar de '+(hor?'horário':'dia')+' com você<div class="linha2">'+chip+'<span>pedido '+haQuanto(t.criadaEm)+'</span>'+(t.motivo?'<span>· “'+esc(t.motivo)+'”</span>':'')+'</div></div>'+
+            '<div class="bts"><button class="btn sec peq" data-prr="recusar" data-id="'+esc(t.id)+'">Recusar</button><button class="btn peq" data-prr="ver" data-id="'+esc(t.id)+'">Ver e responder</button></div></div>'; }).join('')+'</div>'+of+'</div>';
+    } else h='<div class="prr so-oferta">'+of+'</div>';
+    var box=document.createElement('div'); box.innerHTML=h; var el=box.firstChild;
+    main.insertBefore(el, main.firstChild); atualizarAvatares();
+    el.querySelectorAll('[data-prr]').forEach(function(b){ b.onclick=function(){
+      var acao=b.dataset.prr, t=resp.filter(function(x){ return x.id===b.dataset.id; })[0];
+      if(acao==='ofertas'){ rolarParaOfertas(); return; }
+      if(!t) return;
+      if(acao==='recusar') modalRecusarTroca(t); else acaoTrocaAgenteV2('aceitar', t.id, todas);
+    }; });
+  }).catch(function(){});
+}
+var _desenharMinhaEscala_23 = desenharMinhaEscala;
+desenharMinhaEscala = function(d){ _desenharMinhaEscala_23(d); cartaoPedidos(); };
+</script>

@@ -1,0 +1,168 @@
+<style>
+/* ===================== v143: Visão do Dia com presença, licença com período, período na situação, Dashboard da Semana ===================== */
+.vd-ag-pres{display:inline-flex;align-items:center;gap:6px;font-size:11.5px;font-weight:800;border-radius:999px;padding:3px 10px;background:rgba(30,158,88,.14);color:#17713D;margin-left:auto}
+html[data-tema="escuro"] .vd-ag-pres{background:rgba(30,158,88,.22);color:#7fe0a5}
+.lg-per{display:block;margin-top:4px;font-size:11.5px;font-weight:700;color:var(--c4);white-space:nowrap}
+.lg-per b{color:var(--preto);font-weight:800}
+.lg-lic .lg-at-dias span{background:#C98A00}
+.lg-lic .acoes .ok{background:#C98A00!important;border-color:#C98A00!important;color:#fff!important}
+.lg-lic textarea{width:100%;box-sizing:border-box;min-height:64px;margin-top:6px;border:1.5px solid var(--c2,#E6DFEE);border-radius:12px;padding:10px 12px;font:inherit;font-size:13px;background:var(--sup,#fff);color:var(--preto);resize:vertical}
+/* Dashboard da Semana */
+.ls-nav{display:flex;align-items:center;gap:8px;flex-wrap:wrap}
+.ls-nav .nav{all:unset;cursor:pointer;width:36px;height:36px;border-radius:10px;display:grid;place-items:center;border:1.5px solid var(--c2,#E6DFEE);background:var(--sup,#fff);font-size:18px;font-weight:800;color:var(--preto)}
+.ls-nav .nav[disabled]{opacity:.35;cursor:default}
+.ls-nav .per{font-weight:800;font-size:14px;padding:0 6px;font-variant-numeric:tabular-nums}
+.ls-nav .esta{all:unset;cursor:pointer;font-size:12.5px;font-weight:800;color:var(--rosa,#D80073);padding:6px 10px;border-radius:9px}
+.ls-delta{display:block;margin-top:4px;font-size:11.5px;font-weight:800}
+.ls-delta.bom{color:#17713D}.ls-delta.ruim{color:#B42318}.ls-delta.igual{color:var(--c4)}
+html[data-tema="escuro"] .ls-delta.bom{color:#7fe0a5} html[data-tema="escuro"] .ls-delta.ruim{color:#f19999}
+.ls-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:14px;margin-top:14px}
+.ls-dias{display:grid;grid-template-columns:repeat(7,minmax(0,1fr));gap:10px;margin-top:12px}
+.ls-dia{border-radius:16px;border:1.5px solid var(--c2,#E6DFEE);padding:12px 10px;display:flex;flex-direction:column;align-items:center;gap:6px;background:var(--sup,#fff);min-width:0}
+.ls-dia.hoje{border-color:var(--rosa,#D80073);box-shadow:0 0 0 3px rgba(216,0,115,.12)}
+.ls-dia.fut{border-style:dashed;opacity:.65}
+.ls-dia .dn{font-size:11.5px;font-weight:800;text-transform:uppercase;letter-spacing:.05em;color:var(--c4)}
+.ls-dia .dd{font-size:15px;font-weight:800}
+.ls-bar{width:100%;max-width:56px;height:120px;border-radius:12px;background:var(--c1,#F4F1F7);display:flex;flex-direction:column-reverse;overflow:hidden}
+.ls-bar i{display:block;width:100%}
+.ls-dia .pc{font-size:20px;font-weight:800;font-variant-numeric:tabular-nums;line-height:1}
+.ls-dia .pc small{display:block;font-size:11px;font-weight:700;color:var(--c4);margin-top:3px;text-align:center}
+.ls-dia .ab{font-size:11.5px;font-weight:800;color:#B42318}
+.ls-leg{display:flex;gap:14px;flex-wrap:wrap;font-size:12px;color:var(--c4);font-weight:700;margin-top:12px}
+.ls-leg i{display:inline-block;width:10px;height:10px;border-radius:3px;margin-right:6px;vertical-align:-1px}
+.ls-tw{overflow:auto;max-height:440px;border-radius:12px;margin-top:10px}
+.ls-t{border-collapse:separate;border-spacing:0;width:100%;font-size:13px}
+.ls-t th{position:sticky;top:0;z-index:2;background:var(--sup,#fff);font-size:11.5px;font-weight:800;color:var(--c4);text-align:center;padding:8px 6px;border-bottom:1.5px solid var(--c2,#E6DFEE);white-space:nowrap}
+.ls-t td{text-align:center;padding:8px 6px;border-bottom:1px solid var(--c2,#E6DFEE);font-variant-numeric:tabular-nums;white-space:nowrap}
+.ls-t td:first-child,.ls-t th:first-child{text-align:left}
+html[data-tema="escuro"] .ls-t th{background:#1e1a24}
+.ls-pl{display:inline-flex;align-items:center;gap:8px}
+.ls-pl .tr{width:70px;height:7px;border-radius:999px;background:var(--c1,#F4F1F7);overflow:hidden}.ls-pl .tr i{display:block;height:100%;border-radius:999px}
+.ls-pts{display:inline-flex;gap:4px}
+.ls-pts i{width:14px;height:14px;border-radius:4px;display:inline-block;background:var(--c1,#F4F1F7)}
+.ls-pts i.v{background:transparent;border:1.5px dashed var(--c2,#D9D2E3);box-sizing:border-box}
+.ls-mais{all:unset;cursor:pointer;display:block;margin:10px auto 0;font-size:12.5px;font-weight:800;color:var(--rosa,#D80073)}
+.ls-vazio{padding:28px;text-align:center;color:var(--c4)}
+@media (max-width:1100px){ .ls-grid{grid-template-columns:1fr} }
+@media (max-width:760px){ .ls-dias{grid-template-columns:repeat(4,minmax(0,1fr))} .ls-bar{height:80px} }
+</style>
+<script>
+/* ===================== Visão do Dia: o cartão "Agora" conta quem está presente (ou ainda no prazo) ===================== */
+/* o gráfico Agentes por Horário abre em Considerando Presença (o botão Escala do Dia continua disponível) */
+if (typeof estado !== 'undefined' && estado && !estado.vdModoUsuario) estado.vdModo = 'pres';
+function vdAgoraPres(r, p) { var ag = $('vdAgora'), k = typeof vdAgoraSlot === 'function' ? vdAgoraSlot() : -1; if (!ag || k < 0) return;
+  var pr = vdFiltrarPres(r, p), cp = vdCob(pr.r).cob[k], tot = vdCob(r).cob[k]; if (!cp || !tot) return;
+  var its = ag.querySelectorAll('.it'), vals = [cp['0800'], cp.chat, cp.ass, cp.alm];
+  for (var i = 0; i < 4 && i < its.length; i++) { var t = its[i].firstChild; if (t && t.nodeType === 3) t.nodeValue = String(vals[i]); }
+  var n = cp['0800'] + cp.chat + cp.ass + cp.alm, nt = tot['0800'] + tot.chat + tot.ass + tot.alm, ch = ag.querySelector('.vd-ag-pres');
+  if (!ch) { ch = document.createElement('span'); ch.className = 'vd-ag-pres'; var ver = ag.querySelector('.ver'); if (ver) ag.insertBefore(ch, ver); else ag.appendChild(ch); }
+  ch.textContent = 'Considerando Presença · ' + n + ' de ' + nt + ' escalados';
+  ag.title = 'Só quem está presente ou ainda dentro do prazo de registrar a presença.';
+  ag.onclick = function () { estado.vdPresR = pr; vdSlotPres(k); }; }
+(function () { if (typeof vdCobAplicar !== 'function') return; var _c = vdCobAplicar; vdCobAplicar = function (r) { var x = _c.apply(this, arguments);
+  try { if (r && r.data === hojeLocal() && $('vdAgora')) vdPresCarregar(r.data, function (p) { if (p && estado.vdUlt === r) vdAgoraPres(r, p); }); } catch (e) { } return x; }; })();
+
+/* ===================== Controle de Logados: período na situação ===================== */
+function lgDm(d) { return d ? d.slice(8) + '/' + d.slice(5, 7) : ''; }
+function lgPerTxt(p) { if (!p) return ''; var q = p.tipo === 'ATESTADO' ? (p.n + ' dia' + (p.n > 1 ? 's' : '') + ' de trabalho') : (p.n + ' dia' + (p.n > 1 ? 's' : ''));
+  return (p.ini === p.fim ? 'Só <b>' + lgDm(p.ini) + '</b>' : '<b>' + lgDm(p.ini) + '</b> a <b>' + lgDm(p.fim) + '</b>') + ' · ' + q; }
+(function () { if (typeof lgLinha !== 'function') return; var _l = lgLinha; lgLinha = function (x) { var h = _l.apply(this, arguments);
+  try { if (x && x.per && x.per.tipo === x.st) { var i = h.indexOf('</select>'); if (i >= 0) h = h.slice(0, i + 9) + '<small class="lg-per" title="Período inteiro">' + lgPerTxt(x.per) + '</small>' + h.slice(i + 9); } } catch (e) { } return h; }; })();
+/* atestado lançado por período: o período já aparece na linha, sem esperar recarregar */
+(function () { var _ch = window.chamar; if (typeof _ch !== 'function') return; window.chamar = function (fn) { var a = arguments, p = _ch.apply(this, a);
+  if (fn === 'apiDefinirPresencaPeriodo' && p && p.then) p.then(function (res) { try { var r = estado.lgR, em = String(a[4] || '').toLowerCase(); if (!r || !res || !res.trab || !res.trab.length || res.trab.indexOf(r.data) < 0) return;
+    var x = r.itens.filter(function (i) { return i.email === em; })[0]; if (x) { x.per = { ini: res.trab[0], fim: res.trab[res.trab.length - 1], n: res.trab.length, tipo: a[5] || 'ATESTADO' }; setTimeout(function () { try { lgDesenhar(); } catch (e) { } }, 0); } } catch (e) { } }, function () { });
+  return p; }; Object.keys(_ch).forEach(function (k) { window.chamar[k] = _ch[k]; }); })();
+
+/* ===================== Controle de Logados: atestado — a conferência da escala não trava o botão de lançar ===================== */
+(function () { var raiz = document.getElementById('modais') || document.body; new MutationObserver(function () { var md = document.querySelector('.lg-at:not(.lg-lic)'); if (!md || md.dataset.v143) return; md.dataset.v143 = 1;
+  var ok = md.querySelector('#atOk'), prev = md.querySelector('#atPrev'); if (!ok || !prev) return;
+  new MutationObserver(function () { if (!ok.disabled || !prev.querySelector('.car') || /Lançando/.test(ok.textContent)) return; var i = (md.querySelector('#atIni') || {}).value, f = (md.querySelector('#atFim') || {}).value;
+    ok.disabled = false; ok.textContent = (i && f && i !== f) ? 'Lançar Atestado de ' + lgDm(i) + ' a ' + lgDm(f) : 'Lançar Atestado'; }).observe(md, { subtree: true, childList: true, attributes: true, attributeFilter: ['disabled'] }); }).observe(raiz, { childList: true, subtree: true }); })();
+/* ===================== Controle de Logados: licença com início e fim (vai para Férias e Licenças e para o Histórico) ===================== */
+(function () { if (typeof lgSalvar !== 'function') return; var _s = lgSalvar; lgSalvar = function (email, status) { if (status === 'LICENCA' && estado.lgR) return lgLicencaModal(email); return _s.apply(this, arguments); }; })();
+function lgLicencaModal(email) { var r = estado.lgR, x = r.itens.filter(function (i) { return i.email === email; })[0]; if (!x) return;
+  var ini = r.data, fim = r.data, iniMin = lgSomaDia(r.data, -60), feito = false, nd = function () { return Math.round((new Date(fim + 'T12:00:00Z') - new Date(ini + 'T12:00:00Z')) / 86400000) + 1; };
+  var w = abrirModal('<div class="lg-at-cab"><span class="ic">' + (LGK_IC.atest || '') + '</span><div><h3 tabindex="-1">Licença de ' + esc(nomeCurto2(x.nome)) + '</h3><p>' + esc((x.cargo || 'Agente') + (x.coord ? ' · ' + x.coord : '')) + '</p></div></div>' +
+    '<div class="lg-at-per"><div><label for="lcIni">Primeiro dia da licença</label><input type="date" id="lcIni" value="' + ini + '" min="' + iniMin + '"></div><span class="seta">até</span><div><label for="lcFim">Último dia da licença</label><input type="date" id="lcFim" value="' + fim + '" min="' + ini + '"></div></div>' +
+    '<div class="lg-at-rap" role="group" aria-label="Atalhos de período">' + [[1, 'Só este dia'], [7, '7 dias'], [15, '15 dias'], [30, '30 dias'], [60, '60 dias'], [120, '120 dias']].map(function (o) { return '<button type="button" data-n="' + o[0] + '">' + o[1] + '</button>'; }).join('') + '</div>' +
+    '<label for="lcObs" style="display:block;margin-top:14px;font-size:12.5px;font-weight:800;color:var(--c4)">Observação (opcional)</label><textarea id="lcObs" maxlength="200" placeholder="Ex.: licença maternidade, licença médica…"></textarea>' +
+    '<div class="lg-at-prev" id="lcPrev" aria-live="polite"></div>' +
+    '<div class="acoes"><button class="btn sec" id="lcCanc">Cancelar</button><button class="btn ok" id="lcOk">Registrar Licença</button></div>', true);
+  var md = w.querySelector('.modal'); md.classList.add('lg-at', 'lg-lic'); if (document.activeElement) document.activeElement.blur();
+  var iI = md.querySelector('#lcIni'), iF = md.querySelector('#lcFim'), prev = md.querySelector('#lcPrev'), ok = md.querySelector('#lcOk');
+  var previa = function () { var n = nd(); md.querySelectorAll('.lg-at-rap button').forEach(function (b) { b.classList.toggle('at', +b.dataset.n === n); });
+    prev.innerHTML = '<b class="t">Licença de ' + n + ' dia' + (n > 1 ? 's' : '') + '</b><div class="lg-at-dias"><span>' + esc(lgDiaCurto(ini)) + '</span>' + (n > 1 ? '<span class="p">até</span><span>' + esc(lgDiaCurto(fim)) + '</span>' : '') + '</div>' +
+      '<small>Fica registrada em Férias e Licenças e no Histórico. Nesses dias a pessoa sai da escala e aparece como Licença no Controle de Logados.' + (ini < r.data ? ' O início é anterior a ' + esc(lgDm(r.data)) + ': os dias passados também passam a contar como licença.' : '') + '</small>';
+    ok.textContent = n > 1 ? 'Registrar Licença de ' + n + ' Dias' : 'Registrar Licença'; ok.disabled = false; };
+  iI.onchange = function () { var v = iI.value || ini; if (v < iniMin) v = iniMin; var dur = nd() - 1; ini = v; iI.value = ini; fim = lgSomaDia(ini, dur); iF.min = ini; iF.value = fim; previa(); };
+  iF.onchange = function () { var v = iF.value; if (!v || v < ini) v = ini; iF.value = v; fim = v; previa(); };
+  md.querySelectorAll('.lg-at-rap button').forEach(function (b) { b.onclick = function () { fim = lgSomaDia(ini, +b.dataset.n - 1); iF.value = fim; previa(); }; });
+  var fechar = function () { var f = md.closest('.modal-fundo'); if (f) f.remove(); else { var m = document.getElementById('modais'); if (m && m.lastElementChild) m.lastElementChild.remove(); } };
+  md.querySelector('#lcCanc').onclick = fechar;
+  var obs = new MutationObserver(function () { if (!document.body.contains(md)) { obs.disconnect(); if (!feito) lgRepintarTudo(); } }); obs.observe(document.getElementById('modais') || document.body, { childList: true, subtree: true });
+  ok.onclick = function () { ok.disabled = true; ok.textContent = 'Registrando…';
+    chamar('apiRegistrarLicenca', estado.token, { email: email, inicio: ini, fim: fim, obs: (md.querySelector('#lcObs').value || '').trim() }).then(function (res) {
+      if (!res || res.ok === false) { ok.disabled = false; ok.textContent = 'Tentar de Novo'; prev.insertAdjacentHTML('beforeend', '<small style="color:#B42318">' + esc((res && res.msg) || 'Não foi possível registrar.') + '</small>'); return; }
+      feito = true; if (ini <= r.data && fim >= r.data) { x.st = 'LICENCA'; x.sit = 'LICENCA'; x.auto = true; x.per = { ini: ini, fim: fim, n: nd(), tipo: 'LICENCA' }; }
+      estado.lgCache = {}; estado.lgMes = {}; estado.lgSem = {}; fechar(); lgRepintarTudo();
+      try { toast('Licença registrada de ' + lgDm(ini) + ' a ' + lgDm(fim) + '. Já aparece em Férias e Licenças e no Histórico.'); } catch (e) { } })
+    .catch(function (e) { ok.disabled = false; ok.textContent = 'Tentar de Novo'; prev.insertAdjacentHTML('beforeend', '<small style="color:#B42318">Não deu certo: ' + esc(String((e && e.message) || e)) + '</small>'); }); };
+  previa(); }
+
+/* ===================== Controle de Logados: Dashboard da Semana (entre o do Dia e o do Mês) ===================== */
+(function () { if (typeof lgSeg !== 'function') return; var _seg = lgSeg; lgSeg = function (n) { var h = _seg.apply(this, arguments), f = estado.lg, at = f && f.vista === 'semana';
+  var b = '<button type="button" role="tab" data-lgv="semana" class="' + (at ? 'ativa' : '') + '" aria-selected="' + at + '">Dashboard da Semana</button>';
+  var i = h.indexOf('<button type="button" role="tab" data-lgv="mes"'); return i >= 0 ? h.slice(0, i) + b + h.slice(i) : h; }; })();
+(function () { if (typeof lgBindSeg !== 'function') return; var _b = lgBindSeg; lgBindSeg = function (c) { _b.apply(this, arguments);
+  c.querySelectorAll('[data-lgv]').forEach(function (b) { var orig = b.onclick; b.onclick = function () { var v = b.dataset.lgv, era = estado.lg.vista; if (v === era) return;
+    if (v === 'semana') { estado.lg.vista = 'semana'; return lgSemTela(); }
+    if (era === 'semana') { estado.lg.vista = v; if (v === 'mes') return lgMesTela(); if (estado.lgR && estado.lgR.data === estado.lg.data) return lgDesenhar(); return telaLogados(); }
+    return orig && orig.apply(this, arguments); }; }); }; })();
+(function () { var _t = telaLogados; telaLogados = function () { if (estado.lg && estado.lg.vista === 'semana' && gc()) return lgSemTela(); return _t.apply(this, arguments); };
+  var _d = lgDesenhar; lgDesenhar = function () { if (estado.lg && estado.lg.vista === 'semana') return lgSemTela(); return _d.apply(this, arguments); }; })();
+var LS_DN = ['Dom', 'Seg', 'Ter', 'Qua', 'Qui', 'Sex', 'Sáb'];
+function lgSemIni(d) { var x = new Date(d + 'T12:00:00Z'); return lgSomaDia(d, -x.getUTCDay()); }
+function lgSemTela() { var f = estado.lg, c = gc(); if (!c) return; f.sem = f.sem || lgSemIni(f.data || hojeLocal()); var y = window.scrollY, k = f.sem, hojeS = lgSemIni(hojeLocal());
+  c.innerHTML = '<div class="cab"><div><h1>Controle de Logados</h1><p>Visão da semana, de domingo a sábado: presença, faltas e atestados por dia, por coordenação e por pessoa, comparando com a semana anterior.</p></div></div>' +
+    '<div class="lg-top"><div class="ls-nav"><button type="button" class="nav" id="lsAnt" aria-label="Semana anterior">‹</button><span class="per">' + esc(lgDm(k) + ' a ' + lgDm(lgSomaDia(k, 6)) + '/' + lgSomaDia(k, 6).slice(0, 4)) + '</span><button type="button" class="nav" id="lsProx" aria-label="Próxima semana"' + (k >= hojeS ? ' disabled' : '') + '>›</button>' + (k !== hojeS ? '<button type="button" class="esta" id="lsEsta">Esta Semana</button>' : '') + '</div>' + lgSeg(null) + '</div>' +
+    '<div id="lgSemCorpo"><div class="carregando"><div class="giro"></div> Carregando a semana…</div></div>';
+  lgBindSeg(c); $('lsAnt').onclick = function () { f.sem = lgSomaDia(k, -7); lgSemTela(); }; $('lsProx').onclick = function () { if (k < hojeS) { f.sem = lgSomaDia(k, 7); lgSemTela(); } }; if ($('lsEsta')) $('lsEsta').onclick = function () { f.sem = hojeS; lgSemTela(); };
+  var cache = (estado.lgSem || {})[k]; if (cache && (k !== hojeS || Date.now() - cache.t < 60000)) { lgSemDesenhar(cache.r); window.scrollTo(0, y); return; }
+  chamar('apiControleLogadosSemana', estado.token, k).then(function (r) { estado.lgSem = estado.lgSem || {}; estado.lgSem[k] = { r: r, t: Date.now() }; if (estado.sub !== 'logados' || estado.lg.vista !== 'semana' || estado.lg.sem !== k) return; lgSemDesenhar(r); })
+  .catch(function (e) { var b = $('lgSemCorpo'); if (b) b.innerHTML = '<div class="ls-vazio">Não foi possível carregar a semana.</div>'; falhaGeral(e); }); }
+function lgSemDesenhar(r) { var el = $('lgSemCorpo'); if (!el) return; estado.lgSemR = r;
+  var tot = { n: 0, c: {} }; r.pessoas.forEach(function (p) { tot.n += p.esc; Object.keys(p.c).forEach(function (s) { tot.c[s] = (tot.c[s] || 0) + p.c[s]; }); });
+  if (!tot.n) { el.innerHTML = '<div class="lg-card ls-vazio">Sem escalas com presença nesta semana.</div>'; return; }
+  var c = tot.c, a = r.anterior || { esc: 0, c: {} }, abs = lgAbsN(c), absA = lgAbsN(a.c), ag = r.pessoas.filter(function (p) { return p.esc > 0; }).length, ndias = r.dias.filter(function (d) { return !d.futuro && d.esc > 0; }).length;
+  var dl = function (p, pA, menorMelhor) { if (!a.esc) return '<span class="ls-delta igual">sem semana anterior para comparar</span>'; var d = Math.round((p - pA) * 10) / 10; if (Math.abs(d) < 0.1) return '<span class="ls-delta igual">= semana anterior</span>';
+    var bom = menorMelhor ? d < 0 : d > 0; return '<span class="ls-delta ' + (bom ? 'bom' : 'ruim') + '">' + (d > 0 ? '▲ ' : '▼ ') + String(Math.abs(d)).replace('.', ',') + ' p.p. vs semana anterior</span>'; };
+  var pc = function (s) { return lgPct(c[s] || 0, tot.n); }, pcA = function (s) { return lgPct(a.c[s] || 0, a.esc); };
+  var k = function (rot, val, sub, cor, cls) { return '<div class="lg-k ' + (cls || '') + '" style="--k:' + cor + '"><small>' + rot + '</small><b>' + val + '</b><span>' + sub + '</span></div>'; };
+  var kp = '<div class="lg-kpis">' + k('Escalas na Semana', tot.n, ag + ' agentes · ' + ndias + ' dia' + (ndias !== 1 ? 's' : '') + ' com escala', '#4F3F91', 'destaque') +
+    k('Presenças', c.PRESENTE || 0, lgFmt(pc('PRESENTE')) + ' das escalas' + dl(pc('PRESENTE'), pcA('PRESENTE'), false), LG_COR.PRESENTE) +
+    k('Faltas Injustificadas', c.FALTA || 0, lgFmt(pc('FALTA')) + ' das escalas' + dl(pc('FALTA'), pcA('FALTA'), true), LG_COR.FALTA) +
+    k('Atestados', c.ATESTADO || 0, lgFmt(pc('ATESTADO')) + ' das escalas' + dl(pc('ATESTADO'), pcA('ATESTADO'), true), LG_COR.ATESTADO) +
+    k('Compensa / Day Off', c.COMPENSA || 0, lgFmt(pc('COMPENSA')) + ' das escalas', LG_COR.COMPENSA) +
+    k('Absenteísmo', lgFmt(lgPct(abs, tot.n)), abs + ' ausência' + (abs !== 1 ? 's' : '') + dl(lgPct(abs, tot.n), lgPct(absA, a.esc), true), '#B42318') + '</div>';
+  var ST = [['PRESENTE', 'Presentes'], ['AGUARDANDO', 'Aguardando'], ['FALTA', 'Faltas'], ['ATESTADO', 'Atestados'], ['COMPENSA', 'Compensa / Day Off']], hoje = r.hoje;
+  var dias = '<div class="lg-card lg-full"><h3>Dia a Dia</h3><p class="sub">Cada coluna é um dia da semana: a barra mostra como ficaram as escalas do dia; o número é a presença sobre os escalados.</p><div class="ls-dias">' + r.dias.map(function (d, i) {
+    var e = d.esc, h = e ? ST.map(function (s) { var v = d.c[s[0]] || 0; return v ? '<i style="height:' + (v / e * 100).toFixed(1) + '%;background:' + LG_COR[s[0]] + '" title="' + s[1] + ': ' + v + '"></i>' : ''; }).join('') : '';
+    var ab = lgAbsN(d.c), p = e ? lgFmt(lgPct(d.c.PRESENTE || 0, e)) : '—';
+    return '<div class="ls-dia' + (d.data === hoje ? ' hoje' : '') + (d.futuro ? ' fut' : '') + '"><span class="dn">' + LS_DN[i] + (d.data === hoje ? ' · hoje' : '') + '</span><span class="dd">' + lgDm(d.data) + '</span><div class="ls-bar">' + h + '</div>' +
+      (d.futuro ? '<span class="pc">—<small>ainda não chegou</small></span>' : '<span class="pc">' + p + '<small>' + e + ' escalado' + (e !== 1 ? 's' : '') + '</small></span>' + (ab ? '<span class="ab">' + ab + ' ausência' + (ab > 1 ? 's' : '') + '</span>' : '')) + '</div>'; }).join('') + '</div>' +
+    '<div class="ls-leg">' + ST.map(function (s) { return '<span><i style="background:' + LG_COR[s[0]] + '"></i>' + s[1] + '</span>'; }).join('') + '</div></div>';
+  var g = {}; r.pessoas.forEach(function (p) { if (!p.esc) return; var x = g[p.coord] || (g[p.coord] = { nome: p.coord, n: 0, c: {} }); x.n += p.esc; Object.keys(p.c).forEach(function (s) { x.c[s] = (x.c[s] || 0) + p.c[s]; }); });
+  var gl = Object.keys(g).map(function (kk) { return g[kk]; }).sort(function (x, y) { return lgPct(lgAbsN(y.c), y.n) - lgPct(lgAbsN(x.c), x.n); });
+  var barra = function (v, cor) { return '<span class="ls-pl"><span class="tr"><i style="width:' + Math.min(100, v) + '%;background:' + cor + '"></i></span>' + lgFmt(v) + '</span>'; };
+  var coord = '<div class="lg-card"><h3>Presença por Coordenação</h3><p class="sub">Ordenado pelo absenteísmo da semana, do maior para o menor.</p><div class="ls-tw"><table class="ls-t"><thead><tr><th>Coordenação</th><th>Escalas</th><th>Presença</th><th>Faltas</th><th>Atestados</th><th>Absenteísmo</th></tr></thead><tbody>' +
+    gl.map(function (x) { return '<tr><td><b>' + esc(x.nome) + '</b></td><td>' + x.n + '</td><td>' + barra(lgPct(x.c.PRESENTE || 0, x.n), LG_COR.PRESENTE) + '</td><td>' + (x.c.FALTA || 0) + '</td><td>' + (x.c.ATESTADO || 0) + '</td><td><b style="color:' + (lgPct(lgAbsN(x.c), x.n) >= 10 ? '#B42318' : 'inherit') + '">' + lgFmt(lgPct(lgAbsN(x.c), x.n)) + '</b></td></tr>'; }).join('') + '</tbody></table></div></div>';
+  var faltou = r.pessoas.filter(function (p) { return lgAbsN(p.c) > 0; }).sort(function (x, y) { return lgAbsN(y.c) - lgAbsN(x.c) || (y.c.FALTA || 0) - (x.c.FALTA || 0); }), todos = estado.lsTodos;
+  var pts = function (p) { return '<span class="ls-pts">' + r.dias.map(function (d, i) { var s = p.d && p.d[d.data]; return s ? '<i style="background:' + (LG_COR[s] || '#C4C4CC') + '" title="' + LS_DN[i] + ' ' + lgDm(d.data) + ': ' + esc((r.rotulos && r.rotulos[s]) || s) + '"></i>' : '<i class="v" title="' + LS_DN[i] + ' ' + lgDm(d.data) + '"></i>'; }).join('') + '</span>'; };
+  var lista = (todos ? faltou : faltou.slice(0, 10));
+  var quem = '<div class="lg-card"><h3>Quem Mais Faltou na Semana</h3><p class="sub">Faltas, atestados e Compensa / Day Off. Os quadradinhos são os dias, de domingo a sábado.</p>' + (faltou.length ? '<div class="ls-tw"><table class="ls-t"><thead><tr><th>Agente</th><th>Dom a Sáb</th><th>Faltas</th><th>Atestados</th><th>Ausências</th></tr></thead><tbody>' +
+    lista.map(function (p) { return '<tr><td><b>' + esc(nomeCurto2(p.nome)) + '</b><br><small style="color:var(--c4)">' + esc(p.coord || '') + '</small></td><td>' + pts(p) + '</td><td>' + (p.c.FALTA || 0) + '</td><td>' + (p.c.ATESTADO || 0) + '</td><td><b>' + lgAbsN(p.c) + '</b></td></tr>'; }).join('') + '</tbody></table></div>' +
+    (faltou.length > 10 ? '<button type="button" class="ls-mais" id="lsMais">' + (todos ? 'Mostrar só os 10 primeiros' : 'Ver todos (' + faltou.length + ')') + '</button>' : '') : '<div class="ls-vazio">Ninguém faltou nesta semana.</div>') + '</div>';
+  el.innerHTML = kp + dias + '<div class="ls-grid">' + coord + quem + '</div>';
+  var mb = $('lsMais'); if (mb) mb.onclick = function () { estado.lsTodos = !estado.lsTodos; lgSemDesenhar(r); }; }
+</script>

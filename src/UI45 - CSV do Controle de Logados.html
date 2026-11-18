@@ -1,0 +1,41 @@
+<style>
+/* ===================== Controle de Logados: Baixar CSV nos dashboards do Dia, da Semana e do Mês ===================== */
+.lgx-dir{display:flex;align-items:center;gap:10px;flex-wrap:wrap;margin-left:auto}
+.lgx-dir .csv-bt[disabled]{opacity:.55;cursor:wait}
+@media (max-width:640px){ .lgx-dir{margin-left:0;width:100%} .lgx-dir .csv-bt{margin-left:auto} }
+</style>
+<script>
+/* ===================== Controle de Logados: Baixar CSV nos dashboards do Dia, da Semana e do Mês ===================== */
+var LGX_SIT = { F: 'FOLGA', FERIAS: 'FERIAS', LICENCA: 'LICENCA', SEM: 'SEM_ESCALA' };
+var LGX_DS = ['Dom', 'Seg', 'Ter', 'Qua', 'Qui', 'Sex', 'Sáb'];
+var LGX_ORDEM = ['PRESENTE', 'AGUARDANDO', 'FALTA', 'MEDIDA', 'ATESTADO', 'COMPENSA', 'LICENCA', 'FERIAS', 'FOLGA', 'DESLIGADO', 'MOVIMENTACAO', 'SEM_REGISTRO', 'SEM_ESCALA'];
+function lgxRot(st, rot) { if (!st) return ''; return (rot && rot[st]) || (typeof lgRot === 'function' ? lgRot(st) : st); }
+function lgxOrdena(a, b) { return String(a.coord || '').localeCompare(String(b.coord || ''), 'pt-BR') || String(a.nome || '').localeCompare(String(b.nome || ''), 'pt-BR'); }
+function lgxDiaCol(d) { var x = new Date(d + 'T12:00:00'); return d.slice(8, 10) + '/' + d.slice(5, 7) + ' (' + LGX_DS[x.getDay()] + ')'; }
+/* Dia: uma linha por pessoa da lista do dia, inclusive folga, férias e licença */
+function lgxCsvDia() { var r = estado.lgR; if (!r || !r.itens) return; var rot = r.rotulos || {};
+  var L = r.itens.slice().sort(lgxOrdena).map(function (x) { var st = x.st || LGX_SIT[x.sit] || '';
+    return [x.nome, x.email, x.coord || '', x.cargo || '', lgxRot(st, rot), x.i || '', x.a || '', x.f || '', x.em ? (x.emData && x.emData !== r.data ? x.emData.split('-').reverse().join('/') + ' ' : '') + x.em : '', x.por || '']; });
+  csvBaixar('controle_logados_dia_' + r.data + '.csv', ['Nome', 'E-mail', 'Coordenação', 'Cargo', 'Situação', 'Entrada', 'Almoço', 'Saída', 'Registrado Às', 'Registrado Por'], L); }
+/* Semana e Mês: uma coluna por dia com a situação e, no fim, os totais de cada situação */
+function lgxCsvPeriodo(r, nome) { if (!r || !r.pessoas) return; var rot = r.rotulos || {}, dias = (r.dias || []).filter(function (d) { return !d.futuro; }).map(function (d) { return d.data; });
+  var temDia = r.pessoas.some(function (p) { return p.d; }), sts = {};
+  /* total de cada situação: o mesmo número do dashboard; o que o dashboard não conta (ex.: folga) vem dos próprios dias do arquivo */
+  var tot = function (p) { var c = {}, k; for (k in (p.c || {})) c[k] = p.c[k]; if (temDia) { var n = {}; dias.forEach(function (d) { var s = (p.d || {})[d]; if (s) n[s] = (n[s] || 0) + 1; }); for (k in n) if (c[k] == null) c[k] = n[k]; } return c; };
+  r.pessoas.forEach(function (p) { Object.keys(tot(p)).forEach(function (s) { sts[s] = 1; }); });
+  var cols = LGX_ORDEM.filter(function (s) { return sts[s]; }).concat(Object.keys(sts).filter(function (s) { return LGX_ORDEM.indexOf(s) < 0; }));
+  var cab = ['Nome', 'E-mail', 'Coordenação', 'Cargo'].concat(temDia ? dias.map(lgxDiaCol) : []).concat(['Dias Escalados']).concat(cols.map(function (s) { return lgxRot(s, rot); })).concat(['Absenteísmo']);
+  var L = r.pessoas.slice().sort(lgxOrdena).map(function (p) { var c = tot(p);
+    return [p.nome, p.email, p.coord || '', p.cargo || ''].concat(temDia ? dias.map(function (d) { return lgxRot((p.d || {})[d], rot); }) : []).concat([p.esc || 0]).concat(cols.map(function (s) { return c[s] || 0; })).concat([p.esc ? lgFmt(lgPct(lgAbsN(p.c || {}), p.esc)) : '']); });
+  csvBaixar(nome, cab, L); }
+/* coloca o botão ao lado das visões, no topo do dashboard aberto */
+function lgxBotao(titulo, fn) { var c = gc(), top = c && c.querySelector('.lg-top'); if (!top) return; var seg = top.querySelector('.tr-seg'), dir = top.querySelector('.lgx-dir');
+  if (!dir) { dir = document.createElement('div'); dir.className = 'lgx-dir'; if (seg) { top.insertBefore(dir, seg); dir.appendChild(seg); } else top.appendChild(dir); }
+  var b = dir.querySelector('#lgxCsv'); if (!b) { b = document.createElement('button'); b.type = 'button'; b.className = 'csv-bt'; b.id = 'lgxCsv'; b.innerHTML = (typeof CSV_IC !== 'undefined' ? CSV_IC : '') + '<span>Baixar CSV</span>'; dir.appendChild(b); }
+  b.title = titulo; b.setAttribute('aria-label', titulo); b.onclick = function () { try { fn(); } catch (e) { try { toast('Não foi possível gerar o CSV: ' + (e && e.message || e)); } catch (x) { } } }; }
+(function () {
+  if (typeof lgDesenhar === 'function') { var _d = lgDesenhar; lgDesenhar = function () { var x = _d.apply(this, arguments); try { var f = estado.lg; if (f && f.vista === 'painel' && estado.lgR) lgxBotao('Baixar todas as pessoas do dia com a presença de cada uma', lgxCsvDia); } catch (e) { } return x; }; }
+  if (typeof lgSemDesenhar === 'function') { var _s = lgSemDesenhar; lgSemDesenhar = function (r) { var x = _s.apply(this, arguments); try { if (r && r.pessoas && r.pessoas.length) lgxBotao('Baixar todas as pessoas da semana com a presença de cada dia', function () { lgxCsvPeriodo(estado.lgSemR || r, 'controle_logados_semana_' + r.ini + '_a_' + r.fim + '.csv'); }); } catch (e) { } return x; }; }
+  if (typeof lgMesDesenhar === 'function') { var _m = lgMesDesenhar; lgMesDesenhar = function (r) { var x = _m.apply(this, arguments); try { if (r && r.pessoas && r.pessoas.length) lgxBotao('Baixar todas as pessoas do mês com a presença de cada dia', function () { lgxCsvPeriodo(estado.lgMesR || r, 'controle_logados_mes_' + r.mes + '.csv'); }); } catch (e) { } return x; }; }
+})();
+</script>

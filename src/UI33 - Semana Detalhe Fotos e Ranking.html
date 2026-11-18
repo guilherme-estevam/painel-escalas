@@ -1,0 +1,118 @@
+<style>
+/* ===================== v144: dias clicáveis, voltar, fotos, ordenação, ranking completo e atualização sem piscar ===================== */
+.ls-dia.cl{cursor:pointer;transition:transform .2s cubic-bezier(.23,1,.32,1),box-shadow .2s cubic-bezier(.23,1,.32,1),border-color .2s}
+@media (hover:hover){ .ls-dia.cl:hover{transform:translateY(-3px);border-color:var(--rosa,#D80073);box-shadow:0 14px 26px -18px rgba(216,0,115,.6)} }
+.ls-dia.cl:focus-visible{outline:2px solid var(--rosa,#D80073);outline-offset:2px}
+.ls-dia .ver{font-size:11px;font-weight:800;color:var(--rosa,#D80073);opacity:0;transition:opacity .2s}
+@media (hover:hover){ .ls-dia.cl:hover .ver{opacity:1} }
+.ls-dia{position:relative}
+.ls-pop{position:absolute;z-index:60;left:50%;bottom:calc(100% + 10px);transform:translateX(-50%);width:250px;text-align:left;pointer-events:none;visibility:hidden;opacity:0;background:var(--sup,#fff);color:var(--preto);border:1.5px solid var(--c2,#E6DFEE);border-radius:14px;padding:12px 14px;box-shadow:0 18px 40px -18px rgba(0,0,0,.45);font-size:12.5px;font-weight:600}
+.ls-pop.esq{left:0;transform:none}.ls-pop.dir{left:auto;right:0;transform:none}
+.ls-dia.cl:hover .ls-pop,.ls-dia.cl:focus .ls-pop,.ls-dia.cl:focus-within .ls-pop{visibility:visible;opacity:1}
+.ls-pop b.t{display:block;font-size:13.5px;margin-bottom:6px;font-weight:800}
+.ls-pop .ln{display:flex;align-items:center;gap:8px;padding:2px 0}.ls-pop .ln i{width:9px;height:9px;border-radius:3px;flex:none}.ls-pop .ln span{flex:1}.ls-pop .ln b{font-variant-numeric:tabular-nums;font-weight:800}
+.ls-pop .rod{margin-top:8px;padding-top:8px;border-top:1px solid var(--c2,#E6DFEE);color:var(--c4);font-weight:700}
+html[data-tema="escuro"] .ls-pop{background:#1e1a24;border-color:#3a3346}
+.ls-sembrilho>.ds-brilho{display:none!important}
+.lg-volta{all:unset;cursor:pointer;display:inline-flex;align-items:center;gap:8px;margin:0 0 12px;padding:8px 14px;border-radius:999px;font-size:13px;font-weight:800;color:var(--rosa,#D80073);background:rgba(216,0,115,.08);transition:background-color .2s}
+@media (hover:hover){ .lg-volta:hover{background:rgba(216,0,115,.15)} }
+.lg-volta:focus-visible{outline:2px solid var(--rosa,#D80073);outline-offset:2px}
+.lg-dias svg g[data-i]{cursor:pointer}
+.ls-t th button{all:unset;cursor:pointer;display:inline-flex;align-items:center;gap:4px}
+.ls-t th.ord{color:#B0005E}
+.ls-t th .ar{font-size:9px;opacity:.5}.ls-t th.ord .ar{opacity:1}
+.ls-pes{display:flex;align-items:center;gap:10px;min-width:0}
+.ls-pes .tx{min-width:0}.ls-pes .tx b{display:block;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.ls-pes .tx small{color:var(--c4)}
+.ls-t tr.cl{cursor:pointer}
+@media (hover:hover){ .ls-t tr.cl:hover td{background:rgba(216,0,115,.04)} }
+.ls-pos{display:inline-grid;place-items:center;width:24px;height:24px;border-radius:8px;font-size:12px;font-weight:800;background:var(--c1,#F4F1F7)}
+.ls-pos.p1{background:#FDE3E3;color:#B42318}.ls-pos.p2{background:#FFE6D6;color:#9A3F17}.ls-pos.p3{background:#FFF3D9;color:#7A4E00}
+html[data-tema="escuro"] .ls-pos.p1{background:#3d1717;color:#f19999} html[data-tema="escuro"] .ls-pos.p2{background:#3d2414;color:#f2a679} html[data-tema="escuro"] .ls-pos.p3{background:#3a2c0d;color:#F2C063}
+.ls-rk-top{display:flex;gap:10px;flex-wrap:wrap;align-items:center;margin:4px 0 12px}
+.ls-rk-top input,.ls-rk-top select{width:auto!important;margin:0!important;padding:8px 12px;border-radius:10px;border:1.5px solid var(--c2,#E6DFEE);background:var(--sup,#fff);color:var(--preto);font:inherit;font-size:13px}
+.ls-rk-top input{flex:1 1 260px;min-width:180px}.ls-rk-top select{flex:0 1 240px;min-width:200px}
+.ls-rk-top small{color:var(--c4);font-weight:700}
+.ls-rk .ls-tw{max-height:min(60vh,560px)}
+.ls-mais2{all:unset;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:8px;margin:12px auto 0;padding:9px 16px;border-radius:999px;font-size:13px;font-weight:800;color:#fff;background:linear-gradient(90deg,#D80073,#9B3FA8)}
+.ls-mais2:focus-visible{outline:2px solid var(--rosa,#D80073);outline-offset:2px}
+/* as duas tabelas da semana em largura total, sem rolagem lateral */
+.ls-grid{grid-template-columns:1fr!important}
+</style>
+<script>
+/* ===================== Controle de Logados: a atualização automática não apaga os dashboards ===================== */
+/* a lista do dia é atualizada sozinha de tempos em tempos; nos dashboards da Semana e do Mês isso não redesenha mais nada */
+(function () { if (typeof lgCarregar !== 'function') return; var _c = lgCarregar; lgCarregar = function (silencioso) {
+  var v = estado.lg && estado.lg.vista; if (silencioso && (v === 'semana' || v === 'mes')) return Promise.resolve(); return _c.apply(this, arguments); }; })();
+/* Semana e Mês atuais se atualizam por trás a cada 3 minutos: só redesenha se algo mudou, mantendo a rolagem e sem tela de carregando */
+setInterval(function () { try {
+  if (estado.aba !== 'gestao' || estado.sub !== 'logados' || document.hidden || document.querySelector('#modais .modal-fundo')) return; var f = estado.lg; if (!f) return;
+  var manter = function (fn) { var y = window.scrollY; fn(); window.scrollTo(0, y); };
+  if (f.vista === 'semana' && f.sem === lgSemIni(hojeLocal()) && $('lgSemCorpo')) chamar('apiControleLogadosSemana', estado.token, f.sem).then(function (r) { if (estado.lg.vista !== 'semana' || estado.lg.sem !== f.sem) return; var velho = (estado.lgSem || {})[f.sem];
+    estado.lgSem = estado.lgSem || {}; estado.lgSem[f.sem] = { r: r, t: Date.now() }; if (velho && JSON.stringify(velho.r) === JSON.stringify(r)) return; manter(function () { lgSemDesenhar(r); }); }).catch(function () { });
+  if (f.vista === 'mes' && f.mes === hojeLocal().slice(0, 7) && $('lgMesCorpo')) chamar('apiControleLogadosMes', estado.token, f.mes).then(function (r) { if (estado.lg.vista !== 'mes' || estado.lg.mes !== f.mes) return; var velho = (estado.lgMes || {})[f.mes];
+    estado.lgMes = estado.lgMes || {}; estado.lgMes[f.mes] = { r: r, t: Date.now() }; if (velho && JSON.stringify(velho.r) === JSON.stringify(r)) return; manter(function () { lgMesDesenhar(r); }); }).catch(function () { });
+} catch (e) { } }, 180000);
+
+/* ===================== Clique num dia: abre o Dashboard do Dia, com botão para voltar ===================== */
+function lgAbrirDia(data) { var f = estado.lg; estado.lgVolta = { vista: f.vista, sem: f.sem, mes: f.mes, y: window.scrollY };
+  f.vista = 'painel'; f.data = data; window.scrollTo(0, 0); telaLogados(); }
+function lgVoltaRot(v) { return v.vista === 'semana' ? 'Voltar para o Dashboard da Semana (' + lgDm(v.sem) + ' a ' + lgDm(lgSomaDia(v.sem, 6)) + ')' : 'Voltar para o Dashboard do Mês (' + lgMesRot(v.mes) + ')'; }
+function lgVoltar() { var v = estado.lgVolta; if (!v) return; estado.lgVolta = null; var f = estado.lg; f.vista = v.vista; if (v.sem) f.sem = v.sem; if (v.mes) f.mes = v.mes;
+  if (v.vista === 'semana') lgSemTela(); else lgMesTela(); var y = v.y || 0; [60, 400, 1200, 2500].forEach(function (t) { setTimeout(function () { if (estado.lg.vista === v.vista && document.body.scrollHeight > y) window.scrollTo(0, y); }, t); }); }
+(function () { var _d = lgDesenhar; lgDesenhar = function () { var x = _d.apply(this, arguments);
+  try { var f = estado.lg, v = estado.lgVolta, c = gc(); if (v && f && f.vista === 'painel' && c && !c.querySelector('.lg-volta')) { var b = document.createElement('button'); b.type = 'button'; b.className = 'lg-volta'; b.innerHTML = '‹ ' + esc(lgVoltaRot(v)); b.onclick = lgVoltar;
+    var top = c.querySelector('.lg-top'); if (top) top.parentNode.insertBefore(b, top); else c.insertBefore(b, c.firstChild); } } catch (e) { } return x; }; })();
+/* trocar de visão pelos botões normais encerra o "voltar" */
+(function () { var _b = lgBindSeg; lgBindSeg = function (c) { _b.apply(this, arguments); c.querySelectorAll('[data-lgv]').forEach(function (b) { var o = b.onclick; b.onclick = function () { estado.lgVolta = null; return o && o.apply(this, arguments); }; }); }; })();
+
+/* ===================== Dashboard da Semana: detalhe do dia ao passar o mouse, fotos, ordenação e ranking completo ===================== */
+function lsTipHtml(d, i) { var e = d.esc, L = [['PRESENTE', 'Presentes'], ['AGUARDANDO', 'Aguardando Registro'], ['FALTA', 'Faltas Injustificadas'], ['ATESTADO', 'Atestados'], ['COMPENSA', 'Compensa / Day Off']], ab = lgAbsN(d.c);
+  return '<b class="t">' + LS_DN[i] + ', ' + lgDm(d.data) + '</b>' + L.filter(function (s) { return d.c[s[0]]; }).map(function (s) { return '<div class="ln"><i style="background:' + LG_COR[s[0]] + '"></i><span>' + s[1] + '</span><b>' + d.c[s[0]] + ' · ' + lgFmt(lgPct(d.c[s[0]], e)) + '</b></div>'; }).join('') +
+    '<div class="rod">' + e + ' escalado' + (e !== 1 ? 's' : '') + ' · absenteísmo ' + lgFmt(lgPct(ab, e)) + '<br>Clique para ver a lista deste dia</div>'; }
+var LS_ORD = [['g', 'Coordenação'], ['n', 'Escalas'], ['pres', 'Presença'], ['FALTA', 'Faltas'], ['ATESTADO', 'Atestados'], ['COMPENSA', 'Compensa / Day Off'], ['abs', 'Absenteísmo']];
+function lsCoordTab(r) { var g = {}; r.pessoas.forEach(function (p) { if (!p.esc) return; var x = g[p.coord] || (g[p.coord] = { g: p.coord, n: 0, c: {} }); x.n += p.esc; Object.keys(p.c).forEach(function (s) { x.c[s] = (x.c[s] || 0) + p.c[s]; }); });
+  var L = Object.keys(g).map(function (k) { var x = g[k]; x.pres = lgPct(x.c.PRESENTE || 0, x.n); x.abs = lgPct(lgAbsN(x.c), x.n); return x; }), o = estado.lsOrdC || (estado.lsOrdC = { k: 'abs', d: -1 });
+  var val = function (l, k) { return k === 'g' ? l.g : k === 'n' ? l.n : k === 'pres' ? l.pres : k === 'abs' ? l.abs : (l.c[k] || 0); };
+  L.sort(function (a, b) { var va = val(a, o.k), vb = val(b, o.k), x = typeof va === 'string' ? va.localeCompare(vb, 'pt-BR') : va - vb; return x * o.d || a.g.localeCompare(b.g, 'pt-BR'); });
+  var barra = function (v, cor) { return '<span class="ls-pl"><span class="tr"><i style="width:' + Math.min(100, v) + '%;background:' + cor + '"></i></span>' + lgFmt(v) + '</span>'; };
+  return '<table class="ls-t"><thead><tr>' + LS_ORD.map(function (c) { var at = o.k === c[0]; return '<th class="' + (at ? 'ord' : '') + '" aria-sort="' + (at ? (o.d > 0 ? 'ascending' : 'descending') : 'none') + '"><button type="button" data-lso="' + c[0] + '">' + c[1] + '<span class="ar">' + (at ? (o.d > 0 ? '▲' : '▼') : '▼') + '</span></button></th>'; }).join('') + '</tr></thead><tbody>' +
+    L.map(function (x) { var em = (r.coordResp || {})[x.g] || ('coord:' + x.g); return '<tr><td><span class="ls-pes">' + avatarHtml(em, x.g, '') + '<span class="tx"><b>' + esc(x.g) + '</b></span></span></td><td>' + x.n + '</td><td>' + barra(x.pres, LG_COR.PRESENTE) + '</td><td>' + (x.c.FALTA || 0) + '</td><td>' + (x.c.ATESTADO || 0) + '</td><td>' + (x.c.COMPENSA || 0) + '</td><td><b style="color:' + (x.abs >= 10 ? '#B42318' : 'inherit') + '">' + lgFmt(x.abs) + '</b></td></tr>'; }).join('') + '</tbody></table>'; }
+function lsFaltou(r) { return r.pessoas.filter(function (p) { return lgAbsN(p.c) > 0; }).sort(function (x, y) { return lgAbsN(y.c) - lgAbsN(x.c) || (y.c.FALTA || 0) - (x.c.FALTA || 0) || String(x.nome).localeCompare(String(y.nome), 'pt-BR'); }); }
+function lsPts(r, p) { return '<span class="ls-pts">' + r.dias.map(function (d, i) { var s = p.d && p.d[d.data]; return s ? '<i style="background:' + (LG_COR[s] || '#C4C4CC') + '" title="' + LS_DN[i] + ' ' + lgDm(d.data) + ': ' + esc((r.rotulos && r.rotulos[s]) || s) + '"></i>' : '<i class="v" title="' + LS_DN[i] + ' ' + lgDm(d.data) + '"></i>'; }).join('') + '</span>'; }
+function lsLinhaRank(r, p, n) { return '<tr class="cl" data-ag="' + esc(p.email) + '"><td><span class="ls-pos' + (n < 3 ? ' p' + (n + 1) : '') + '">' + (n + 1) + '</span></td><td><span class="ls-pes">' + avatarHtml(p.email, p.nome, '') + '<span class="tx"><b>' + esc(nomeCurto2(p.nome)) + '</b><small>' + esc(p.coord || '') + '</small></span></span></td><td>' + lsPts(r, p) + '</td><td>' + (p.c.FALTA || 0) + '</td><td>' + (p.c.ATESTADO || 0) + '</td><td>' + (p.c.COMPENSA || 0) + '</td><td><b>' + lgAbsN(p.c) + '</b></td></tr>'; }
+var LS_RK_CAB = '<thead><tr><th>#</th><th>Agente</th><th>Dom a Sáb</th><th>Faltas</th><th>Atestados</th><th>Compensa</th><th>Ausências</th></tr></thead>';
+function lsRankModal(r) { var todos = lsFaltou(r), coords = {}; todos.forEach(function (p) { coords[p.coord || 'Sem coordenação'] = 1; });
+  var w = abrirModal('<h3>Ranking de Ausências da Semana</h3><p class="sub">' + esc(lgDm(r.ini) + ' a ' + lgDm(r.fim)) + ' · faltas injustificadas, atestados e Compensa / Day Off, de quem mais faltou para quem menos faltou. Clique numa pessoa para ver os detalhes.</p>' +
+    '<div class="ls-rk-top"><input type="search" id="lsRkQ" placeholder="Buscar agente" aria-label="Buscar agente"><select id="lsRkC" aria-label="Coordenação" data-nativo><option value="">Todas as coordenações</option>' + Object.keys(coords).sort(function (a, b) { return a.localeCompare(b, 'pt-BR'); }).map(function (c) { return '<option value="' + esc(c) + '">' + esc(c) + '</option>'; }).join('') + '</select><small id="lsRkN"></small></div>' +
+    '<div class="ls-tw"><table class="ls-t">' + LS_RK_CAB + '<tbody id="lsRkB"></tbody></table></div>', true);
+  var md = w.querySelector('.modal'); md.classList.add('ls-rk'); md.style.maxWidth = '980px'; md.style.width = 'min(980px, 96vw)';
+  var pinta = function () { var q = (md.querySelector('#lsRkQ').value || '').trim().toLowerCase(), c = md.querySelector('#lsRkC').value;
+    var L = todos.map(function (p, n) { return { p: p, n: n }; }).filter(function (x) { return (!c || (x.p.coord || 'Sem coordenação') === c) && (!q || String(x.p.nome).toLowerCase().indexOf(q) >= 0); });
+    md.querySelector('#lsRkB').innerHTML = L.length ? L.map(function (x) { return lsLinhaRank(r, x.p, x.n); }).join('') : '<tr><td colspan="7" class="ls-vazio">Ninguém com esse filtro.</td></tr>';
+    md.querySelector('#lsRkN').textContent = L.length + ' de ' + todos.length + ' pessoas';
+    md.querySelectorAll('tr.cl').forEach(function (t) { t.onclick = function () { if (typeof modalAgente === 'function') modalAgente(t.dataset.ag); }; });
+    if (typeof atualizarAvatares === 'function') atualizarAvatares(); };
+  md.querySelector('#lsRkQ').oninput = pinta; md.querySelector('#lsRkC').onchange = pinta; pinta(); }
+/* depois de desenhar a semana: dias clicáveis com detalhe, tabela de coordenação ordenável com fotos e Quem Mais Faltou com fotos */
+(function () { var _sd = lgSemDesenhar; lgSemDesenhar = function (r) { var x = _sd.apply(this, arguments); try { lsMelhorar(r); } catch (e) { } return x; }; })();
+function lsMelhorar(r) { var el = $('lgSemCorpo'); if (!el || !r || !r.dias) return;
+  var cards = el.querySelectorAll('.ls-dia'), cx = el.querySelector('.ls-dias'); if (cx && cx.closest('.lg-card')) cx.closest('.lg-card').classList.add('ls-sembrilho');
+  cards.forEach(function (cd, i) { var d = r.dias[i]; if (!d || d.futuro || !d.esc) return; cd.classList.add('cl'); cd.setAttribute('tabindex', '0'); cd.setAttribute('role', 'button'); cd.setAttribute('aria-label', 'Ver a lista do dia ' + lgDm(d.data));
+    cd.insertAdjacentHTML('beforeend', '<span class="ver">Ver o dia ›</span>');
+    cd.insertAdjacentHTML('beforeend', '<span class="ls-pop' + (i === 0 ? ' esq' : i === 6 ? ' dir' : '') + '" role="tooltip">' + lsTipHtml(d, i) + '</span>');
+    cd.onclick = function () { lgAbrirDia(d.data); }; cd.onkeydown = function (e) { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); lgAbrirDia(d.data); } }; });
+  var tabs = el.querySelectorAll('.ls-grid .lg-card');
+  if (tabs[0]) { var box = tabs[0].querySelector('.ls-tw'), sub = tabs[0].querySelector('.sub'); if (sub) sub.textContent = 'Clique no nome de uma coluna para ordenar e clique de novo para inverter.';
+    var pintaC = function () { box.innerHTML = lsCoordTab(r); box.querySelectorAll('[data-lso]').forEach(function (b) { b.onclick = function () { var k = b.dataset.lso, o = estado.lsOrdC || { k: 'abs', d: -1 }; if (o.k === k) o.d = -o.d; else { o.k = k; o.d = k === 'g' ? 1 : -1; } estado.lsOrdC = o; pintaC(); }; }); if (typeof atualizarAvatares === 'function') atualizarAvatares(); };
+    if (box) pintaC(); }
+  if (tabs[1]) { var todos = lsFaltou(r), c2 = tabs[1], tw = c2.querySelector('.ls-tw'), mb = c2.querySelector('#lsMais'); if (mb) mb.remove();
+    if (tw) { tw.innerHTML = '<table class="ls-t">' + LS_RK_CAB + '<tbody>' + todos.slice(0, 10).map(function (p, n) { return lsLinhaRank(r, p, n); }).join('') + '</tbody></table>';
+      tw.querySelectorAll('tr.cl').forEach(function (t) { t.onclick = function () { if (typeof modalAgente === 'function') modalAgente(t.dataset.ag); }; });
+      if (todos.length) { var b = document.createElement('button'); b.type = 'button'; b.className = 'ls-mais2'; b.textContent = 'Ver Ranking Completo (' + todos.length + ' pessoas)'; b.onclick = function () { lsRankModal(r); }; c2.appendChild(b); } } }
+  if (typeof atualizarAvatares === 'function') atualizarAvatares(); }
+
+/* ===================== Dashboard do Mês: clicar num dia do gráfico abre o Dashboard do Dia ===================== */
+(function () { if (typeof lgMesDesenhar !== 'function') return; var _m = lgMesDesenhar; lgMesDesenhar = function (r) { var x = _m.apply(this, arguments);
+  try { var sv = document.querySelector('#lgMesCorpo .lg-dias svg'); if (sv && r && r.dias) { var p = sv.closest('.lg-card'), sub = p && p.querySelector('.sub'); if (sub && sub.textContent.indexOf('Clique') < 0) sub.insertAdjacentHTML('beforeend', ' <b>Clique num dia</b> para ver a lista daquele dia.');
+    sv.querySelectorAll('g[data-i]').forEach(function (g) { var d = r.dias[+g.getAttribute('data-i')]; if (!d || d.futuro) return; var ir = function () { lgAbrirDia(d.data); }; g.addEventListener('click', ir); g.addEventListener('keydown', function (e) { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); ir(); } }); }); } } catch (e) { } return x; }; })();
+</script>

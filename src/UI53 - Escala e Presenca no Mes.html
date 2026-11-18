@@ -1,0 +1,145 @@
+<style>
+/* ===================== Controle de Logados: Escala e Presença no Mês ===================== */
+.lgp{--lgp-e:cubic-bezier(.23,1,.32,1)}
+.lgp .lgp-top{display:flex;align-items:center;justify-content:space-between;gap:12px 18px;flex-wrap:wrap;margin-bottom:16px}
+.lgp .lgp-top h3{margin:0;font-size:20px;font-weight:800;color:var(--preto)}
+.lgp .lgp-top p{margin:3px 0 0;font-size:13px;color:var(--c5,#5c556a)}
+.lgp .lgp-top .sel-mes{width:auto;min-width:170px}
+.lgp-nums{display:grid;grid-template-columns:repeat(auto-fit,minmax(118px,1fr));gap:10px;margin-bottom:14px}
+.lgp-num{position:relative;padding:12px 14px 11px;border-radius:14px;border:1px solid var(--c2,#E6DFEE);background:var(--sup,#fff);overflow:hidden}
+.lgp-num::before{content:"";position:absolute;left:0;top:0;bottom:0;width:4px;background:var(--k,#D80073)}
+.lgp-num b{display:block;font-family:'IBM Plex Mono',ui-monospace,monospace;font-size:24px;line-height:1.1;font-weight:700;color:var(--k,var(--preto));font-variant-numeric:tabular-nums}
+.lgp-num span{display:block;margin-top:3px;font-size:11.5px;font-weight:700;line-height:1.3;color:var(--c5,#5c556a)}
+.lgp-num small{display:block;margin-top:2px;font-size:11px;color:var(--c4,#8a8397)}
+.lgp-cal{border:1px solid var(--c2,#E6DFEE);border-radius:16px;overflow:hidden;background:var(--sup,#fff)}
+.lgp-sem,.lgp-gr{display:grid;grid-template-columns:repeat(7,minmax(0,1fr))}
+.lgp-sem div{padding:8px 6px;text-align:center;font-size:11px;font-weight:800;letter-spacing:.06em;text-transform:uppercase;color:var(--c4,#8a8397);background:color-mix(in srgb,var(--c2,#E6DFEE) 40%,transparent);border-bottom:1px solid var(--c2,#E6DFEE)}
+.lgp-d{position:relative;min-height:104px;padding:8px 8px 9px;border-right:1px solid var(--c2,#E6DFEE);border-bottom:1px solid var(--c2,#E6DFEE);display:flex;flex-direction:column;gap:4px;min-width:0;text-align:left;font:inherit;color:inherit;background:transparent}
+.lgp-gr .lgp-d:nth-child(7n){border-right:none}
+.lgp-d.vazio{background:color-mix(in srgb,var(--c2,#E6DFEE) 22%,transparent)}
+button.lgp-d{-webkit-appearance:none;appearance:none;margin:0;border-top:0;border-left:0;border-radius:0;box-shadow:none;cursor:pointer;transition:background-color .15s var(--lgp-e)}
+button.lgp-d:focus-visible{outline:2px solid var(--rosa,#D80073);outline-offset:-2px}
+.lgp-d .n{display:flex;align-items:center;justify-content:space-between;gap:4px;font-size:12.5px;font-weight:800;color:var(--preto)}
+.lgp-d.hoje .n b{display:inline-grid;place-items:center;min-width:24px;height:22px;padding:0 5px;border-radius:999px;background:var(--rosa,#D80073);color:#fff}
+.lgp-d .fer{font-size:10px;font-weight:700;color:#C98A00;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.lgp-d .hr{font-family:'IBM Plex Mono',ui-monospace,monospace;font-size:11.5px;font-weight:600;color:var(--preto);white-space:nowrap}
+.lgp-d .al{font-size:10.5px;color:var(--c4,#8a8397);white-space:nowrap}
+.lgp-d .bar{display:flex;height:5px;border-radius:999px;overflow:hidden;background:var(--c2,#E6DFEE)}
+.lgp-d .bar i{display:block;height:100%}
+.lgp-d .lgp-sit{font-size:11.5px;font-weight:700;color:var(--c4,#8a8397);text-align:left}
+.lgp-d .lgp-ds{display:none;font-size:11px;font-weight:700;color:var(--c4,#8a8397)}
+.lgp-st{margin-top:auto;display:inline-flex;align-items:center;gap:5px;align-self:flex-start;max-width:100%;padding:3px 8px 3px 6px;border-radius:999px;font-size:11px;font-weight:800;line-height:1.3;color:var(--k);background:color-mix(in srgb,var(--k) 12%,transparent);border:1px solid color-mix(in srgb,var(--k) 30%,transparent);white-space:normal;text-align:left;border-radius:10px}
+.lgp-st i{flex:none;width:7px;height:7px;border-radius:50%;background:var(--k)}
+.lgp-st.prev{color:var(--c4,#8a8397);background:transparent;border-style:dashed;border-color:var(--c3,#D6CFE0)}
+.lgp-leg{display:flex;flex-wrap:wrap;gap:6px 14px;margin:12px 2px 0;font-size:12px;color:var(--c5,#5c556a)}
+.lgp-leg span{display:inline-flex;align-items:center;gap:6px}
+.lgp-leg i{width:9px;height:9px;border-radius:3px;background:var(--k)}
+.lgp-nota{margin:10px 2px 0;font-size:12px;line-height:1.45;color:var(--c4,#8a8397)}
+.lgp .acoes .dica{margin-right:auto}
+@keyframes lgpSobe{from{opacity:0;transform:translate3d(0,8px,0)}to{opacity:1;transform:none}}
+.lgp-anim .lgp-num,.lgp-anim .lgp-cal{animation:lgpSobe .45s var(--lgp-e) both}
+.lgp-anim .lgp-num:nth-child(2){animation-delay:30ms}.lgp-anim .lgp-num:nth-child(3){animation-delay:60ms}.lgp-anim .lgp-num:nth-child(4){animation-delay:90ms}.lgp-anim .lgp-num:nth-child(5){animation-delay:120ms}.lgp-anim .lgp-num:nth-child(6){animation-delay:150ms}.lgp-anim .lgp-num:nth-child(7){animation-delay:180ms}
+.lgp-anim .lgp-cal{animation-delay:150ms}
+@media (hover:hover) and (pointer:fine){ button.lgp-d:hover{background:color-mix(in srgb,var(--rosa,#D80073) 6%,transparent)} }
+html[data-tema="escuro"] .lgp-num,html[data-tema="escuro"] .lgp-cal{background:#1c1823;border-color:#3a3150}
+html[data-tema="escuro"] .lgp-d,html[data-tema="escuro"] .lgp-sem div{border-color:#3a3150}
+html[data-tema="escuro"] .lgp-d.vazio{background:rgba(255,255,255,.02)}
+html[data-tema="escuro"] .lgp-sem div{background:rgba(255,255,255,.04)}
+@media (max-width:720px){
+  .lgp-sem{display:none}
+  .lgp-gr{grid-template-columns:minmax(0,1fr)}
+  .lgp-d.vazio{display:none}
+  .lgp-d{min-height:0;flex-direction:row;flex-wrap:wrap;align-items:center;gap:4px 10px;border-right:none;padding:10px 12px}
+  .lgp-d .n{min-width:74px;justify-content:flex-start;gap:8px}
+  .lgp-d .lgp-ds{display:inline}
+  .lgp-d .bar{flex:1 1 100%;order:9}
+  .lgp-st{margin-top:0;margin-left:auto}
+}
+@media (prefers-reduced-motion:reduce){ .lgp-anim .lgp-num,.lgp-anim .lgp-cal{animation:none} button.lgp-d{transition:none} }
+</style>
+<script>
+/* ===================== Controle de Logados: Escala e Presença no Mês (12/11/2026) =====================
+   Ao clicar num agente no Controle de Logados abre o mês da pessoa: a escala publicada de cada dia
+   (horário, almoço e atuações) e a situação de presença (Presente, Falta Injustificada, Atestado...),
+   com as mesmas cores e regras do Controle de Logados. Clicar num dia abre os detalhes daquele dia. */
+var LGP_SEM = ['Dom', 'Seg', 'Ter', 'Qua', 'Qui', 'Sex', 'Sáb'];
+var LGP_ATU = { '0800': ['0800', '#D80073'], chat: ['Chat', '#4F3F91'], ass: ['Assíncrono', '#0E8A8A'], pad: ['A Definir', '#9AA4B2'] };
+function lgpCor(st) { return (typeof LG_COR !== 'undefined' && LG_COR[st]) || '#9AA4B2'; }
+function lgpMin(h) { var p = String(h || '').split(':'); return p.length < 2 ? null : (+p[0]) * 60 + (+p[1]); }
+function lgpHm(m) { return ('0' + Math.floor(m / 60)).slice(-2) + ':' + ('0' + (m % 60)).slice(-2); }
+function lgpMesPadrao() { var f = estado.lg || {}; return (f.vista === 'mes' && f.mes) ? f.mes : String(f.data || hojeLocal()).slice(0, 7); }
+function lgpBarra(d) {
+  var i = lgpMin(d.i), f = lgpMin(d.f); if (i === null || f === null || f <= i || !d.b || !d.b.length) return '';
+  var tot = f - i, a = lgpMin(d.a), pedacos = [], cur = i;
+  var bl = d.b.map(function (b) { return [b[0], lgpMin(b[1]), lgpMin(b[2])]; }).filter(function (b) { return b[1] !== null && b[2] !== null && b[2] > b[1]; }).sort(function (x, y) { return x[1] - y[1]; });
+  if (a !== null) bl.push(['alm', a, a + 60]); bl.sort(function (x, y) { return x[1] - y[1]; });
+  bl.forEach(function (b) { if (b[1] > cur) pedacos.push(['', b[1] - cur]); pedacos.push([b[0], Math.max(0, Math.min(b[2], f) - Math.max(b[1], cur))]); cur = Math.max(cur, b[2]); });
+  if (cur < f) pedacos.push(['', f - cur]);
+  return '<div class="bar" title="' + bl.filter(function (b) { return b[0] !== 'alm'; }).map(function (b) { return (LGP_ATU[b[0]] ? LGP_ATU[b[0]][0] : b[0]) + ' ' + lgpHm(b[1]) + '–' + lgpHm(b[2]); }).join(' · ') + '">' +
+    pedacos.filter(function (p) { return p[1] > 0; }).map(function (p) { var c = p[0] === 'alm' ? 'transparent' : (LGP_ATU[p[0]] ? LGP_ATU[p[0]][1] : (p[0] ? '#9AA4B2' : 'transparent')); return '<i style="width:' + (p[1] / tot * 100).toFixed(2) + '%;background:' + c + '"></i>'; }).join('') + '</div>';
+}
+function lgpCorpo(r) {
+  var rot = r.rotulos || {}, hoje = r.hoje, cont = {}, escAte = 0, fol = 0;
+  r.dias.forEach(function (d) { if (d.data > hoje) return; if (d.sit === 'T') escAte++; if (d.st) cont[d.st] = (cont[d.st] || 0) + 1; if (d.sit === 'F') fol++; });
+  var pres = cont.PRESENTE || 0, base = escAte - (cont.AGUARDANDO || 0), pct = base > 0 ? Math.round(pres / base * 1000) / 10 : null;
+  var num = function (k, v, rotulo, sub) { return '<div class="lgp-num" style="--k:' + k + '"><b>' + v + '</b><span>' + rotulo + '</span>' + (sub ? '<small>' + sub + '</small>' : '') + '</div>'; };
+  var nums = r.hist ? '' : num('#D80073', escAte, 'Dias Escalados', 'até hoje') +
+    num(lgpCor('PRESENTE'), pres, 'Presente', pct === null ? '' : pct.toLocaleString('pt-BR') + '% dos dias escalados') +
+    num(lgpCor('FALTA'), cont.FALTA || 0, 'Falta Injustificada') + num(lgpCor('ATESTADO'), cont.ATESTADO || 0, 'Atestado') +
+    num(lgpCor('COMPENSA'), cont.COMPENSA || 0, 'Compensa / Day Off') + num(lgpCor('FERIAS'), (cont.FERIAS || 0) + (cont.LICENCA || 0), 'Férias e Licença', 'dias') + num(lgpCor('FOLGA'), fol, 'Folgas', 'até hoje');
+  if (r.hist) { var ch = Object.keys(cont).sort(function (a, b) { return cont[b] - cont[a]; }); nums = ch.map(function (k) { return num(lgpCor(k), cont[k], rot[k] || k); }).join(''); }
+  var p1 = r.dias.length ? new Date(r.dias[0].data + 'T12:00:00Z').getUTCDay() : 0, cel = '';
+  for (var k = 0; k < p1; k++) cel += '<div class="lgp-d vazio" aria-hidden="true"></div>';
+  r.dias.forEach(function (d) {
+    var dn = +d.data.slice(8), fut = d.data > hoje, ehHoje = d.data === hoje, corpo = '';
+    var sitTx = { F: 'Folga', FERIAS: 'Férias', LICENCA: 'Licença', SEM: 'Sem escala publicada' }[d.sit];
+    if (d.sit === 'T' && d.i) corpo = '<div class="hr">' + esc(d.i) + '–' + esc(d.f) + '</div>' + (d.a ? '<div class="al">almoço ' + esc(d.a) + '–' + lgpHm(lgpMin(d.a) + 60) + '</div>' : '') + lgpBarra(d);
+    else if (sitTx && !r.hist && (fut || !d.st)) corpo = '<div class="lgp-sit">' + sitTx + '</div>';
+    var st = '';
+    if (d.st && !fut) st = '<span class="lgp-st" style="--k:' + lgpCor(d.st) + '" title="' + esc((rot[d.st] || d.st) + (d.auto ? ' (automático)' : (d.por ? ' · registrado por ' + (typeof nomeDe === 'function' ? nomeDe(d.por) : d.por) + (d.em ? ' às ' + String(d.em).slice(-5) : '') : ''))) + '"><i></i>' + esc(rot[d.st] || d.st) + '</span>';
+    else if (fut && d.sit === 'T') st = '<span class="lgp-st prev">Previsto</span>';
+    var fer = d.feriado ? '<div class="fer" title="' + esc(d.feriado) + (d.feriadoTrab ? ' (trabalhado)' : '') + '">' + esc(d.feriado) + '</div>' : '';
+    var cab = '<div class="n"><b>' + dn + '</b><span class="lgp-ds">' + LGP_SEM[new Date(d.data + 'T12:00:00Z').getUTCDay()] + '</span></div>';
+    var clic = !r.hist && d.sit === 'T';
+    cel += (clic ? '<button type="button" class="lgp-d' + (ehHoje ? ' hoje' : '') + '" data-dia="' + d.data + '" title="Ver os detalhes de ' + dn + '/' + r.mes.slice(5) + '">' : '<div class="lgp-d' + (ehHoje ? ' hoje' : '') + '">') + cab + fer + corpo + st + (clic ? '</button>' : '</div>');
+  });
+  var usados = {}; r.dias.forEach(function (d) { if (d.st && d.data <= hoje) usados[d.st] = 1; });
+  var leg = Object.keys(usados).map(function (k) { return '<span style="--k:' + lgpCor(k) + '"><i></i>' + esc(rot[k] || k) + '</span>'; }).join('') +
+    (r.hist ? '' : Object.keys(LGP_ATU).filter(function (a) { return r.dias.some(function (d) { return (d.b || []).some(function (b) { return b[0] === a; }); }); }).map(function (a) { return '<span style="--k:' + LGP_ATU[a][1] + '"><i style="border-radius:999px;height:5px;width:14px"></i>' + LGP_ATU[a][0] + '</span>'; }).join(''));
+  return '<div class="lgp-nums">' + nums + '</div>' +
+    '<div class="lgp-cal"><div class="lgp-sem">' + LGP_SEM.map(function (s) { return '<div>' + s + '</div>'; }).join('') + '</div><div class="lgp-gr">' + cel + '</div></div>' +
+    '<div class="lgp-leg">' + leg + '</div>' +
+    '<p class="lgp-nota">' + (r.hist ? 'Mês importado da planilha antiga: mostra só a situação de cada dia, sem a escala.' : 'A escala é a publicada (a que o agente vê). A situação de cada dia segue a mesma regra do Controle de Logados. Clique num dia de trabalho para ver os detalhes.') + '</p>';
+}
+function lgpModal(email, mes) {
+  mes = mes || lgpMesPadrao();
+  var w = abrirModal('<div class="lgp" id="lgpCorpo"><div class="carregando" style="min-height:160px"><div class="giro"></div> Carregando…</div></div>', true);
+  var md = w.querySelector('.modal'); md.classList.add('xl');
+  var primeira = true;
+  function carregar() {
+    chamar('apiEscalaPresencaMes', estado.token, mes, email).then(function (r) {
+      if (!document.body.contains(w)) return;
+      var p = r.pessoa, c = w.querySelector('#lgpCorpo');
+      var opts = (r.meses || [r.mes]).slice().reverse().map(function (m) { return '<option value="' + m + '"' + (m === r.mes ? ' selected' : '') + '>' + (typeof rotuloMes === 'function' ? rotuloMes(m) : m) + '</option>'; }).join('');
+      c.innerHTML = '<div class="lgp-top"><div class="ola2">' + avatarHtml(p.email, p.nome, 'g') + '<div><h3>' + esc(p.nome) + '</h3><p>' + [p.cargo, p.coord, p.email].filter(Boolean).map(esc).join(' · ') + '</p></div></div>' +
+        '<select class="sel-mes" id="lgpMes" aria-label="Mês">' + opts + '</select></div>' + lgpCorpo(r) +
+        '<div class="acoes"><span class="dica">' + (r.hist ? '' : (r.publicadaEm ? 'Escala publicada em ' + dhBr(r.publicadaEm) + (r.publicadaPor ? ' por ' + esc(nomeDe(r.publicadaPor)) : '') : 'Escala de ' + (typeof rotuloMes === 'function' ? rotuloMes(r.mes).toLowerCase() : r.mes) + ' ainda não publicada')) + '</span><button class="btn sec" data-fechar>Fechar</button>' + (r.hist ? '' : '<button class="btn roxo" id="lgpCompleta">Ver escala completa</button>') + '</div>';
+      if (primeira && !(window.matchMedia && matchMedia('(prefers-reduced-motion: reduce)').matches)) { c.classList.add('lgp-anim'); setTimeout(function () { c.classList.remove('lgp-anim'); }, 900); }
+      primeira = false;
+      c.querySelector('#lgpMes').onchange = function () { mes = this.value; c.innerHTML = '<div class="carregando" style="min-height:160px"><div class="giro"></div> Carregando…</div>'; carregar(); };
+      var bc = c.querySelector('#lgpCompleta'); if (bc) bc.onclick = function () { var antes = estado.mes; estado.mes = mes; try { modalJornadaDe(email); } finally { estado.mes = antes; } };
+      c.querySelectorAll('[data-dia]').forEach(function (b) { b.onclick = function () { var antes = estado.vd; estado.vd = Object.assign({}, antes || {}, { data: b.getAttribute('data-dia') }); try { modalAgente(email); } finally { estado.vd = antes; } }; });
+      if (typeof atualizarAvatares === 'function') atualizarAvatares();
+    }).catch(function (e) { w.remove(); falhaGeral(e); });
+  }
+  carregar();
+}
+/* nos agentes do Controle de Logados, o clique abre a escala e a presença no mês */
+document.addEventListener('click', function (ev) {
+  var t = ev.target; if (!t || !t.closest) return;
+  if (t.closest('select, input, button.btn, a')) return;
+  var el = t.closest('#lgTab .lg-ag[data-ag], .lg-aus .it[data-ag], tr.cl[data-ag]'); if (!el) return;
+  var email = el.getAttribute('data-ag'); if (!email) return;
+  ev.stopImmediatePropagation(); ev.preventDefault(); lgpModal(email);
+}, true);
+</script>
