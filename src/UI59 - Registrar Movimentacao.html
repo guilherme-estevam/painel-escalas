@@ -1,0 +1,87 @@
+<style>
+/* ===================== Planejamento: Registrar Movimentação (19/11/2026) ===================== */
+.mov-bt{display:inline-flex;align-items:center;gap:7px;margin-right:auto!important;height:38px;padding:0 14px;border-radius:10px;border:1.5px solid #9FD3D3;background:transparent;color:#0B6E6E;font:inherit;font-size:13px;font-weight:800;cursor:pointer;transition:background-color .15s,border-color .15s}
+.ed-rod .acoes .dsl-bt:has(+ .mov-bt){margin-right:0!important}
+.mov-bt svg{width:16px;height:16px}
+.mov-bt:focus-visible{outline:2px solid #0E8A8A;outline-offset:2px}
+@media (hover:hover) and (pointer:fine){ .mov-bt:hover{background:#E3F4F4;border-color:#0E8A8A} }
+html[data-tema="escuro"] .mov-bt{border-color:#1f5656;color:#8FDADA}
+html[data-tema="escuro"] .mov-bt:hover{background:#102626}
+.mov-tag{display:inline-flex;align-items:center;gap:6px;margin-right:auto!important;padding:6px 12px;border-radius:999px;background:#E3F4F4;color:#0B5F5F;font-size:12.5px;font-weight:800}
+.mov-tag i{width:8px;height:8px;border-radius:50%;background:#0E8A8A}
+html[data-tema="escuro"] .mov-tag{background:#102626;color:#8FDADA}
+.mov-chip{display:inline-block;margin-left:6px;padding:1px 7px;border-radius:999px;background:#E3F4F4;color:#0B5F5F;font-size:10.5px;font-weight:800;vertical-align:middle;white-space:nowrap}
+html[data-tema="escuro"] .mov-chip{background:#102626;color:#8FDADA}
+.dsl.mov .ic{background:#E3F4F4;color:#0E8A8A}
+html[data-tema="escuro"] .dsl.mov .ic{background:#102626;color:#8FDADA}
+.dsl.mov .dsl-ok input{accent-color:#0E8A8A}
+.dsl.mov .btn.mover{background:#0E8A8A!important;border-color:#0E8A8A!important;color:#fff!important}
+.dsl.mov .btn.mover[disabled]{opacity:.45;cursor:not-allowed}
+.dsl.mov .cp small{font-size:11px;font-weight:700;letter-spacing:0;text-transform:none;color:var(--c4,#8a8397)}
+</style>
+<script>
+/* ===================== Planejamento: Registrar Movimentação (19/11/2026) =====================
+   Igual ao desligamento (UI57): só o WFM. No editor da pessoa (clique no nome na grade), o botão
+   "Registrar Movimentação" abre a confirmação: data da movimentação, destino (opcional), prévia e caixa de confirmação.
+   A data é o primeiro dia fora do painel; o último dia no painel é a véspera. */
+var MOV_IC = { mover: '<polyline points="15 3 21 3 21 9"/><path d="M21 3l-7 7"/><path d="M10 14 3 21"/><polyline points="9 21 3 21 3 15"/>' };
+if (typeof ACOES !== 'undefined') ACOES.MOVIMENTACAO = 'Movimentação Registrada';
+function movSvg(k) { return k === 'mover' ? '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">' + MOV_IC.mover + '</svg>' : dslSvg(k); }
+function movModal(email) {
+  var p = dslPessoa(email), tok = 0, hoje = hojeLocal();
+  var w = abrirModal('<div class="dsl mov"><span class="ic">' + movSvg('mover') + '</span><h2>Registrar Movimentação</h2>' +
+    '<p class="sb"><b>' + esc(p.nome) + '</b> · ' + esc(email) + '</p>' +
+    '<label class="cp">Data da movimentação <small>primeiro dia da pessoa fora do painel</small><input type="date" id="movData" value="' + hoje + '"></label>' +
+    '<label class="cp">Para onde foi <small>opcional, fica no Histórico</small><input type="text" id="movDest" maxlength="120" placeholder="Ex.: Backoffice, Qualidade, outra área"></label>' +
+    '<div class="dsl-prev" id="movPrev"></div>' +
+    '<label class="dsl-ok"><input type="checkbox" id="movOk"><span>Confirmo a movimentação de <b>' + esc(p.nome) + '</b>. Esta ação não pode ser desfeita pelo painel.</span></label>' +
+    '<div class="ac"><button class="btn sec" data-fechar>Cancelar</button><button class="btn mover" id="movIr" disabled>Registrar Movimentação</button></div></div>');
+  var $d = w.querySelector('#movData'), $dest = w.querySelector('#movDest'), $p = w.querySelector('#movPrev'), $ok = w.querySelector('#movOk'), $ir = w.querySelector('#movIr'), pronto = false;
+  function botao() { $ir.disabled = !(pronto && $ok.checked); }
+  function previa() {
+    var t = ++tok; pronto = false; botao();
+    if (!$d.value) { $p.innerHTML = '<div class="dsl-er">Escolha a data da movimentação.</div>'; return; }
+    $p.innerHTML = '<div class="carregando" style="min-height:60px"><div class="giro"></div> Conferindo…</div>';
+    chamar('apiMovimentacaoPrevia', estado.token, email, $d.value, $dest.value).then(function (r) {
+      if (t !== tok) return;
+      if (r.jaDesligadoEm) { $p.innerHTML = '<div class="dsl-er">O desligamento desta pessoa já foi registrado, com último dia em ' + dslBr(r.jaDesligadoEm) + '.</div>'; return; }
+      if (r.jaMovimentadoEm) { $p.innerHTML = '<div class="dsl-er">A movimentação desta pessoa já foi registrada, a partir de ' + dslBr(r.jaMovimentadoEm) + '.</div>'; return; }
+      var li = function (ic, k, txt, sub) { return '<div class="dsl-li" style="--k:' + k + '">' + movSvg(ic) + '<b>' + txt + '</b>' + (sub ? '<span>' + sub + '</span>' : '') + '</div>'; };
+      $p.innerHTML = li('hist', '#1E9E58', 'Até ' + r.ultimoBr + ' nada muda', 'Escala, presença, aderência, tempos, trocas e Histórico continuam aparecendo.') +
+        li('cal', '#0E8A8A', 'A partir de ' + r.dataMovBr + ' a escala é excluída', r.diasRemovidos + ' dia(s) de trabalho saem da escala' + (r.mesesApagados.length ? ' e a escala de ' + r.mesesApagados.map(function (m) { return rotuloMes(m).toLowerCase(); }).join(', ') + ' é apagada' : '') + '.') +
+        li('troca', '#0E8A8A', r.trocas.length ? r.trocas.length + ' troca(s) pendente(s) cancelada(s)' : 'Nenhuma troca pendente', 'Ninguém consegue pedir troca com esta pessoa daqui em diante.') +
+        li('cad', '#0E8A8A', 'Login bloqueado', r.loginBloqueadoJa ? 'O bloqueio vale na hora e as sessões abertas são encerradas.' : 'O acesso continua até ' + r.ultimoBr + ' e é bloqueado em ' + r.dataMovBr + '.') +
+        li('olho', '#4F3F91', 'Sai da Visão Operacional e do Controle de Logados a partir de ' + r.dataMovBr, 'Nos dias anteriores, continua aparecendo. Na Escala e Presença do Mês, os dias seguintes aparecem como Movimentação.');
+      pronto = true; botao();
+    }).catch(function (e) { if (t !== tok) return; $p.innerHTML = '<div class="dsl-er">' + esc((e && e.message) || String(e)) + '</div>'; });
+  }
+  $d.onchange = previa; $d.oninput = previa; $ok.onchange = botao; previa();
+  $ir.onclick = function () {
+    if (!(pronto && $ok.checked)) return; $ir.disabled = true; $ir.textContent = 'Registrando…';
+    chamar('apiMovimentar', estado.token, email, $d.value, $dest.value).then(function (r) {
+      document.querySelectorAll('#modais .modal-fundo').forEach(function (f) { f.remove(); });
+      if (typeof toast === 'function') toast('Movimentação de ' + r.nome + ' registrada (a partir de ' + r.dataMovBr + ').');
+      try { if (typeof telaGestao === 'function') telaGestao(); } catch (e) { }
+    }).catch(function (e) { $ir.textContent = 'Registrar Movimentação'; botao(); $p.insertAdjacentHTML('afterbegin', '<div class="dsl-er">' + esc((e && e.message) || String(e)) + '</div>'); });
+  };
+}
+/* botão no rodapé do editor da pessoa (ao lado do Registrar Desligamento) e selo na grade */
+(function () {
+  var atual = '';
+  if (typeof abrirEditor === 'function') { var _ae = abrirEditor; abrirEditor = function (email) { atual = email; return _ae.apply(this, arguments); }; }
+  function pintar() {
+    if (!estado.superadmin) return;
+    var rod = document.querySelector('.modal.editor .ed-rod .acoes');
+    if (rod && atual && !rod.querySelector('.mov-bt,.mov-tag')) {
+      var p = dslPessoa(atual), dsl = rod.querySelector('.dsl-bt');
+      if (p.movimentadoEm) rod.insertAdjacentHTML('afterbegin', '<span class="mov-tag"><i></i>Movimentado · a partir de ' + dslBr(p.movimentadoEm) + '</span>');
+      else if (dsl && !p.desligadoEm) { dsl.insertAdjacentHTML('afterend', '<button type="button" class="mov-bt" id="edMov">' + movSvg('mover') + 'Registrar Movimentação</button>'); var em = atual; rod.querySelector('#edMov').onclick = function () { movModal(em); }; }
+    }
+    document.querySelectorAll('#grade td.col-nome button[data-pessoa]').forEach(function (b) {
+      var p = dslPessoa(b.getAttribute('data-pessoa')); if (!p.movimentadoEm || b.parentNode.querySelector('.mov-chip')) return;
+      b.insertAdjacentHTML('afterend', '<span class="mov-chip" title="Movimentação registrada">Movimentado ' + dslBr(p.movimentadoEm).slice(0, 5) + '</span>');
+    });
+  }
+  var pend = 0; new MutationObserver(function () { if (pend) return; pend = requestAnimationFrame(function () { pend = 0; try { pintar(); } catch (e) { } }); }).observe(document.body, { childList: true, subtree: true });
+})();
+</script>
