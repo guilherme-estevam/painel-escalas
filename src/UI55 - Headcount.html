@@ -268,6 +268,20 @@ function hcPct(n, d) { return d ? (Math.round(n * 1000 / d) / 10).toLocaleString
 var HC_UNIFICA = { 'IA & Automação': 'Gerente Um', 'Engajamento': 'Gerente Executiva' };
 function hcUnificar() { var H = estado.hc; if (!H || H.__uni) return; (H.pessoas || []).forEach(function (p) { var u = HC_UNIFICA[String(p.coord || '').trim()]; if (u) { p.coordOriginal = p.coord; p.coord = u; } }); H.__uni = 1; }
 function hcSel() { hcUnificar(); var a = (estado.hcF && estado.hcF.area) || ''; return (estado.hc.pessoas || []).filter(function (p) { return !a || p.area === a; }); }
+/* situação da sincronização com a planilha (19/11/2026): erro e leitura ignorada têm mensagem própria; o WFM vê o detalhe ao passar o mouse */
+function hcHora(iso) { return iso ? String(iso).slice(8, 10) + '/' + String(iso).slice(5, 7) + ' às ' + String(iso).slice(11, 16) : ''; }
+function hcSincTexto(H) {
+  if (H.erro) return 'Não foi possível ler a planilha na última conferência' + (H.conferidoEm ? ' (' + hcHora(H.conferidoEm) + ')' : '');
+  if (H.aviso) return 'A última leitura da planilha não foi aplicada (veio com bem menos pessoas)';
+  if (H.pendente) return 'Há alterações na planilha · entram assim que a edição terminar (no máximo 30 min)';
+  return 'Planilha em dia';
+}
+function hcSincTitulo(H) {
+  if (!H.ph) return '';
+  var t = []; if (H.erro) t.push('Erro: ' + H.erro); if (H.aviso) t.push(H.aviso); if (H.conferidoEm) t.push('Última conferência: ' + hcHora(H.conferidoEm));
+  if (H.diag) { t.push('Resultado: ' + H.diag.resultado); if (H.diag.mudouDesdeAUltimaLeitura && H.diag.mudouDesdeAUltimaLeitura.length) t.push('Mudou desde a leitura anterior: ' + H.diag.mudouDesdeAUltimaLeitura.join(', ')); if (H.diag.diferenteDaCopia && H.diag.diferenteDaCopia.length) t.push('Diferente da cópia aplicada: ' + H.diag.diferenteDaCopia.join(', ')); }
+  return t.length ? ' title="' + esc(t.join('\n')) + '"' : '';
+}
 /* a cópia da tela vale 2 minutos: depois disso, mostra o que tem e busca de novo em segundo plano (redesenha se a planilha mudou) */
 function hcBuscar(forcar) {
   return chamar(forcar ? 'apiHeadcountAtualizar' : 'apiHeadcount', estado.token).then(function (r) { r.pessoas = r.pessoas || []; r.mapa = {}; r.pessoas.forEach(function (p) { r.mapa[p.email] = p; }); estado.hc = r; estado.hcEm = Date.now(); return r; });
@@ -355,7 +369,7 @@ function hcDesenhar(animar) {
   var card = function (ic, tit, sub, corpo, extra) { return '<section class="hcx-card"><header><div><h3>' + tit + '</h3><p>' + sub + '</p></div><span class="ic">' + hcSvg(ic) + '</span></header>' + (extra || '') + corpo + '</section>'; };
   g.innerHTML = '<div class="hcx' + (animar ? ' hcx-anim' : '') + '" id="hcx">' +
     '<div class="hcx-topo"><div><h2>Headcount · Customer</h2><p>As mesmas informações da planilha Headcount. Clique em um time para filtrar e em qualquer número para ver as pessoas.</p></div>' +
-    '<div class="hcx-sinc"><span class="pt' + (H.pendente ? ' esp' : '') + '"></span><span>' + (H.pendente ? 'Há alterações na planilha, aguardando a edição terminar' : 'Planilha em dia') + (quando ? ' · atualizado em ' + quando : '') + '</span>' + '' + '</div></div>' +
+    '<div class="hcx-sinc"' + hcSincTitulo(H) + '><span class="pt' + (H.pendente || H.aviso || H.erro ? ' esp' : '') + '"></span><span>' + esc(hcSincTexto(H)) + (quando ? ' · atualizado em ' + quando : '') + '</span>' + '' + '</div></div>' +
     '<div class="hcx-times">' + times + '</div><div class="hcx-faixa">' + faixa + '</div>' +
     '<div class="hcx-g2">' + card('coord', 'Pessoas por Coordenação', nomeSel + ' · ' + n + ' pessoas, pela coordenação ou gerência de cada uma', '<div class="cp">' + (coords || '<div class="hcx-vazio">Ninguém na seleção.</div>') + '</div>', '<div class="hcx-leg"><span style="--k:#D80073"><i></i>Agentes</span><span style="--k:#4F3F91"><i></i>Analistas e Assistentes</span><span style="--k:#E0A12D"><i></i>Aprendizes</span><span style="--k:#9AA4B2"><i></i>Gestão</span></div>') +
       '<div class="hcx-pilha">' + card('cargo', 'Volumes por Cargo', 'Quantas pessoas em cada grupo', '<div class="cp">' + cargos + '</div>') + card('turno', 'Turnos', 'Distribuição da seleção', '<div class="cp"><div class="hcx-turno">' + turnoBar + '</div>' + turnos + '</div>') + '</div></div>' +
