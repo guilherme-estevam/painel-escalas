@@ -268,9 +268,17 @@ function hcPct(n, d) { return d ? (Math.round(n * 1000 / d) / 10).toLocaleString
 var HC_UNIFICA = { 'IA & Automação': 'Gerente Um', 'Engajamento': 'Gerente Executiva' };
 function hcUnificar() { var H = estado.hc; if (!H || H.__uni) return; (H.pessoas || []).forEach(function (p) { var u = HC_UNIFICA[String(p.coord || '').trim()]; if (u) { p.coordOriginal = p.coord; p.coord = u; } }); H.__uni = 1; }
 function hcSel() { hcUnificar(); var a = (estado.hcF && estado.hcF.area) || ''; return (estado.hc.pessoas || []).filter(function (p) { return !a || p.area === a; }); }
+/* a cópia da tela vale 2 minutos: depois disso, mostra o que tem e busca de novo em segundo plano (redesenha se a planilha mudou) */
+function hcBuscar(forcar) {
+  return chamar(forcar ? 'apiHeadcountAtualizar' : 'apiHeadcount', estado.token).then(function (r) { r.pessoas = r.pessoas || []; r.mapa = {}; r.pessoas.forEach(function (p) { r.mapa[p.email] = p; }); estado.hc = r; estado.hcEm = Date.now(); return r; });
+}
 function hcCarregar(forcar) {
-  if (estado.hc && !forcar) return Promise.resolve(estado.hc);
-  return chamar(forcar ? 'apiHeadcountAtualizar' : 'apiHeadcount', estado.token).then(function (r) { r.pessoas = r.pessoas || []; r.mapa = {}; r.pessoas.forEach(function (p) { r.mapa[p.email] = p; }); estado.hc = r; return r; });
+  if (forcar || !estado.hc) return hcBuscar(forcar);
+  if (Date.now() - (estado.hcEm || 0) > 120000) {
+    var antes = estado.hc.atualizadoEm;
+    hcBuscar(false).then(function (r) { if (r.atualizadoEm !== antes && estado.aba === 'headcount' && estado.hcSub === 'geral') hcDesenhar(true); }).catch(function () { });
+  }
+  return Promise.resolve(estado.hc);
 }
 
 /* ---------- aba principal e sub-abas ---------- */

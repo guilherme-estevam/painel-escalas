@@ -495,8 +495,9 @@ function apiSolicitacaoDecidir(token, id, aprovar, obs, ajustes) {
     const av = [{ dest: l.criada_por, tipo: 'SOLICITACAO_APROVADA', titulo: 'Solicitação aprovada', msg: nomeEu + ' aprovou: ' + SOL_TIPOS[l.tipo] + ' — ' + r.resumo + '. A escala já foi atualizada.', ref: id }];
     r.previa.forEach(function (p) {
       if (!p.dias.length) return; const linhas = p.dias.map(function (x) { return x.data + ': ' + x.depois; });
-      av.push({ dest: p.email, tipo: 'ESCALA_ALTERADA', titulo: 'Sua escala mudou', msg: 'Sua escala mudou. ' + linhas.join(' · ') + '. Nos outros dias, nada muda. Confira em Minha Escala.', ref: l.mes });
-      solEmail_(p.email, 'Sua escala mudou', 'Sua escala mudou:<br>' + p.dias.map(function (x) { return '• <b>' + x.data + ':</b> ' + escHtml_(x.depois); }).join('<br>') + '<br><br>Nos outros dias, nada muda.');
+      /* o agente só é avisado aqui, na aprovação final do WFM, com o nome de quem aprovou */
+      av.push({ dest: p.email, tipo: 'ESCALA_ALTERADA', titulo: 'Sua escala mudou', msg: 'Sua escala mudou (ajuste aprovado por ' + nomeEu + ', do WFM). ' + linhas.join(' · ') + '. Nos outros dias, nada muda. Confira em Minha Escala.', ref: l.mes });
+      solEmail_(p.email, 'Sua escala mudou', 'Sua escala mudou. O ajuste foi aprovado por <b>' + escHtml_(nomeEu) + '</b>, do WFM.<br><br>' + p.dias.map(function (x) { return '• <b>' + x.data + ':</b> ' + escHtml_(x.depois); }).join('<br>') + '<br><br>Nos outros dias, nada muda. Confira em Minha Escala.');
     });
     solAvisos_(av);
     solEmail_(l.criada_por, 'Sua solicitação foi aprovada', escHtml_(nomeEu) + ' aprovou a solicitação <b>' + escHtml_(SOL_TIPOS[l.tipo]) + '</b> — ' + escHtml_(r.resumo) + '. A escala já foi atualizada.');
