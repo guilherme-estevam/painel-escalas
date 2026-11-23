@@ -73,7 +73,7 @@ function apSubnav() {
 }
 function apCarregar() {
   var area = $('apArea'); if (!area) return;
-  if (estado.apDados) { apMontar(); return; }
+  if (estado.apDados) { apMontar(); apChecarNovos(true); return; }
   area.innerHTML = '<div class="carregando"><div class="giro"></div> Carregando os dados da Twilio e as escalas do painel…</div>';
   var meses = apMeses();
   Promise.all(meses.map(function (m) { return chamar('apiAderencia', estado.token, m + '-01', apFimMes(m)); })).then(function (lista) {
@@ -82,7 +82,7 @@ function apCarregar() {
       (x.pessoas || []).forEach(function (p) { if (!vistos[p.e]) { vistos[p.e] = 1; D.pessoas.push(p); } });
       Object.keys(x.dias || {}).forEach(function (e) { var o = D.dias[e] || (D.dias[e] = {}); Object.keys(x.dias[e]).forEach(function (d) { o[d] = x.dias[e][d]; }); });
       Object.keys(x.tw || {}).forEach(function (e) { var o = D.tw[e] || (D.tw[e] = {}); Object.keys(x.tw[e]).forEach(function (d) { o[d] = x.tw[e][d]; }); });
-      D.fer = D.fer.concat(x.fer || []); if (x.ultimo && x.ultimo > D.ultimo) D.ultimo = x.ultimo;
+      D.fer = D.fer.concat(x.fer || []); if (x.ultimo && x.ultimo > D.ultimo) D.ultimo = x.ultimo; if (x.versao) D.versao = x.versao;
     });
     estado.apDados = D; if (estado.aba === 'aderencia') apMontar();
   }).catch(function (e) {
@@ -91,9 +91,20 @@ function apCarregar() {
     var b = $('apDeNovo'); if (b) b.onclick = apCarregar;
   });
 }
+/* a aba se atualiza sozinha quando chega carga nova da Twilio (sem precisar de F5): confere ao abrir, ao voltar para a janela e a cada 5 minutos */
+var AP_CHK = 0;
+function apChecarNovos(forcar) {
+  if (estado.aba !== 'aderencia' || !estado.apDados || document.visibilityState === 'hidden') return;
+  var agora = Date.now(); if (!forcar && agora - AP_CHK < 60000) return; AP_CHK = agora;
+  chamar('apiAderenciaVersao', estado.token).then(function (r) {
+    if (!r || !r.versao || estado.aba !== 'aderencia' || !estado.apDados || !estado.apDados.versao) return;
+    if (r.versao !== estado.apDados.versao) { estado.apDados = null; apCarregar(); }
+  }).catch(function () { });
+}
+if (!window.__apChk) { window.__apChk = 1; setInterval(function () { apChecarNovos(true); }, 300000); document.addEventListener('visibilitychange', function () { if (document.visibilityState === 'visible') apChecarNovos(false); }); window.addEventListener('focus', function () { apChecarNovos(false); }); }
 function apMontar() {
   var area = $('apArea'), D = estado.apDados; if (!area) return;
-  var sub = $('apSubtit'); if (sub) sub.innerHTML = 'Como os agentes usam o tempo na Twilio e se cumprem a escala publicada no painel. ' + (D.ultimo ? '<b>Dados da Twilio até ' + dBr(D.ultimo) + '</b> · atualizados todo dia às 08:00.' : '<b>Ainda não há dados da Twilio.</b>');
+  var sub = $('apSubtit'); if (sub) sub.innerHTML = 'Como os agentes usam o tempo na Twilio e se cumprem a escala publicada no painel. ' + (D.ultimo ? '<b>Dados da Twilio até ' + dBr(D.ultimo) + '</b> · atualizados todo dia às 06:00.' : '<b>Ainda não há dados da Twilio.</b>');
   area.innerHTML = '<iframe class="apx-frame" id="apFrame" title="Painel de Aderência e Pausas"></iframe>';
   var f = $('apFrame');
   f.addEventListener('load', function () {

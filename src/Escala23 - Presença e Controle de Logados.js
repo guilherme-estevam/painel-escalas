@@ -830,6 +830,15 @@ const ADER_INICIO = '2026-11-01', ADER_CTRL = 'TwilioDias';
 function aderMais_(d, n) { const x = new Date(d + 'T12:00:00Z'); x.setUTCDate(x.getUTCDate() + n); return x.toISOString().slice(0, 10); }
 function aderCacheLer_(k) { try { const c = CacheService.getScriptCache(), n = +(c.get(k + '_n') || 0); if (!n) return null; const ps = c.getAll(Array.from({ length: n }, function (_, i) { return k + '_' + i; })); let s = ''; for (let i = 0; i < n; i++) { const p = ps[k + '_' + i]; if (p === undefined || p === null) return null; s += p; } return JSON.parse(s); } catch (e) { return null; } }
 function aderCacheGravar_(k, o, seg) { try { const s = JSON.stringify(o), c = CacheService.getScriptCache(), T = 90000, m = {}; let n = 0; for (let i = 0; i < s.length; i += T) m[k + '_' + (n++)] = s.slice(i, i + T); if (n > 60) return; m[k + '_n'] = String(n); c.putAll(m, seg); } catch (e) { /* sem cache */ } }
+/** Marca da carga da Twilio: muda sempre que o n8n grava um dia (o painel compara e se atualiza sozinho, sem F5). */
+function aderVersao_() {
+  const c = CacheService.getScriptCache(), g = c.get('ader_versao'); if (g) return g;
+  const sh = db_().getSheetByName(ADER_CTRL); let mx = '', n = 0;
+  if (sh) sh.getDataRange().getDisplayValues().slice(1).forEach(function (r) { n++; if (String(r[3] || '') > mx) mx = String(r[3] || ''); });
+  const v = (mx || 'sem') + '|' + n; c.put('ader_versao', v, 60); return v;
+}
+/** Só a marca da carga (leve): a tela pergunta de tempos em tempos se chegou dado novo. */
+function apiAderenciaVersao(token) { sessao_(token); return { versao: aderVersao_() }; }
 /** Dados de um período para a aba Aderência (só gestão). */
 function apiAderencia(token, ini, fim) {
   const ctx = sessao_(token); exigirGestao_(ctx);
@@ -837,7 +846,7 @@ function apiAderencia(token, ini, fim) {
   const ontem = aderMais_(hojeIso_(), -1);
   if (ini < ADER_INICIO) ini = ADER_INICIO; if (fim > ontem) fim = ontem; if (fim < ini) fim = ini;
   if (aderMais_(ini, 62) < fim) throw new Error('Escolha um período de até 2 meses.');
-  const ck = 'ader2_' + ini + '_' + fim, g = aderCacheLer_(ck); if (g) return g;
+  const versao = aderVersao_(), ck = 'ader3_' + ini + '_' + fim + '_' + versao.replace(/[^0-9A-Za-z]/g, ''), g = aderCacheLer_(ck); if (g) return g;
   const ss = db_(), datas = []; for (let d = ini; d <= fim; d = aderMais_(d, 1)) datas.push(d);
   const meses = datas.map(function (d) { return d.slice(0, 7); }).filter(function (m, i, a) { return a.indexOf(m) === i; });
   // 1) dias já carregados e eventos da Twilio (vale a gravação mais recente de cada pessoa e dia)
@@ -875,7 +884,7 @@ function apiAderencia(token, ini, fim) {
     });
     if (tem || tw[p.email]) dias[p.email] = o;
   });
-  const out = { ini: ini, fim: fim, ultimo: carregados.filter(function (d) { return d <= ontem; }).sort().pop() || '', carregados: carregados,
+  const out = { ini: ini, fim: fim, versao: versao, ultimo: carregados.filter(function (d) { return d <= ontem; }).sort().pop() || '', carregados: carregados,
     pessoas: pes.filter(function (p) { return dias[p.email]; }).map(function (p) { return { e: p.email, n: p.nome, c: p.coord || 'Sem Coordenação', cg: p.cargo || '' }; }),
     dias: dias, tw: tw, fer: feriadosEntre_(ini, fim, true).map(function (f) { return { d: f.data, n: f.nome }; }) };
   aderCacheGravar_(ck, out, 600);
