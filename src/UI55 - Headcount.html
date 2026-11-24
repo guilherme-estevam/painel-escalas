@@ -247,6 +247,7 @@ var HC_IC = {
   aj: '<line x1="4" y1="21" x2="4" y2="14"/><line x1="4" y1="10" x2="4" y2="3"/><line x1="12" y1="21" x2="12" y2="12"/><line x1="12" y1="8" x2="12" y2="3"/><line x1="20" y1="21" x2="20" y2="16"/><line x1="20" y1="12" x2="20" y2="3"/><line x1="1" y1="14" x2="7" y2="14"/><line x1="9" y1="8" x2="15" y2="8"/><line x1="17" y1="16" x2="23" y2="16"/>',
   plan: '<rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/>',
   fer: '<path d="M12 2l2.400 5.200L20 8l-4 4 1 5.800L12 15l-5 2.800L8 12 4 8l5.600-.800z"/>',
+  usr: '<path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><line x1="19" y1="8" x2="19" y2="14"/><line x1="22" y1="11" x2="16" y2="11"/>',
   coord: '<path d="M3 21h18"/><path d="M5 21V7l8-4v18"/><path d="M19 21V11l-6-4"/><path d="M9 9v.01M9 12v.01M9 15v.01M9 18v.01"/>',
   nivel: '<path d="M12 2 2 7l10 5 10-5-10-5z"/><path d="m2 17 10 5 10-5"/><path d="m2 12 10 5 10-5"/>',
   tempo: '<circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/>',
@@ -490,13 +491,13 @@ function hcPessoas(chave) { hcNav([chave]); }
   document.addEventListener('pointercancel', function () { ajApertou = false; }, true);
   var _d = desenharSubnav; desenharSubnav = function () {
     if (estado.sub === 'afast') estado.sub = 'dia';
-    if (estado.sub === 'fer' && !estado.superadmin) estado.sub = 'dia';
+    if ((estado.sub === 'fer' || estado.sub === 'usr') && !estado.superadmin) estado.sub = 'dia';
     var r = _d.apply(this, arguments), el = $('subnav'); if (!el) return r;
     el.querySelectorAll('[data-sub="plan"],[data-sub="afast"],[data-sub="fer"]').forEach(function (b) { b.remove(); });
     var ult = el.lastElementChild; if (ult && ult.className === 'sn-div') ult.remove();
     if (estado.superadmin) {
       /* um único botão, reaproveitado a cada redesenho da barra: recriar o botão no meio de um clique fazia o clique se perder */
-      var atual = estado.sub === 'plan' ? 'Planejamento' : estado.sub === 'fer' ? 'Feriados' : '';
+      var atual = estado.sub === 'plan' ? 'Planejamento' : estado.sub === 'fer' ? 'Feriados' : estado.sub === 'usr' ? 'Usuários' : '';
       var b = ajBotao || (ajBotao = (function () { var n = document.createElement('button'); n.type = 'button'; n.setAttribute('aria-haspopup', 'menu'); n.setAttribute('aria-expanded', 'false'); n.title = 'Ajustes do WFM'; n.onclick = function (ev) { ev.stopPropagation(); if (Date.now() - ajUlt < 700) return; ajMenu(n); }; return n; })());
       var cls = 'sn-aj' + (atual ? ' on ativa' : ''), html = hcSvg('aj') + (atual ? '<span>' + atual + '</span>' : '<span class="sr" style="position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0)">Ajustes do WFM</span>');
       if (b.className !== cls) b.className = cls; if (b.dataset.h !== html) { b.innerHTML = html; b.dataset.h = html; }
@@ -528,7 +529,7 @@ function hcPessoas(chave) { hcNav([chave]); }
   function ajMenu(b) {
     if (document.querySelector('.sn-ajp')) { ajFechar(); return; }
     var p = document.createElement('div'); p.className = 'sn-ajp'; p.setAttribute('role', 'menu');
-    p.innerHTML = '<small>Ajustes do WFM</small>' + [['plan', 'Planejamento', 'Montar e publicar as escalas'], ['fer', 'Feriados', 'Cadastro usado nas escalas e na aderência']].map(function (x) { return '<button type="button" role="menuitem" data-aj="' + x[0] + '" class="' + (estado.sub === x[0] ? 'at' : '') + '">' + hcSvg(x[0]) + '<div>' + x[1] + '<span>' + x[2] + '</span></div></button>'; }).join('');
+    p.innerHTML = '<small>Ajustes do WFM</small>' + [['plan', 'Planejamento', 'Montar e publicar as escalas'], ['fer', 'Feriados', 'Cadastro usado nas escalas e na aderência'], ['usr', 'Usuários', 'Cadastrar, atualizar, movimentar ou desligar']].map(function (x) { return '<button type="button" role="menuitem" data-aj="' + x[0] + '" class="' + (estado.sub === x[0] ? 'at' : '') + '">' + hcSvg(x[0]) + '<div>' + x[1] + '<span>' + x[2] + '</span></div></button>'; }).join('');
     document.body.appendChild(p); var r = b.getBoundingClientRect(); p.style.top = (r.bottom + 8) + 'px'; p.style.right = Math.max(8, window.innerWidth - r.right) + 'px'; b.setAttribute('aria-expanded', 'true');
     p.querySelectorAll('[data-aj]').forEach(function (x) { x.onclick = function () { var s = x.getAttribute('data-aj'); ajFechar(); if (s === estado.sub) return; if (estado.sub === 'plan' && temEdicoes() && !confirm('Há alterações não salvas na grade. Sair mesmo assim?')) return; if (estado.sub === 'plan') estado.edits = {}; estado.sub = s; telaGestao(); }; });
     setTimeout(function () { document.addEventListener('click', ajFora, true); document.addEventListener('keydown', ajEsc, true); var f = p.querySelector('button'); if (f) f.focus(); }, 0);

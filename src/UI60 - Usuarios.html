@@ -1,0 +1,300 @@
+<style>
+/* ===================== Gestão de Escalas > Ajustes > Usuários (24/11/2026) ===================== */
+.usr{--usr-ease:cubic-bezier(.23,1,.32,1);--usr-mola:cubic-bezier(.34,1.56,.64,1)}
+.usr-kpis{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:10px;margin:0 0 16px}
+.usr-kpi{position:relative;overflow:hidden;display:flex;flex-direction:column;align-items:flex-start;gap:2px;padding:13px 14px 12px 16px;border-radius:14px;border:1.5px solid var(--c2);background:var(--sup,#fff);color:var(--preto);font:inherit;text-align:left;cursor:pointer;transition:border-color .2s var(--usr-ease),box-shadow .25s var(--usr-ease),transform .25s var(--usr-ease)}
+.usr-kpi:before{content:"";position:absolute;left:0;top:10px;bottom:10px;width:4px;border-radius:0 4px 4px 0;background:var(--k);transform:scaleY(.55);transition:transform .35s var(--usr-mola)}
+.usr-kpi b{font-size:26px;line-height:1.1;font-weight:800;font-variant-numeric:tabular-nums}
+.usr-kpi span{font-size:12.5px;font-weight:700;color:var(--c4)}
+.usr-kpi[aria-pressed="true"]{border-color:var(--k);box-shadow:0 10px 24px -18px var(--k)}
+.usr-kpi[aria-pressed="true"]:before{transform:scaleY(1)}
+.usr-kpi:focus-visible{outline:2px solid var(--k);outline-offset:2px}
+@media (hover:hover) and (pointer:fine){ .usr-kpi:hover{transform:translateY(-2px);border-color:var(--k)} }
+.usr-barra{display:flex;gap:10px;align-items:center;flex-wrap:wrap;margin:0 0 12px}
+.usr-busca{position:relative;flex:1 1 260px;max-width:420px}
+.usr-busca svg{position:absolute;left:12px;top:50%;width:16px;height:16px;margin-top:-8px;color:var(--c4);pointer-events:none}
+.usr-busca input{width:100%;height:40px;padding:0 12px 0 36px;border-radius:10px;border:1.5px solid var(--c3);background:var(--sup,#fff);color:var(--preto);font-size:14px}
+.usr-busca input:focus{border-color:var(--rosa);outline:none;box-shadow:0 0 0 3px color-mix(in srgb,var(--rosa) 18%,transparent)}
+.usr-conta{font-size:13px;color:var(--c4);font-weight:700}
+.usr-lista{display:flex;flex-direction:column;gap:8px}
+.usr-cabl,.usr-it{display:grid;grid-template-columns:minmax(0,2.3fr) minmax(0,1.15fr) minmax(0,1.1fr) minmax(0,1.15fr) 114px;gap:12px;align-items:center}
+.usr-cabl{padding:0 14px;font-size:11px;font-weight:800;letter-spacing:.06em;text-transform:uppercase;color:var(--c4)}
+.usr-it{padding:10px 14px;border-radius:14px;border:1px solid var(--c2);background:var(--sup,#fff);transition:border-color .2s var(--usr-ease),box-shadow .25s var(--usr-ease)}
+.usr-it.usr-fora{opacity:.72}
+@media (hover:hover) and (pointer:fine){ .usr-it:hover{border-color:color-mix(in srgb,var(--rosa) 35%,var(--c2));box-shadow:0 12px 26px -22px rgba(79,63,145,.6)} }
+.usr-an .usr-it{animation:usrEntra .5s var(--usr-ease) both;animation-delay:calc(var(--i,0) * 32ms)}
+.usr-an .usr-kpi{animation:usrEntra .55s var(--usr-ease) both;animation-delay:calc(var(--i,0) * 55ms)}
+@keyframes usrEntra{from{opacity:0;transform:translate3d(0,12px,0) scale(.99)}to{opacity:1;transform:none}}
+.usr-it.usr-flash{animation:usrFlash 1.8s var(--usr-ease) both}
+@keyframes usrFlash{0%{box-shadow:0 0 0 0 rgba(216,0,115,.0);border-color:var(--rosa);background:color-mix(in srgb,var(--rosa) 10%,var(--sup,#fff))}30%{box-shadow:0 0 0 6px rgba(216,0,115,.12)}100%{box-shadow:0 0 0 0 rgba(216,0,115,0)}}
+.usr-q{display:flex;align-items:center;gap:10px;min-width:0;padding:0;border:0;background:none;color:inherit;font:inherit;text-align:left;cursor:pointer}
+.usr-q .av{flex:none}
+.usr-q .tx{min-width:0;display:flex;flex-direction:column}
+.usr-q b{font-size:14px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.usr-q small{font-size:12px;color:var(--c4);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.usr-q:focus-visible{outline:2px solid var(--rosa);outline-offset:4px;border-radius:8px}
+.usr-tg .pp{margin:0}
+.usr-tg em{display:block;margin-top:3px;font-size:11px;font-style:normal;color:var(--c4)}
+.usr-co{font-size:13px;font-weight:700;min-width:0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.usr-co small{display:block;font-size:11px;font-weight:600;color:var(--c4)}
+.usr-st{display:inline-flex;align-items:center;gap:6px;padding:3px 10px;border-radius:999px;font-size:12px;font-weight:800;white-space:nowrap;background:var(--sb);color:var(--sc)}
+.usr-st i{width:7px;height:7px;border-radius:50%;background:currentColor}
+.usr-st.ok{--sb:#E3F5EA;--sc:#17713D}.usr-st.esp{--sb:#FFF3D9;--sc:#8A5A00}.usr-st.desl{--sb:#FDECEC;--sc:#9B1C1C}.usr-st.mov{--sb:#E3F4F4;--sc:#0B5F5F}.usr-st.sem{--sb:#EEF1F5;--sc:#5B6676}
+.usr-st.esp i{animation:usrPulso 1.6s ease-in-out infinite}
+@keyframes usrPulso{50%{transform:scale(1.6);opacity:.45}}
+html[data-tema="escuro"] .usr-st.ok{--sb:#173a26;--sc:#7fe0a5}html[data-tema="escuro"] .usr-st.esp{--sb:#3a2c0d;--sc:#F2C063}html[data-tema="escuro"] .usr-st.desl{--sb:#2a1416;--sc:#F2A3A3}html[data-tema="escuro"] .usr-st.mov{--sb:#102626;--sc:#8FDADA}html[data-tema="escuro"] .usr-st.sem{--sb:#26303b;--sc:#B9C3D0}
+.usr-ac{display:flex;gap:6px;justify-content:flex-end}
+.usr-ib{display:grid;place-items:center;width:34px;height:34px;border-radius:10px;border:1.5px solid var(--c3);background:transparent;color:var(--c4);cursor:pointer;transition:background-color .15s,border-color .15s,color .15s,transform .2s var(--usr-mola)}
+.usr-ib svg{width:16px;height:16px}
+.usr-ib:active{transform:scale(.92)}
+.usr-ib:focus-visible{outline:2px solid var(--rosa);outline-offset:2px}
+@media (hover:hover) and (pointer:fine){ .usr-ib.ed:hover{color:var(--rosa);border-color:var(--rosa);background:var(--rosa-bg)} .usr-ib.mv:hover{color:#0B6E6E;border-color:#0E8A8A;background:#E3F4F4} .usr-ib.dl:hover{color:#B3261E;border-color:#B3261E;background:#FDECEC}
+  html[data-tema="escuro"] .usr-ib.mv:hover{background:#102626;color:#8FDADA} html[data-tema="escuro"] .usr-ib.dl:hover{background:#2a1416;color:#F2A3A3} }
+.usr-vz{padding:28px 16px;text-align:center;border:1.5px dashed var(--c3);border-radius:14px;color:var(--c4);font-size:14px}
+.usr-erro{padding:18px;border-radius:14px;background:#FDECEC;color:#9B1C1C;font-size:14px}
+html[data-tema="escuro"] .usr-erro{background:#2a1416;color:#F2A3A3}
+/* janela de cadastro */
+.usr-md .mcab .ic{background:var(--rosa-bg);color:var(--vinho)}
+.usr-md .mcab .ic svg{width:22px;height:22px}
+.usr-md .campo small{font-weight:600;color:var(--c4);text-transform:none;letter-spacing:0}
+.usr-md input[readonly]{background:var(--c1);color:var(--c4);cursor:not-allowed}
+.usr-rot{display:block;margin:4px 0 8px;font-size:13px;font-weight:800}
+.usr-md .tipo{transition:border-color .2s var(--usr-ease),background-color .2s var(--usr-ease),transform .3s var(--usr-mola)}
+.usr-md .tipo:active{transform:scale(.98)}
+.usr-md .tipo.on{border-color:var(--rosa);background:var(--rosa-bg)}
+.usr-md .tipo.on b{color:var(--vinho)}
+.usr-col{display:grid;grid-template-rows:0fr;opacity:0;transition:grid-template-rows .4s var(--usr-ease),opacity .3s var(--usr-ease)}
+.usr-col>div{overflow:hidden;min-height:0}
+.usr-col.on{grid-template-rows:1fr;opacity:1}
+.usr-tags{display:flex;flex-wrap:wrap;gap:8px;padding:2px 2px 4px}
+.usr-tags button{font:inherit;cursor:pointer;transform:scale(.97);transition:color .2s var(--usr-ease),background-color .2s var(--usr-ease),border-color .2s var(--usr-ease),transform .35s var(--usr-mola),box-shadow .25s var(--usr-ease)}
+.usr-tags button.pp{font-size:12.5px;padding:5px 12px;border-radius:999px;margin:0}
+/* só a tag escolhida fica com a cor dela; as outras ficam neutras (a cor aparece ao passar o mouse) */
+.usr-tags button.pp:not(.on){color:var(--c4);background:transparent;border-color:var(--c3)}
+.usr-tags button.on{transform:scale(1.04);box-shadow:0 8px 18px -12px currentColor}
+.usr-tags button:focus-visible{outline:2px solid var(--rosa);outline-offset:2px}
+@media (hover:hover) and (pointer:fine){ .usr-tags button.pp:not(.on):hover{color:var(--preto);border-color:var(--c4)} }
+.usr-desc{margin:8px 0 14px;font-size:12.5px;color:var(--c4);min-height:18px}
+.usr-nota{display:flex;gap:10px;align-items:flex-start;padding:12px;border-radius:12px;background:var(--c1);font-size:13px;line-height:1.45;color:var(--c4);margin:0 0 14px}
+.usr-nota svg{width:17px;height:17px;flex:none;margin-top:1px;color:var(--roxo)}
+.usr-prev{display:flex;align-items:center;gap:12px;padding:12px 14px;border-radius:14px;border:1.5px dashed var(--c3);margin:4px 0 14px}
+.usr-prev .tx{min-width:0;flex:1}
+.usr-prev .tx small{display:block;font-size:11px;font-weight:800;letter-spacing:.06em;text-transform:uppercase;color:var(--c4)}
+.usr-prev .tx b{display:block;font-size:15px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.usr-prev .tx span{font-size:12.5px;color:var(--c4)}
+.usr-prev .pp{margin:0}
+.usr-prev .pp.usr-pop{animation:usrPop .45s var(--usr-mola)}
+@keyframes usrPop{0%{transform:scale(.7);opacity:.3}100%{transform:none;opacity:1}}
+.usr-av{display:grid;place-items:center;width:40px;height:40px;border-radius:50%;flex:none;background:linear-gradient(135deg,var(--rosa),#9B7BFF);color:#fff;font-weight:800;font-size:14px}
+.usr-msg{padding:10px 12px;border-radius:12px;background:#FDECEC;border:1px solid #F2B8B8;color:#9B1C1C;font-size:13px;line-height:1.45;margin:0 0 12px}
+.usr-msg button{margin-left:6px;border:0;background:none;color:inherit;font:inherit;font-weight:800;text-decoration:underline;cursor:pointer;padding:0}
+html[data-tema="escuro"] .usr-msg{background:#2a1416;border-color:#6a2c2c;color:#F2A3A3}
+.usr-msg.usr-treme{animation:usrTreme .4s var(--usr-ease)}
+@keyframes usrTreme{20%{transform:translateX(-6px)}40%{transform:translateX(5px)}60%{transform:translateX(-3px)}80%{transform:translateX(2px)}}
+.usr-md .opcard.on{border-color:var(--rosa);background:var(--rosa-bg)}
+.usr-md .opcard input{accent-color:var(--rosa);margin-top:2px}
+.usr-md .opcard span{display:block;font-size:12.5px;color:var(--c4)}
+@media (max-width:860px){ .usr-cabl{display:none} .usr-it{grid-template-columns:minmax(0,1fr) auto;row-gap:8px} .usr-q{grid-column:1 / -1} .usr-co{grid-column:1 / -1;order:3} .usr-ac{order:4;grid-column:1 / -1;justify-content:flex-start} }
+@media (max-width:520px){ .usr-md .tipos{grid-template-columns:1fr} }
+@media (prefers-reduced-motion:reduce){ .usr-an .usr-it,.usr-an .usr-kpi,.usr-it.usr-flash,.usr-st.esp i,.usr-prev .pp.usr-pop,.usr-msg.usr-treme{animation:none!important} .usr *,.usr-md *{transition:none!important} }
+</style>
+<script>
+/* ===================== Gestão de Escalas > Ajustes > Usuários (24/11/2026) =====================
+   Só o WFM (o servidor também confere). Lista quem tem acesso ao painel, com a tag, a coordenação e a situação.
+   · Cadastrar usuário: e-mail, nome completo, acesso (Agente ou Gestão) e, na gestão, a tag; coordenação opcional.
+   · Editar: nome, acesso, tag e coordenação. Quem está na lista fixa do WFM e a própria pessoa não mudam o acesso aqui.
+   · Movimentação e Desligamento abrem as mesmas janelas do Planejamento (UI59 e UI57). */
+var USR_IC = {
+  novo: '<path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><line x1="19" y1="8" x2="19" y2="14"/><line x1="22" y1="11" x2="16" y2="11"/>',
+  ed: '<path d="M12 20h9"/><path d="M16.500 3.500a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4z"/>',
+  busca: '<circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.650" y2="16.650"/>',
+  info: '<circle cx="12" cy="12" r="10"/><line x1="12" y1="16" x2="12" y2="12"/><line x1="12" y1="8" x2="12.010" y2="8"/>'
+};
+function usrSvg(k) { if (k === 'mv' && typeof movSvg === 'function') return movSvg('mover'); if (k === 'dl' && typeof dslSvg === 'function') return dslSvg('sair'); return '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">' + (USR_IC[k] || '') + '</svg>'; }
+if (typeof ACOES !== 'undefined') { ACOES.USUARIO_CADASTRADO = 'Usuário Cadastrado'; ACOES.USUARIO_ATUALIZADO = 'Cadastro Atualizado'; }
+if (typeof ROTULO_CAMPO !== 'undefined') { ['nome', 'acesso', 'coordenacao', 'ativo'].forEach(function (k, i) { if (!ROTULO_CAMPO[k]) ROTULO_CAMPO[k] = ['Nome', 'Acesso', 'Coordenação', 'Ativo'][i]; }); }
+var USR_FILTROS = [
+  ['ativos', 'Ativos', '#D80073', function (u) { return u.sit === 'ATIVO'; }],
+  ['agentes', 'Agentes', '#4F3F91', function (u) { return u.sit === 'ATIVO' && u.perfil === 'AGENTE'; }],
+  ['gestao', 'Gestão', '#1D5FC2', function (u) { return u.sit === 'ATIVO' && u.perfil === 'GESTAO'; }],
+  ['ph', 'WFM', '#C2006A', function (u) { return u.sit === 'ATIVO' && (u.tag.cls === 'ph' || u.tag.cls === 'people'); }],
+  ['senha', 'Aguardando 1º acesso', '#C98A00', function (u) { return u.sit === 'ATIVO' && !u.senha; }],
+  ['sairam', 'Desligados e movimentados', '#0E8A8A', function (u) { return u.sit === 'DESLIGADO' || u.sit === 'MOVIMENTADO'; }],
+  ['sem', 'Sem acesso', '#5B6676', function (u) { return u.sit === 'SEM_ACESSO'; }]
+];
+function usrBr(d) { return d ? d.slice(8, 10) + '/' + d.slice(5, 7) + '/' + d.slice(0, 4) : ''; }
+function usrStatus(u) {
+  if (u.sit === 'DESLIGADO') return '<span class="usr-st desl"><i></i>Desligado · ' + usrBr(u.desligadoEm).slice(0, 5) + '</span>';
+  if (u.sit === 'MOVIMENTADO') return '<span class="usr-st mov"><i></i>Movimentado · ' + usrBr(u.movimentadoEm).slice(0, 5) + '</span>';
+  if (u.sit === 'SEM_ACESSO') return '<span class="usr-st sem"><i></i>Sem acesso</span>';
+  if (u.movimentadoEm) return '<span class="usr-st mov" title="Movimentação registrada: primeiro dia fora do painel em ' + usrBr(u.movimentadoEm) + '"><i></i>Movimenta em ' + usrBr(u.movimentadoEm).slice(0, 5) + '</span>';
+  if (u.desligadoEm) return '<span class="usr-st desl" title="Desligamento registrado: último dia em ' + usrBr(u.desligadoEm) + '"><i></i>Último dia ' + usrBr(u.desligadoEm).slice(0, 5) + '</span>';
+  if (!u.senha) return '<span class="usr-st esp" title="Ainda não criou a senha do painel"><i></i>Aguardando 1º acesso</span>';
+  return '<span class="usr-st ok"><i></i>Ativo</span>';
+}
+function usrIni(n) { var w = String(n || '').trim().split(/\s+/).filter(Boolean); return ((w[0] || '?').charAt(0) + (w.length > 1 ? w[w.length - 1].charAt(0) : '')).toUpperCase(); }
+function usrNomeBonito(n) { return String(n || '').toLowerCase().replace(/(^|\s)(\S)/g, function (m, a, b) { return a + b.toUpperCase(); }).replace(/\s(Da|De|Do|Das|Dos|E)\s/g, function (m) { return m.toLowerCase(); }); }
+function usrReduz() { return window.matchMedia && matchMedia('(prefers-reduced-motion: reduce)').matches; }
+
+/* ---------- rota: estado.sub === 'usr' (só WFM) ---------- */
+(function () {
+  if (typeof SUBS_RESTRITAS !== 'undefined' && SUBS_RESTRITAS.indexOf('usr') < 0) SUBS_RESTRITAS.push('usr');
+  var _a = abrirSub;
+  abrirSub = function () {
+    if (estado.sub === 'usr') { if (!estado.superadmin) { estado.sub = 'dia'; return _a.apply(this, arguments); } $('conteudo').className = ''; return telaUsuarios(); }
+    return _a.apply(this, arguments);
+  };
+  /* as janelas de Movimentação e Desligamento pegam o nome da pessoa no Planejamento; aqui, da lista de usuários */
+  if (typeof dslPessoa === 'function') {
+    var _dp = dslPessoa;
+    dslPessoa = function (email) {
+      var r = _dp.apply(this, arguments), u = estado.usr && estado.usr.mapa && estado.usr.mapa[email];
+      if (u && (!r || r.nome === String(email).split('@')[0])) return { email: email, nome: u.nome, desligadoEm: u.desligadoEm, movimentadoEm: u.movimentadoEm };
+      return r;
+    };
+  }
+})();
+
+/* ---------- tela ---------- */
+function telaUsuarios(flash) {
+  estado.usrF = estado.usrF || { f: 'ativos', q: '' };
+  if (!estado.usr || !$('usr')) gCarregando();
+  chamar('apiUsuarios', estado.token).then(function (r) {
+    r.mapa = {}; r.usuarios.forEach(function (u) { r.mapa[u.email] = u; }); estado.usr = r;
+    if (estado.aba !== 'gestao' || estado.sub !== 'usr') return;
+    usrDesenhar(true, flash);
+  }).catch(function (e) {
+    if (/SESSAO_INVALIDA|SEM_PERMISSAO/.test(String(e))) return falhaGeral(e);
+    gc().innerHTML = '<div class="usr-erro">Não foi possível carregar os usuários agora. ' + esc((e && e.message) || '') + ' <button class="btn sec peq" id="usrDeNovo">Tentar de novo</button></div>';
+    var b = $('usrDeNovo'); if (b) b.onclick = function () { telaUsuarios(); };
+  });
+}
+function usrDesenhar(animar, flash) {
+  var R = estado.usr, F = estado.usrF, g = gc(); if (!g || !R) return;
+  var cont = {}; USR_FILTROS.forEach(function (f) { cont[f[0]] = R.usuarios.filter(f[3]).length; });
+  var filtros = USR_FILTROS.filter(function (f) { return f[0] !== 'sem' || cont.sem > 0 || F.f === 'sem'; });
+  g.innerHTML = '<div class="usr' + (animar && !usrReduz() ? ' usr-an' : '') + '" id="usr">' +
+    '<div class="pl-cab"><div><h1>Usuários</h1><p>Quem tem acesso ao painel, com a tag que aparece no Histórico e no topo. Cadastre pessoas novas, atualize o cadastro ou registre uma movimentação ou um desligamento.</p></div>' +
+    '<div class="pl-acoes"><button class="btn" id="usrNovo">' + usrSvg('novo').replace('<svg ', '<svg style="width:16px;height:16px;vertical-align:-3px;margin-right:6px" ') + 'Cadastrar usuário</button></div></div>' +
+    '<div class="usr-kpis" role="group" aria-label="Filtrar usuários">' + filtros.map(function (f, i) { return '<button type="button" class="usr-kpi" style="--k:' + f[2] + ';--i:' + i + '" data-f="' + f[0] + '" aria-pressed="' + (F.f === f[0]) + '"><b data-n="' + cont[f[0]] + '">' + cont[f[0]] + '</b><span>' + f[1] + '</span></button>'; }).join('') + '</div>' +
+    '<div class="usr-barra"><label class="usr-busca"><span class="sr" style="position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0)">Buscar usuário</span>' + usrSvg('busca') + '<input type="search" id="usrQ" placeholder="Buscar por nome, e-mail, tag ou coordenação" autocomplete="off" value="' + esc(F.q) + '"></label><span class="usr-conta" id="usrConta"></span></div>' +
+    '<div class="usr-lista" id="usrLista"></div></div>';
+  usrLista(animar, flash);
+  var raiz = $('usr');
+  if (animar && !usrReduz()) {
+    raiz.querySelectorAll('.usr-kpi b[data-n]').forEach(function (el) { var alvo = +el.getAttribute('data-n'), t0 = performance.now(), d = 650; if (!alvo) return; (function passo(t) { var p = Math.min(1, (t - t0) / d), e = 1 - Math.pow(1 - p, 3); el.textContent = Math.round(alvo * e); if (p < 1 && document.body.contains(el)) requestAnimationFrame(passo); })(t0); });
+    setTimeout(function () { if (raiz) raiz.classList.remove('usr-an'); }, 1400);
+  }
+  raiz.querySelectorAll('.usr-kpi').forEach(function (b) { b.onclick = function () { var f = b.getAttribute('data-f'); if (F.f === f) return; F.f = f; raiz.querySelectorAll('.usr-kpi').forEach(function (x) { x.setAttribute('aria-pressed', String(x === b)); }); usrLista(true); }; });
+  var q = $('usrQ'), tq = 0; q.oninput = function () { clearTimeout(tq); tq = setTimeout(function () { F.q = q.value.trim(); usrLista(false); }, 120); };
+  $('usrNovo').onclick = function () { usrModal(null); };
+}
+function usrSemAcento(s) { return String(s || '').toLowerCase().normalize('NFD').replace(/[̀-ͯ]/g, ''); }
+function usrLista(animar, flash) {
+  var R = estado.usr, F = estado.usrF, el = $('usrLista'); if (!el) return;
+  var f = USR_FILTROS.filter(function (x) { return x[0] === F.f; })[0] || USR_FILTROS[0], q = usrSemAcento(F.q);
+  var l = R.usuarios.filter(f[3]).filter(function (u) { return !q || usrSemAcento(u.nome + ' ' + u.email + ' ' + u.tag.rot + ' ' + u.coord + ' ' + u.cargo).indexOf(q) >= 0; });
+  $('usrConta').textContent = l.length + (l.length === 1 ? ' pessoa' : ' pessoas');
+  if (!l.length) { el.innerHTML = '<div class="usr-vz">' + (q ? 'Ninguém encontrado com essa busca.' : 'Ninguém neste filtro.') + '</div>'; return; }
+  var linha = function (u, i) {
+    var saiu = u.sit === 'DESLIGADO' || u.sit === 'MOVIMENTADO', podeSair = !saiu && u.sit === 'ATIVO' && !u.desligadoEm && !u.movimentadoEm && !u.eu;
+    return '<div class="usr-it' + (saiu || u.sit === 'SEM_ACESSO' ? ' usr-fora' : '') + '" data-em="' + esc(u.email) + '" style="--i:' + Math.min(i, 16) + '">' +
+      '<button type="button" class="usr-q" data-ed="' + esc(u.email) + '" title="Editar o cadastro de ' + esc(u.nome) + '">' + avatarHtml(u.email, u.nome, '') + '<span class="tx"><b>' + esc(u.nome) + (u.eu ? ' <small style="display:inline">(você)</small>' : '') + '</b><small>' + esc(u.email) + '</small></span></button>' +
+      '<div class="usr-tg"><span class="pp pp-' + esc(u.tag.cls) + '">' + esc(u.tag.rot) + '</span>' + (u.fixo ? '<em>Acesso fixo do WFM</em>' : '') + '</div>' +
+      '<div class="usr-co">' + esc(u.coord && u.coord !== '—' ? u.coord : 'Sem coordenação') + '<small>' + esc(u.cargo || (u.perfil === 'GESTAO' ? 'Gestão' : 'Agente')) + '</small></div>' +
+      '<div>' + usrStatus(u) + '</div>' +
+      '<div class="usr-ac"><button type="button" class="usr-ib ed" data-ed="' + esc(u.email) + '" title="Editar cadastro" aria-label="Editar o cadastro de ' + esc(u.nome) + '">' + usrSvg('ed') + '</button>' +
+        (podeSair ? '<button type="button" class="usr-ib mv" data-mv="' + esc(u.email) + '" title="Registrar Movimentação" aria-label="Registrar a movimentação de ' + esc(u.nome) + '">' + usrSvg('mv') + '</button><button type="button" class="usr-ib dl" data-dl="' + esc(u.email) + '" title="Registrar Desligamento" aria-label="Registrar o desligamento de ' + esc(u.nome) + '">' + usrSvg('dl') + '</button>' : '') + '</div></div>';
+  };
+  el.classList.toggle('usr-an', !!animar && !usrReduz());
+  el.innerHTML = '<div class="usr-cabl" aria-hidden="true"><span>Pessoa</span><span>Tag</span><span>Coordenação e cargo</span><span>Situação</span><span></span></div>' + l.map(linha).join('');
+  if (animar) setTimeout(function () { el.classList.remove('usr-an'); }, 1200);
+  el.querySelectorAll('[data-ed]').forEach(function (b) { b.onclick = function () { usrModal(R.mapa[b.getAttribute('data-ed')]); }; });
+  el.querySelectorAll('[data-mv]').forEach(function (b) { b.onclick = function () { if (typeof movModal === 'function') movModal(b.getAttribute('data-mv')); }; });
+  el.querySelectorAll('[data-dl]').forEach(function (b) { b.onclick = function () { if (typeof dslModal === 'function') dslModal(b.getAttribute('data-dl')); }; });
+  if (typeof atualizarAvatares === 'function') atualizarAvatares();
+  if (flash) { var it = el.querySelector('.usr-it[data-em="' + flash.replace(/"/g, '') + '"]'); if (it) { it.classList.add('usr-flash'); try { it.scrollIntoView({ block: 'center', behavior: usrReduz() ? 'auto' : 'smooth' }); } catch (e) { } } }
+}
+
+/* ---------- janela: cadastrar ou editar ---------- */
+function usrModal(u) {
+  var R = estado.usr, novo = !u, travado = !!u && (u.fixo || u.eu);
+  var st = { perfil: u ? u.perfil : '', papel: u && u.perfil === 'GESTAO' ? (R.papeis.some(function (p) { return p.id === u.papel; }) ? u.papel : '') : '' };
+  if (u && u.perfil === 'GESTAO' && !st.papel) { var ach = R.papeis.filter(function (p) { return u.tag && p.rot === u.tag.rot; })[0] || R.papeis.filter(function (p) { return u.tag && p.cls === u.tag.cls; })[0]; st.papel = ach ? ach.id : 'Gestão'; }
+  var ini = { perfil: st.perfil, papel: st.papel };
+  var opCoord = '<option value="">' + (u && !u.coordManual && u.coord && u.coord !== '—' ? 'Pela planilha do Headcount (' + esc(u.coord) + ')' : 'Sem coordenação') + '</option>' +
+    R.coordenacoes.map(function (c) { return '<option value="' + esc(c.id) + '"' + (u && u.coordManual === c.id ? ' selected' : '') + '>' + esc(c.nome) + '</option>'; }).join('');
+  var acesso = travado
+    ? '<div class="usr-nota">' + usrSvg('info') + '<span>' + (u.eu ? 'Você não pode mudar o seu próprio acesso.' : 'Esta pessoa está na lista fixa do WFM. O acesso dela só muda pelo código.') + ' O acesso atual é <span class="pp pp-' + esc(u.tag.cls) + '">' + esc(u.tag.rot) + '</span>.</span></div>'
+    : '<span class="usr-rot">Acesso</span><div class="tipos usr-tipos"><button type="button" class="tipo" data-p="AGENTE"><b>Agente</b><span>Vê a própria escala e a presença e pede trocas. Fica com a tag de Agente.</span></button><button type="button" class="tipo" data-p="GESTAO"><b>Gestão</b><span>Vê as visões da gestão, com a tag escolhida abaixo.</span></button></div>' +
+      '<div class="usr-col" id="uTagsBox"><div><span class="usr-rot">Tag de gestão</span><div class="usr-tags" role="radiogroup" aria-label="Tag de gestão">' + R.papeis.map(function (p) { return '<button type="button" role="radio" class="pp pp-' + p.cls + '" data-tag="' + esc(p.id) + '" aria-checked="false">' + esc(p.rot) + '</button>'; }).join('') + '</div><p class="usr-desc" id="uTagDesc"></p></div></div>';
+  var w = abrirModal('<div class="usr-md">' +
+    '<div class="mcab"><span class="ic">' + usrSvg(novo ? 'novo' : 'ed') + '</span><div><h3>' + (novo ? 'Cadastrar usuário' : 'Editar cadastro') + '</h3><p>' + (novo ? 'A pessoa passa a entrar no painel com o acesso escolhido.' : esc(u.email)) + '</p></div></div>' +
+    '<div class="campo"><label for="uEm">E-mail</label><input id="uEm" type="email" inputmode="email" autocomplete="off" spellcheck="false" maxlength="80" placeholder="nome.sobrenome@exemplo.com" value="' + esc(u ? u.email : '') + '"' + (novo ? '' : ' readonly') + '></div>' +
+    '<div class="campo"><label for="uNm">Nome completo</label><input id="uNm" type="text" autocomplete="off" maxlength="120" placeholder="Nome e sobrenome" value="' + esc(u ? usrNomeBonito(u.nomeCompleto || u.nome) : '') + '"></div>' +
+    acesso +
+    '<div class="campo"><label for="uCo">Coordenação <small>(opcional)</small></label><select id="uCo">' + opCoord + '</select></div>' +
+    '<div class="usr-prev" aria-live="polite"><span class="usr-av" id="uAv">?</span><span class="tx"><small>Vai aparecer assim</small><b id="uPvN">Nome da pessoa</b><span id="uPvC"></span></span><span id="uPvT"></span></div>' +
+    (novo ? '<label class="opcard on" id="uConv"><input type="checkbox" checked><div><b>Enviar o e-mail para criar a senha</b><span>A pessoa recebe na hora o link para criar a senha. Ela também pode pedir pela tela de entrada.</span></div></label>' : '') +
+    '<div id="uMsg"></div>' +
+    '<div class="acoes"><button class="btn sec" data-fechar>Cancelar</button><button class="btn" id="uOk">' + (novo ? 'Cadastrar usuário' : 'Salvar') + '</button></div></div>');
+  var q = function (s) { return w.querySelector(s); }, $em = q('#uEm'), $nm = q('#uNm'), $co = q('#uCo'), $ok = q('#uOk'), ultTag = '';
+  var msg = function (html) { var m = q('#uMsg'); m.innerHTML = html ? '<div class="usr-msg">' + html + '</div>' : ''; var x = m.firstChild; if (x && !usrReduz()) { x.classList.add('usr-treme'); } };
+  function papelAtual() { return R.papeis.filter(function (p) { return p.id === st.papel; })[0] || null; }
+  function tagDe() { if (travado) return u.tag; if (st.perfil === 'AGENTE') return { rot: 'Agente', cls: 'agente' }; var p = papelAtual(); return st.perfil === 'GESTAO' && p ? { rot: p.rot, cls: p.cls } : null; }
+  function prever() {
+    var n = usrNomeBonito($nm.value.trim()); q('#uPvN').textContent = n || 'Nome da pessoa'; q('#uAv').textContent = n ? usrIni(n) : '?';
+    var co = $co.options[$co.selectedIndex]; q('#uPvC').textContent = ($em.value.trim().toLowerCase() || 'e-mail') + ' · ' + (co ? co.text.replace(/^Pela planilha do Headcount \((.*)\)$/, '$1') : '');
+    var t = tagDe(), k = t ? t.cls + '|' + t.rot : '';
+    if (k !== ultTag) { ultTag = k; var box = q('#uPvT'); box.innerHTML = t ? '<span class="pp pp-' + esc(t.cls) + (usrReduz() ? '' : ' usr-pop') + '">' + esc(t.rot) + '</span>' : ''; }
+  }
+  function pintarAcesso() {
+    if (travado) return;
+    w.querySelectorAll('[data-p]').forEach(function (b) { b.classList.toggle('on', b.getAttribute('data-p') === st.perfil); b.setAttribute('aria-pressed', String(b.getAttribute('data-p') === st.perfil)); });
+    q('#uTagsBox').classList.toggle('on', st.perfil === 'GESTAO');
+    w.querySelectorAll('[data-tag]').forEach(function (b) { var on = b.getAttribute('data-tag') === st.papel; b.classList.toggle('on', on); b.setAttribute('aria-checked', String(on)); b.tabIndex = st.perfil === 'GESTAO' ? 0 : -1; });
+    var p = papelAtual(); q('#uTagDesc').textContent = p ? p.desc + '.' : 'Escolha a tag que aparece para esta pessoa no painel.';
+    prever();
+  }
+  if (!travado) {
+    w.querySelectorAll('[data-p]').forEach(function (b) { b.onclick = function () { st.perfil = b.getAttribute('data-p'); if (st.perfil === 'GESTAO' && !st.papel) st.papel = ''; msg(''); pintarAcesso(); }; });
+    w.querySelectorAll('[data-tag]').forEach(function (b) { b.onclick = function () { st.papel = b.getAttribute('data-tag'); msg(''); pintarAcesso(); }; });
+  }
+  /* e-mail: completa o domínio e avisa na hora se já existe */
+  function emailOk() { var v = $em.value.trim().toLowerCase(); return /^[a-z0-9._-]+@exemplo\.com$/.test(v) ? v : ''; }
+  function conferirEmail() {
+    if (!novo) return true; var v = emailOk(); if (!v) return false;
+    var x = R.mapa[v];
+    if (x && x.sit === 'ATIVO') { msg('Este e-mail já está cadastrado (' + esc(x.nome) + ').<button type="button" id="uIrEd">Editar o cadastro</button>'); var b = q('#uIrEd'); if (b) b.onclick = function () { w.remove(); usrModal(x); }; return false; }
+    if (x && (x.sit === 'DESLIGADO' || x.sit === 'MOVIMENTADO')) { msg('Este e-mail tem ' + (x.sit === 'MOVIMENTADO' ? 'movimentação' : 'desligamento') + ' registrado. O retorno de quem saiu não é feito por esta tela.'); return false; }
+    if (x && !$nm.value.trim()) $nm.value = usrNomeBonito(x.nomeCompleto || x.nome);
+    msg(''); return true;
+  }
+  if (novo) {
+    $em.addEventListener('blur', function () { var v = $em.value.trim().toLowerCase().replace(/\s+/g, ''); if (v && v.indexOf('@') < 0) v += '@exemplo.com'; $em.value = v; prever(); if (v) { if (!emailOk()) msg('Use um e-mail @exemplo.com válido.'); else conferirEmail(); } });
+    $em.addEventListener('input', function () { prever(); });
+    var cv = q('#uConv'); cv.onclick = function (ev) { ev.preventDefault(); var i = cv.querySelector('input'); i.checked = !i.checked; cv.classList.toggle('on', i.checked); };
+  }
+  $nm.addEventListener('input', prever); $co.addEventListener('change', prever);
+  pintarAcesso(); prever();
+  setTimeout(function () { (novo ? $em : $nm).focus(); }, 60);
+  $ok.onclick = function () {
+    var email = novo ? emailOk() : u.email, nome = $nm.value.replace(/\s+/g, ' ').trim();
+    if (novo && !email) { msg('Use um e-mail @exemplo.com válido.'); $em.focus(); return; }
+    if (novo && !conferirEmail()) return;
+    if (nome.split(' ').length < 2 || nome.length < 5) { msg('Informe o nome completo (nome e sobrenome).'); $nm.focus(); return; }
+    if (!travado && !st.perfil) { msg('Escolha o acesso: Agente ou Gestão.'); return; }
+    if (!travado && st.perfil === 'GESTAO' && !st.papel) { msg('Escolha a tag de gestão.'); return; }
+    var conv = q('#uConv'), txt = $ok.textContent; ocupado($ok, true, novo ? 'Cadastrando…' : 'Salvando…'); msg('');
+    chamar('apiUsuarioSalvar', estado.token, { novo: novo, email: email, nome: nome, perfil: travado ? u.perfil : st.perfil, papel: st.papel, manterAcesso: !novo && st.perfil === ini.perfil && (st.perfil !== 'GESTAO' || st.papel === ini.papel), coordId: $co.value, convite: !!(conv && conv.querySelector('input').checked) }).then(function (r) {
+      w.remove();
+      toast(r.novo ? 'Usuário cadastrado: ' + r.nome + '.' + (r.convite ? ' O e-mail para criar a senha foi enviado.' : '') : r.nada ? 'Nada mudou no cadastro.' : 'Cadastro de ' + r.nome + ' atualizado.' + (r.sessoesEncerradas ? ' A pessoa vai precisar entrar de novo.' : ''));
+      // os selos, os nomes e a lista de pessoas da gestão são lidos de novo
+      estado.papeis = null; estado.__papeisP = null; if (typeof carregarPapeis === 'function') carregarPapeis();
+      if (estado.nomes) chamar('apiNomes', estado.token).then(function (n) { estado.nomes = n; }).catch(function () { });
+      if (r.novo && estado.usrF.f !== 'ativos' && estado.usrF.f !== (r.acesso === 'Agente' ? 'agentes' : 'gestao')) estado.usrF.f = 'ativos';
+      telaUsuarios(r.email);
+    }).catch(function (e) { ocupado($ok, false, txt); if (/SESSAO_INVALIDA|SEM_PERMISSAO/.test(String(e))) return falhaGeral(e); msg(esc(String((e && e.message) || e).replace(/^Error:\s*/, ''))); });
+  };
+}
+</script>
