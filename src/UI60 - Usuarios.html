@@ -1,15 +1,42 @@
 <style>
 /* ===================== Gestão de Escalas > Ajustes > Usuários (24/11/2026) ===================== */
 .usr{--usr-ease:cubic-bezier(.23,1,.32,1);--usr-mola:cubic-bezier(.34,1.56,.64,1)}
-.usr-kpis{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:10px;margin:0 0 16px}
-.usr-kpi{position:relative;overflow:hidden;display:flex;flex-direction:column;align-items:flex-start;gap:2px;padding:13px 14px 12px 16px;border-radius:14px;border:1.5px solid var(--c2);background:var(--sup,#fff);color:var(--preto);font:inherit;text-align:left;cursor:pointer;transition:border-color .2s var(--usr-ease),box-shadow .25s var(--usr-ease),transform .25s var(--usr-ease)}
-.usr-kpi:before{content:"";position:absolute;left:0;top:10px;bottom:10px;width:4px;border-radius:0 4px 4px 0;background:var(--k);transform:scaleY(.55);transition:transform .35s var(--usr-mola)}
+/* resumo: a conta Agentes + Gestão = Com acesso fica escrita; o que está "dentro" e o que está "fora" fica separado */
+.usr-res{display:grid;grid-template-columns:minmax(0,1fr) minmax(230px,300px);gap:12px;margin:0 0 16px}
+.usr-bloco{padding:14px;border-radius:16px;border:1px solid var(--c2);background:var(--sup,#fff);min-width:0}
+.usr-tit{display:block;margin:0 0 10px;font-size:11px;font-weight:800;letter-spacing:.06em;text-transform:uppercase;color:var(--c4)}
+.usr-eq{display:flex;align-items:stretch;gap:8px}
+.usr-op{display:grid;place-items:center;flex:none;width:22px;font-size:22px;font-weight:800;color:var(--c4)}
+.usr-kpi{position:relative;overflow:hidden;flex:1 1 0;min-width:0;display:flex;flex-direction:column;align-items:flex-start;gap:2px;padding:11px 12px 10px 15px;border-radius:12px;border:1.5px solid var(--c2);background:var(--sup,#fff);color:var(--preto);font:inherit;text-align:left;cursor:pointer;transition:border-color .2s var(--usr-ease),box-shadow .25s var(--usr-ease),transform .25s var(--usr-ease),background-color .2s var(--usr-ease)}
+.usr-kpi:before{content:"";position:absolute;left:0;top:9px;bottom:9px;width:4px;border-radius:0 4px 4px 0;background:var(--k);transform:scaleY(.55);transition:transform .35s var(--usr-mola)}
 .usr-kpi b{font-size:26px;line-height:1.1;font-weight:800;font-variant-numeric:tabular-nums}
 .usr-kpi span{font-size:12.5px;font-weight:700;color:var(--c4)}
+.usr-kpi.usr-tot{background:color-mix(in srgb,var(--k) 7%,var(--sup,#fff));border-color:color-mix(in srgb,var(--k) 30%,var(--c2))}
+.usr-kpi.usr-tot span{color:var(--preto)}
 .usr-kpi[aria-pressed="true"]{border-color:var(--k);box-shadow:0 10px 24px -18px var(--k)}
 .usr-kpi[aria-pressed="true"]:before{transform:scaleY(1)}
-.usr-kpi:focus-visible{outline:2px solid var(--k);outline-offset:2px}
-@media (hover:hover) and (pointer:fine){ .usr-kpi:hover{transform:translateY(-2px);border-color:var(--k)} }
+.usr-kpi:focus-visible,.usr-chip:focus-visible{outline:2px solid var(--k);outline-offset:2px}
+.usr-trilho{display:flex;height:8px;margin:12px 0 0;border-radius:99px;overflow:hidden;background:var(--c2);gap:2px}
+.usr-trilho i{display:block;height:100%;width:var(--w);background:var(--k);min-width:4px}
+.usr-an .usr-trilho{animation:usrBarra .9s var(--usr-ease) .15s both}
+@keyframes usrBarra{from{clip-path:inset(0 100% 0 0)}to{clip-path:inset(0 0 0 0)}}
+.usr-dentro{display:flex;flex-wrap:wrap;align-items:center;gap:8px;margin:12px 0 0;padding:10px 0 0;border-top:1px dashed var(--c3)}
+.usr-dentro>span{font-size:12.5px;font-weight:700;color:var(--c4);margin-right:2px}
+.usr-chip{display:inline-flex;align-items:center;gap:7px;padding:6px 12px 6px 9px;border-radius:999px;border:1.5px solid var(--c3);background:transparent;color:var(--preto);font:inherit;font-size:13px;font-weight:700;cursor:pointer;transition:border-color .2s var(--usr-ease),background-color .2s var(--usr-ease),transform .25s var(--usr-mola)}
+.usr-chip:before{content:"";width:8px;height:8px;border-radius:50%;background:var(--k)}
+.usr-chip b{font-variant-numeric:tabular-nums}
+.usr-chip em{font-style:normal;font-weight:600;color:var(--c4)}
+.usr-chip:active{transform:scale(.96)}
+.usr-chip[aria-pressed="true"]{border-color:var(--k);background:color-mix(in srgb,var(--k) 10%,transparent)}
+.usr-fora-b{display:flex;flex-direction:column}
+.usr-fora-b .usr-kpi{flex:none;width:100%}
+.usr-sai{margin:10px 0 0;padding:0;list-style:none;display:flex;flex-direction:column;gap:6px;font-size:12.5px;color:var(--c4);line-height:1.4}
+.usr-sai li{display:flex;gap:8px;align-items:baseline}
+.usr-sai b{color:var(--preto);font-variant-numeric:tabular-nums;min-width:14px;text-align:right}
+.usr-an .usr-kpi,.usr-an .usr-chip{animation:usrEntra .55s var(--usr-ease) both;animation-delay:calc(var(--i,0) * 55ms)}
+@media (hover:hover) and (pointer:fine){ .usr-kpi:hover{transform:translateY(-2px);border-color:var(--k)} .usr-chip:hover{border-color:var(--k)} }
+@media (max-width:860px){ .usr-res{grid-template-columns:1fr} }
+@media (max-width:520px){ .usr-bloco{padding:12px} .usr-eq{gap:5px} .usr-op{width:14px;font-size:18px} .usr-eq .usr-kpi{padding:9px 7px 8px 11px} .usr-eq .usr-kpi b{font-size:21px} .usr-eq .usr-kpi span{font-size:11.5px;line-height:1.25} }
 .usr-barra{display:flex;gap:10px;align-items:center;flex-wrap:wrap;margin:0 0 12px}
 .usr-busca{position:relative;flex:1 1 260px;max-width:420px}
 .usr-busca svg{position:absolute;left:12px;top:50%;width:16px;height:16px;margin-top:-8px;color:var(--c4);pointer-events:none}
@@ -39,10 +66,10 @@
 .usr-co small{display:block;font-size:11px;font-weight:600;color:var(--c4)}
 .usr-st{display:inline-flex;align-items:center;gap:6px;padding:3px 10px;border-radius:999px;font-size:12px;font-weight:800;white-space:nowrap;background:var(--sb);color:var(--sc)}
 .usr-st i{width:7px;height:7px;border-radius:50%;background:currentColor}
-.usr-st.ok{--sb:#E3F5EA;--sc:#17713D}.usr-st.esp{--sb:#FFF3D9;--sc:#8A5A00}.usr-st.desl{--sb:#FDECEC;--sc:#9B1C1C}.usr-st.mov{--sb:#E3F4F4;--sc:#0B5F5F}.usr-st.sem{--sb:#EEF1F5;--sc:#5B6676}
+.usr-st.ok{--sb:#E3F5EA;--sc:#17713D}.usr-st.esp{--sb:#FFF3D9;--sc:#8A5A00}.usr-st.desl{--sb:#FDECEC;--sc:#9B1C1C}.usr-st.mov{--sb:#E3F4F4;--sc:#0B5F5F}
 .usr-st.esp i{animation:usrPulso 1.6s ease-in-out infinite}
 @keyframes usrPulso{50%{transform:scale(1.6);opacity:.45}}
-html[data-tema="escuro"] .usr-st.ok{--sb:#173a26;--sc:#7fe0a5}html[data-tema="escuro"] .usr-st.esp{--sb:#3a2c0d;--sc:#F2C063}html[data-tema="escuro"] .usr-st.desl{--sb:#2a1416;--sc:#F2A3A3}html[data-tema="escuro"] .usr-st.mov{--sb:#102626;--sc:#8FDADA}html[data-tema="escuro"] .usr-st.sem{--sb:#26303b;--sc:#B9C3D0}
+html[data-tema="escuro"] .usr-st.ok{--sb:#173a26;--sc:#7fe0a5}html[data-tema="escuro"] .usr-st.esp{--sb:#3a2c0d;--sc:#F2C063}html[data-tema="escuro"] .usr-st.desl{--sb:#2a1416;--sc:#F2A3A3}html[data-tema="escuro"] .usr-st.mov{--sb:#102626;--sc:#8FDADA}
 .usr-ac{display:flex;gap:6px;justify-content:flex-end}
 .usr-ib{display:grid;place-items:center;width:34px;height:34px;border-radius:10px;border:1.5px solid var(--c3);background:transparent;color:var(--c4);cursor:pointer;transition:background-color .15s,border-color .15s,color .15s,transform .2s var(--usr-mola)}
 .usr-ib svg{width:16px;height:16px}
@@ -85,7 +112,14 @@ html[data-tema="escuro"] .usr-erro{background:#2a1416;color:#F2A3A3}
 .usr-prev .pp{margin:0}
 .usr-prev .pp.usr-pop{animation:usrPop .45s var(--usr-mola)}
 @keyframes usrPop{0%{transform:scale(.7);opacity:.3}100%{transform:none;opacity:1}}
-.usr-av{display:grid;place-items:center;width:40px;height:40px;border-radius:50%;flex:none;background:linear-gradient(135deg,var(--rosa),#9B7BFF);color:#fff;font-weight:800;font-size:14px}
+.usr-av{position:relative;display:grid;place-items:center;width:44px;height:44px;border-radius:50%;flex:none;background:linear-gradient(135deg,var(--rosa),#9B7BFF);color:#fff;font-weight:800;font-size:14px;overflow:hidden}
+.usr-av img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;border-radius:50%;opacity:0;transform:scale(1.08);transition:opacity .35s var(--usr-ease),transform .45s var(--usr-ease)}
+.usr-av img.ok{opacity:1;transform:none}
+.usr-av.busca:after{content:"";position:absolute;inset:-3px;border-radius:50%;border:2px solid transparent;border-top-color:var(--rosa);animation:usrGira .8s linear infinite}
+@keyframes usrGira{to{transform:rotate(360deg)}}
+.usr-ft{display:block;margin-top:2px;font-size:11.5px;color:var(--c4)}
+.usr-ft.ok{color:#17713D}
+html[data-tema="escuro"] .usr-ft.ok{color:#7fe0a5}
 .usr-msg{padding:10px 12px;border-radius:12px;background:#FDECEC;border:1px solid #F2B8B8;color:#9B1C1C;font-size:13px;line-height:1.45;margin:0 0 12px}
 .usr-msg button{margin-left:6px;border:0;background:none;color:inherit;font:inherit;font-weight:800;text-decoration:underline;cursor:pointer;padding:0}
 html[data-tema="escuro"] .usr-msg{background:#2a1416;border-color:#6a2c2c;color:#F2A3A3}
@@ -96,7 +130,7 @@ html[data-tema="escuro"] .usr-msg{background:#2a1416;border-color:#6a2c2c;color:
 .usr-md .opcard span{display:block;font-size:12.5px;color:var(--c4)}
 @media (max-width:860px){ .usr-cabl{display:none} .usr-it{grid-template-columns:minmax(0,1fr) auto;row-gap:8px} .usr-q{grid-column:1 / -1} .usr-co{grid-column:1 / -1;order:3} .usr-ac{order:4;grid-column:1 / -1;justify-content:flex-start} }
 @media (max-width:520px){ .usr-md .tipos{grid-template-columns:1fr} }
-@media (prefers-reduced-motion:reduce){ .usr-an .usr-it,.usr-an .usr-kpi,.usr-it.usr-flash,.usr-st.esp i,.usr-prev .pp.usr-pop,.usr-msg.usr-treme{animation:none!important} .usr *,.usr-md *{transition:none!important} }
+@media (prefers-reduced-motion:reduce){ .usr-an .usr-it,.usr-an .usr-kpi,.usr-an .usr-chip,.usr-an .usr-trilho,.usr-av.busca:after,.usr-it.usr-flash,.usr-st.esp i,.usr-prev .pp.usr-pop,.usr-msg.usr-treme{animation:none!important} .usr *,.usr-md *{transition:none!important} }
 </style>
 <script>
 /* ===================== Gestão de Escalas > Ajustes > Usuários (24/11/2026) =====================
@@ -113,20 +147,21 @@ var USR_IC = {
 function usrSvg(k) { if (k === 'mv' && typeof movSvg === 'function') return movSvg('mover'); if (k === 'dl' && typeof dslSvg === 'function') return dslSvg('sair'); return '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">' + (USR_IC[k] || '') + '</svg>'; }
 if (typeof ACOES !== 'undefined') { ACOES.USUARIO_CADASTRADO = 'Usuário Cadastrado'; ACOES.USUARIO_ATUALIZADO = 'Cadastro Atualizado'; }
 if (typeof ROTULO_CAMPO !== 'undefined') { ['nome', 'acesso', 'coordenacao', 'ativo'].forEach(function (k, i) { if (!ROTULO_CAMPO[k]) ROTULO_CAMPO[k] = ['Nome', 'Acesso', 'Coordenação', 'Ativo'][i]; }); }
+/* a lista só tem quem tem acesso ao painel (ATIVO) e quem tem saída registrada; quem não tem acesso não aparece */
+function usrSaiu(u) { return u.sit === 'DESLIGADO' || u.sit === 'MOVIMENTADO'; }
+function usrAgendada(u) { return u.sit === 'ATIVO' && !!(u.desligadoEm || u.movimentadoEm); }
 var USR_FILTROS = [
-  ['ativos', 'Ativos', '#D80073', function (u) { return u.sit === 'ATIVO'; }],
+  ['ativos', 'Com acesso ao painel', '#D80073', function (u) { return u.sit === 'ATIVO'; }],
   ['agentes', 'Agentes', '#4F3F91', function (u) { return u.sit === 'ATIVO' && u.perfil === 'AGENTE'; }],
   ['gestao', 'Gestão', '#1D5FC2', function (u) { return u.sit === 'ATIVO' && u.perfil === 'GESTAO'; }],
   ['ph', 'WFM', '#C2006A', function (u) { return u.sit === 'ATIVO' && (u.tag.cls === 'ph' || u.tag.cls === 'people'); }],
   ['senha', 'Aguardando 1º acesso', '#C98A00', function (u) { return u.sit === 'ATIVO' && !u.senha; }],
-  ['sairam', 'Desligados e movimentados', '#0E8A8A', function (u) { return u.sit === 'DESLIGADO' || u.sit === 'MOVIMENTADO'; }],
-  ['sem', 'Sem acesso', '#5B6676', function (u) { return u.sit === 'SEM_ACESSO'; }]
+  ['sairam', 'Saídas registradas', '#0E8A8A', function (u) { return usrSaiu(u) || usrAgendada(u); }]
 ];
 function usrBr(d) { return d ? d.slice(8, 10) + '/' + d.slice(5, 7) + '/' + d.slice(0, 4) : ''; }
 function usrStatus(u) {
   if (u.sit === 'DESLIGADO') return '<span class="usr-st desl"><i></i>Desligado · ' + usrBr(u.desligadoEm).slice(0, 5) + '</span>';
   if (u.sit === 'MOVIMENTADO') return '<span class="usr-st mov"><i></i>Movimentado · ' + usrBr(u.movimentadoEm).slice(0, 5) + '</span>';
-  if (u.sit === 'SEM_ACESSO') return '<span class="usr-st sem"><i></i>Sem acesso</span>';
   if (u.movimentadoEm) return '<span class="usr-st mov" title="Movimentação registrada: primeiro dia fora do painel em ' + usrBr(u.movimentadoEm) + '"><i></i>Movimenta em ' + usrBr(u.movimentadoEm).slice(0, 5) + '</span>';
   if (u.desligadoEm) return '<span class="usr-st desl" title="Desligamento registrado: último dia em ' + usrBr(u.desligadoEm) + '"><i></i>Último dia ' + usrBr(u.desligadoEm).slice(0, 5) + '</span>';
   if (!u.senha) return '<span class="usr-st esp" title="Ainda não criou a senha do painel"><i></i>Aguardando 1º acesso</span>';
@@ -161,6 +196,8 @@ function telaUsuarios(flash) {
   if (!estado.usr || !$('usr')) gCarregando();
   chamar('apiUsuarios', estado.token).then(function (r) {
     r.mapa = {}; r.usuarios.forEach(function (u) { r.mapa[u.email] = u; }); estado.usr = r;
+    // fotos do Slack lidas agora pelo servidor (a lista geral do painel é carregada uma vez só, na entrada)
+    if (r.fotos) { estado.fotos = estado.fotos || {}; Object.keys(r.fotos).forEach(function (e) { estado.fotos[e] = r.fotos[e]; }); }
     if (estado.aba !== 'gestao' || estado.sub !== 'usr') return;
     usrDesenhar(true, flash);
   }).catch(function (e) {
@@ -171,21 +208,36 @@ function telaUsuarios(flash) {
 }
 function usrDesenhar(animar, flash) {
   var R = estado.usr, F = estado.usrF, g = gc(); if (!g || !R) return;
-  var cont = {}; USR_FILTROS.forEach(function (f) { cont[f[0]] = R.usuarios.filter(f[3]).length; });
-  var filtros = USR_FILTROS.filter(function (f) { return f[0] !== 'sem' || cont.sem > 0 || F.f === 'sem'; });
+  if (F.f === 'sem') F.f = 'ativos';
+  var cont = {}, cor = {}, rot = {}; USR_FILTROS.forEach(function (f) { cont[f[0]] = R.usuarios.filter(f[3]).length; cor[f[0]] = f[2]; rot[f[0]] = f[1]; });
+  var jaSairam = R.usuarios.filter(usrSaiu).length, agendadas = R.usuarios.filter(usrAgendada).length, tot = cont.ativos;
+  var phGestao = R.usuarios.filter(USR_FILTROS[3][3]).every(function (u) { return u.perfil === 'GESTAO'; });
+  var kpi = function (f, i, extra) { return '<button type="button" class="usr-kpi' + (extra || '') + '" style="--k:' + cor[f] + ';--i:' + i + '" data-f="' + f + '" aria-pressed="' + (F.f === f) + '"><b data-n="' + cont[f] + '">' + cont[f] + '</b><span>' + rot[f] + '</span></button>'; };
+  var chip = function (f, i, nota) { return '<button type="button" class="usr-chip" style="--k:' + cor[f] + ';--i:' + i + '" data-f="' + f + '" aria-pressed="' + (F.f === f) + '"><b data-n="' + cont[f] + '">' + cont[f] + '</b> ' + rot[f] + (nota ? ' <em>' + nota + '</em>' : '') + '</button>'; };
+  var pct = function (n) { return tot ? (n / tot * 100).toFixed(2) + '%' : '0%'; };
+  var resumo = '<div class="usr-res">' +
+    '<section class="usr-bloco" aria-label="Quem tem acesso ao painel"><span class="usr-tit">Quem tem acesso ao painel</span>' +
+      '<div class="usr-eq" role="group" aria-label="Agentes mais Gestão é igual ao total com acesso">' + kpi('agentes', 0) + '<span class="usr-op" aria-hidden="true">+</span>' + kpi('gestao', 1) + '<span class="usr-op" aria-hidden="true">=</span>' + kpi('ativos', 2, ' usr-tot') + '</div>' +
+      '<div class="usr-trilho" title="' + cont.agentes + ' agentes e ' + cont.gestao + ' da gestão" aria-hidden="true"><i style="--w:' + pct(cont.agentes) + ';--k:' + cor.agentes + '"></i><i style="--w:' + pct(cont.gestao) + ';--k:' + cor.gestao + '"></i></div>' +
+      '<div class="usr-dentro"><span>Já contados nos ' + tot + ':</span>' + chip('ph', 3, phGestao ? '(na Gestão)' : '') + chip('senha', 4, '(ainda sem senha)') + '</div>' +
+    '</section>' +
+    '<section class="usr-bloco usr-fora-b" aria-label="Saídas registradas"><span class="usr-tit">Saídas</span>' + kpi('sairam', 5) +
+      '<ul class="usr-sai"><li><b>' + jaSairam + '</b><span>já ' + (jaSairam === 1 ? 'saiu' : 'saíram') + ' do painel e não ' + (jaSairam === 1 ? 'entra' : 'entram') + ' nos ' + tot + '</span></li>' +
+      '<li><b>' + agendadas + '</b><span>com saída agendada: ' + (agendadas === 1 ? 'continua' : 'continuam') + ' nos ' + tot + ' até o último dia</span></li></ul>' +
+    '</section></div>';
   g.innerHTML = '<div class="usr' + (animar && !usrReduz() ? ' usr-an' : '') + '" id="usr">' +
     '<div class="pl-cab"><div><h1>Usuários</h1><p>Quem tem acesso ao painel, com a tag que aparece no Histórico e no topo. Cadastre pessoas novas, atualize o cadastro ou registre uma movimentação ou um desligamento.</p></div>' +
     '<div class="pl-acoes"><button class="btn" id="usrNovo">' + usrSvg('novo').replace('<svg ', '<svg style="width:16px;height:16px;vertical-align:-3px;margin-right:6px" ') + 'Cadastrar usuário</button></div></div>' +
-    '<div class="usr-kpis" role="group" aria-label="Filtrar usuários">' + filtros.map(function (f, i) { return '<button type="button" class="usr-kpi" style="--k:' + f[2] + ';--i:' + i + '" data-f="' + f[0] + '" aria-pressed="' + (F.f === f[0]) + '"><b data-n="' + cont[f[0]] + '">' + cont[f[0]] + '</b><span>' + f[1] + '</span></button>'; }).join('') + '</div>' +
+    resumo +
     '<div class="usr-barra"><label class="usr-busca"><span class="sr" style="position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0)">Buscar usuário</span>' + usrSvg('busca') + '<input type="search" id="usrQ" placeholder="Buscar por nome, e-mail, tag ou coordenação" autocomplete="off" value="' + esc(F.q) + '"></label><span class="usr-conta" id="usrConta"></span></div>' +
     '<div class="usr-lista" id="usrLista"></div></div>';
   usrLista(animar, flash);
   var raiz = $('usr');
   if (animar && !usrReduz()) {
-    raiz.querySelectorAll('.usr-kpi b[data-n]').forEach(function (el) { var alvo = +el.getAttribute('data-n'), t0 = performance.now(), d = 650; if (!alvo) return; (function passo(t) { var p = Math.min(1, (t - t0) / d), e = 1 - Math.pow(1 - p, 3); el.textContent = Math.round(alvo * e); if (p < 1 && document.body.contains(el)) requestAnimationFrame(passo); })(t0); });
+    raiz.querySelectorAll('.usr-res b[data-n]').forEach(function (el) { var alvo = +el.getAttribute('data-n'), t0 = performance.now(), d = 650; if (!alvo) return; (function passo(t) { var p = Math.min(1, (t - t0) / d), e = 1 - Math.pow(1 - p, 3); el.textContent = Math.round(alvo * e); if (p < 1 && document.body.contains(el)) requestAnimationFrame(passo); })(t0); });
     setTimeout(function () { if (raiz) raiz.classList.remove('usr-an'); }, 1400);
   }
-  raiz.querySelectorAll('.usr-kpi').forEach(function (b) { b.onclick = function () { var f = b.getAttribute('data-f'); if (F.f === f) return; F.f = f; raiz.querySelectorAll('.usr-kpi').forEach(function (x) { x.setAttribute('aria-pressed', String(x === b)); }); usrLista(true); }; });
+  raiz.querySelectorAll('.usr-res [data-f]').forEach(function (b) { b.onclick = function () { var f = b.getAttribute('data-f'); if (F.f === f) return; F.f = f; raiz.querySelectorAll('.usr-res [data-f]').forEach(function (x) { x.setAttribute('aria-pressed', String(x === b)); }); usrLista(true); }; });
   var q = $('usrQ'), tq = 0; q.oninput = function () { clearTimeout(tq); tq = setTimeout(function () { F.q = q.value.trim(); usrLista(false); }, 120); };
   $('usrNovo').onclick = function () { usrModal(null); };
 }
@@ -194,11 +246,13 @@ function usrLista(animar, flash) {
   var R = estado.usr, F = estado.usrF, el = $('usrLista'); if (!el) return;
   var f = USR_FILTROS.filter(function (x) { return x[0] === F.f; })[0] || USR_FILTROS[0], q = usrSemAcento(F.q);
   var l = R.usuarios.filter(f[3]).filter(function (u) { return !q || usrSemAcento(u.nome + ' ' + u.email + ' ' + u.tag.rot + ' ' + u.coord + ' ' + u.cargo).indexOf(q) >= 0; });
+  // saídas: primeiro quem ainda vai sair (data mais próxima), depois quem já saiu (mais recente primeiro)
+  if (f[0] === 'sairam') l = l.slice().sort(function (a, b) { var da = a.movimentadoEm || a.desligadoEm, db = b.movimentadoEm || b.desligadoEm, sa = usrSaiu(a) ? 1 : 0, sb = usrSaiu(b) ? 1 : 0; return sa !== sb ? sa - sb : sa ? db.localeCompare(da) : da.localeCompare(db); });
   $('usrConta').textContent = l.length + (l.length === 1 ? ' pessoa' : ' pessoas');
   if (!l.length) { el.innerHTML = '<div class="usr-vz">' + (q ? 'Ninguém encontrado com essa busca.' : 'Ninguém neste filtro.') + '</div>'; return; }
   var linha = function (u, i) {
     var saiu = u.sit === 'DESLIGADO' || u.sit === 'MOVIMENTADO', podeSair = !saiu && u.sit === 'ATIVO' && !u.desligadoEm && !u.movimentadoEm && !u.eu;
-    return '<div class="usr-it' + (saiu || u.sit === 'SEM_ACESSO' ? ' usr-fora' : '') + '" data-em="' + esc(u.email) + '" style="--i:' + Math.min(i, 16) + '">' +
+    return '<div class="usr-it' + (saiu ? ' usr-fora' : '') + '" data-em="' + esc(u.email) + '" style="--i:' + Math.min(i, 16) + '">' +
       '<button type="button" class="usr-q" data-ed="' + esc(u.email) + '" title="Editar o cadastro de ' + esc(u.nome) + '">' + avatarHtml(u.email, u.nome, '') + '<span class="tx"><b>' + esc(u.nome) + (u.eu ? ' <small style="display:inline">(você)</small>' : '') + '</b><small>' + esc(u.email) + '</small></span></button>' +
       '<div class="usr-tg"><span class="pp pp-' + esc(u.tag.cls) + '">' + esc(u.tag.rot) + '</span>' + (u.fixo ? '<em>Acesso fixo do WFM</em>' : '') + '</div>' +
       '<div class="usr-co">' + esc(u.coord && u.coord !== '—' ? u.coord : 'Sem coordenação') + '<small>' + esc(u.cargo || (u.perfil === 'GESTAO' ? 'Gestão' : 'Agente')) + '</small></div>' +
@@ -234,7 +288,7 @@ function usrModal(u) {
     '<div class="campo"><label for="uNm">Nome completo</label><input id="uNm" type="text" autocomplete="off" maxlength="120" placeholder="Nome e sobrenome" value="' + esc(u ? usrNomeBonito(u.nomeCompleto || u.nome) : '') + '"></div>' +
     acesso +
     '<div class="campo"><label for="uCo">Coordenação <small>(opcional)</small></label><select id="uCo">' + opCoord + '</select></div>' +
-    '<div class="usr-prev" aria-live="polite"><span class="usr-av" id="uAv">?</span><span class="tx"><small>Vai aparecer assim</small><b id="uPvN">Nome da pessoa</b><span id="uPvC"></span></span><span id="uPvT"></span></div>' +
+    '<div class="usr-prev" aria-live="polite"><span class="usr-av" id="uAv"><span id="uAvI">?</span></span><span class="tx"><small>Vai aparecer assim</small><b id="uPvN">Nome da pessoa</b><span id="uPvC"></span><span class="usr-ft" id="uFt"></span></span><span id="uPvT"></span></div>' +
     (novo ? '<label class="opcard on" id="uConv"><input type="checkbox" checked><div><b>Enviar o e-mail para criar a senha</b><span>A pessoa recebe na hora o link para criar a senha. Ela também pode pedir pela tela de entrada.</span></div></label>' : '') +
     '<div id="uMsg"></div>' +
     '<div class="acoes"><button class="btn sec" data-fechar>Cancelar</button><button class="btn" id="uOk">' + (novo ? 'Cadastrar usuário' : 'Salvar') + '</button></div></div>');
@@ -243,7 +297,7 @@ function usrModal(u) {
   function papelAtual() { return R.papeis.filter(function (p) { return p.id === st.papel; })[0] || null; }
   function tagDe() { if (travado) return u.tag; if (st.perfil === 'AGENTE') return { rot: 'Agente', cls: 'agente' }; var p = papelAtual(); return st.perfil === 'GESTAO' && p ? { rot: p.rot, cls: p.cls } : null; }
   function prever() {
-    var n = usrNomeBonito($nm.value.trim()); q('#uPvN').textContent = n || 'Nome da pessoa'; q('#uAv').textContent = n ? usrIni(n) : '?';
+    var n = usrNomeBonito($nm.value.trim()); q('#uPvN').textContent = n || 'Nome da pessoa'; q('#uAvI').textContent = n ? usrIni(n) : '?';
     var co = $co.options[$co.selectedIndex]; q('#uPvC').textContent = ($em.value.trim().toLowerCase() || 'e-mail') + ' · ' + (co ? co.text.replace(/^Pela planilha do Headcount \((.*)\)$/, '$1') : '');
     var t = tagDe(), k = t ? t.cls + '|' + t.rot : '';
     if (k !== ultTag) { ultTag = k; var box = q('#uPvT'); box.innerHTML = t ? '<span class="pp pp-' + esc(t.cls) + (usrReduz() ? '' : ' usr-pop') + '">' + esc(t.rot) + '</span>' : ''; }
@@ -270,13 +324,41 @@ function usrModal(u) {
     if (x && !$nm.value.trim()) $nm.value = usrNomeBonito(x.nomeCompleto || x.nome);
     msg(''); return true;
   }
+  /* foto do Slack pelo e-mail: aparece na prévia assim que o e-mail fica completo */
+  var consultaTok = 0, ultConsulta = '', tEm = 0;
+  function setFt(t, ok) { var e = q('#uFt'); if (!e) return; e.textContent = t || ''; e.classList.toggle('ok', !!ok); }
+  function pintarFoto(url) {
+    var av = q('#uAv'), im = av.querySelector('img');
+    if (!url) { if (im) im.remove(); return; }
+    if (im && im.getAttribute('src') === url) return;
+    if (im) im.remove();
+    im = new Image(); im.alt = ''; im.decoding = 'async';
+    im.onload = function () { im.classList.add('ok'); };
+    im.onerror = function () { im.remove(); setFt('Não foi possível abrir a foto do Slack: ficam as iniciais.'); };
+    im.src = url; av.appendChild(im);
+  }
+  function consultar() {
+    var v = novo ? emailOk() : u.email, av = q('#uAv');
+    if (!v) { ultConsulta = ''; consultaTok++; av.classList.remove('busca'); pintarFoto(''); setFt(''); return; }
+    if (v === ultConsulta) return; ultConsulta = v;
+    var local = estado.fotos && estado.fotos[v], meu = ++consultaTok;
+    if (local) { pintarFoto(local); setFt('Foto do Slack', true); } else { pintarFoto(''); setFt('Procurando a foto no Slack…'); }
+    av.classList.add('busca');
+    chamar('apiUsuarioConsulta', estado.token, v).then(function (r) {
+      if (meu !== consultaTok || !document.body.contains(w)) return;
+      av.classList.remove('busca');
+      if (r.foto) { pintarFoto(r.foto); setFt('Foto do Slack', true); estado.fotos = estado.fotos || {}; estado.fotos[v] = r.foto; }
+      else { pintarFoto(''); setFt('Este e-mail ainda não tem foto no Slack: ficam as iniciais até a foto chegar.'); }
+      if (novo && r.nome && !$nm.value.trim() && !R.mapa[v]) { $nm.value = usrNomeBonito(r.nome); prever(); }
+    }).catch(function () { if (meu !== consultaTok) return; av.classList.remove('busca'); if (!local) setFt(''); });
+  }
   if (novo) {
-    $em.addEventListener('blur', function () { var v = $em.value.trim().toLowerCase().replace(/\s+/g, ''); if (v && v.indexOf('@') < 0) v += '@exemplo.com'; $em.value = v; prever(); if (v) { if (!emailOk()) msg('Use um e-mail @exemplo.com válido.'); else conferirEmail(); } });
-    $em.addEventListener('input', function () { prever(); });
+    $em.addEventListener('blur', function () { var v = $em.value.trim().toLowerCase().replace(/\s+/g, ''); if (v && v.indexOf('@') < 0) v += '@exemplo.com'; $em.value = v; prever(); clearTimeout(tEm); consultar(); if (v) { if (!emailOk()) msg('Use um e-mail @exemplo.com válido.'); else conferirEmail(); } });
+    $em.addEventListener('input', function () { prever(); clearTimeout(tEm); if (emailOk() !== ultConsulta) { if (!emailOk()) consultar(); else tEm = setTimeout(consultar, 450); } });
     var cv = q('#uConv'); cv.onclick = function (ev) { ev.preventDefault(); var i = cv.querySelector('input'); i.checked = !i.checked; cv.classList.toggle('on', i.checked); };
   }
   $nm.addEventListener('input', prever); $co.addEventListener('change', prever);
-  pintarAcesso(); prever();
+  pintarAcesso(); prever(); if (!novo) consultar();
   setTimeout(function () { (novo ? $em : $nm).focus(); }, 60);
   $ok.onclick = function () {
     var email = novo ? emailOk() : u.email, nome = $nm.value.replace(/\s+/g, ' ').trim();
@@ -288,6 +370,7 @@ function usrModal(u) {
     var conv = q('#uConv'), txt = $ok.textContent; ocupado($ok, true, novo ? 'Cadastrando…' : 'Salvando…'); msg('');
     chamar('apiUsuarioSalvar', estado.token, { novo: novo, email: email, nome: nome, perfil: travado ? u.perfil : st.perfil, papel: st.papel, manterAcesso: !novo && st.perfil === ini.perfil && (st.perfil !== 'GESTAO' || st.papel === ini.papel), coordId: $co.value, convite: !!(conv && conv.querySelector('input').checked) }).then(function (r) {
       w.remove();
+      if (r.foto) { estado.fotos = estado.fotos || {}; estado.fotos[r.email] = r.foto; }
       toast(r.novo ? 'Usuário cadastrado: ' + r.nome + '.' + (r.convite ? ' O e-mail para criar a senha foi enviado.' : '') : r.nada ? 'Nada mudou no cadastro.' : 'Cadastro de ' + r.nome + ' atualizado.' + (r.sessoesEncerradas ? ' A pessoa vai precisar entrar de novo.' : ''));
       // os selos, os nomes e a lista de pessoas da gestão são lidos de novo
       estado.papeis = null; estado.__papeisP = null; if (typeof carregarPapeis === 'function') carregarPapeis();

@@ -10,6 +10,8 @@
  * foi cadastrado aqui com essas tags (coluna acesso_ph = SIM, criada na primeira gravação). Quem está
  * na lista fixa não tem o acesso alterado por esta tela, e ninguém altera o próprio acesso.
  * Tudo vai para o Histórico (Usuário Cadastrado e Cadastro Atualizado).
+ * 24/11/2026 (tarde): a lista mostra só quem tem acesso e quem tem saída registrada (inclusive a agendada);
+ * quem não tem acesso não aparece. A foto vem do Slack pelo e-mail, lida direto da aba fotos_slack.
  * ===================================================================== */
 var USR_PAPEIS = [
   { id: 'WFM', rot: 'WFM', cls: 'ph', ph: true, desc: 'Acesso completo, com Planejamento, Feriados e Usuários' },
@@ -62,30 +64,66 @@ function usrColuna_() {
 }
 function usrPapel_(id) { return USR_PAPEIS.filter(function (x) { return x.id === id; })[0] || null; }
 function usrFixo_(email) { return SUPERADMINS.indexOf(String(email || '').toLowerCase()) >= 0; }
-function usrAcessoTxt_(perfil, papel) { return perfil === 'GESTAO' ? 'Gestão · ' + (papel || 'Gestão') : perfil === 'AGENTE' ? 'Agente' : (perfil || 'Sem acesso'); }
+function usrAcessoTxt_(perfil, papel) { return perfil === 'GESTAO' ? 'Gestão · ' + (papel || 'Gestão') : 'Agente'; }
+function usrIso_(v) { const s = String(v || '').slice(0, 10); return /^\d{4}-\d{2}-\d{2}$/.test(s) ? s : ''; }
 
-/** Lista de usuários para a tela (WFM). */
+/* Fotos do Slack pelo e-mail, lidas direto da aba fotos_slack (o n8n reescreve todo dia com a empresa inteira).
+ * A lista em memória (fotos_v1) dura 6 h: quando a aba tem foto nova, ela é renovada na hora para todo o painel. */
+function usrFotos_() {
+  if (MEMO_.__usrFotos) return MEMO_.__usrFotos;
+  let base = {}; try { base = fotosSlack_(false) || {}; } catch (e) { base = {}; }
+  const out = Object.assign({}, base); let novas = 0;
+  try {
+    const sh = db_().getSheetByName('fotos_slack');
+    if (sh && sh.getLastRow() > 1) sh.getRange(2, 1, sh.getLastRow() - 1, 2).getValues().forEach(function (r) {
+      const e = normalizar_(r[0]), u = String(r[1] || '').trim();
+      if (e && /^https:\/\//.test(u) && out[e] !== u) { out[e] = u; novas++; }
+    });
+  } catch (e) { /* fica com a lista em memória */ }
+  if (novas) { try { CacheService.getScriptCache().put('fotos_v1', JSON.stringify(out), 21600); } catch (e) { } }
+  return (MEMO_.__usrFotos = out);
+}
+
+/** Lista de usuários para a tela (WFM): só quem tem acesso ao painel, mais quem tem saída registrada.
+ * Quem não tem acesso não aparece: não está na lista do painel, então já não entra. */
 function apiUsuarios(token) {
   const ctx = sessao_(token); exigirPlanejamento_(ctx);
   const us = {}; tabela_('Usuarios').linhas.forEach(function (u) { us[String(u.email).toLowerCase()] = u; });
   const cred = {}; tabela_('Credenciais').linhas.forEach(function (c) { cred[String(c.email).toLowerCase()] = 1; });
-  const mapa = coordenacoes_(), hoje = hojeIso_();
-  const lista = tabela_('Pessoas').linhas.filter(function (p) { return us[String(p.email).toLowerCase()] && !/^vaga/i.test(String(p.status_headcount || '')); }).map(function (p) {
-    const email = String(p.email).toLowerCase(), u = us[email], c = coordDe_(p, mapa), tag = papelPainel_(email, u, p);
-    const desl = String(p.desligado_em || '').slice(0, 10), mov = String(p.movimentado_em || '').slice(0, 10);
-    const comAcesso = p.ativo === 'SIM' && (u.perfil === 'AGENTE' || u.perfil === 'GESTAO');
-    let sit = comAcesso ? 'ATIVO' : 'SEM_ACESSO';
-    if (mov && hoje >= mov) sit = 'MOVIMENTADO'; else if (desl && hoje > desl) sit = 'DESLIGADO';
-    return {
-      email: email, nome: nomeCurto_(p.nome), nomeCompleto: String(p.nome || '').trim(), perfil: u.perfil, papel: u.papel_gestao || '', ph: u.acesso_ph === 'SIM',
-      tag: comAcesso ? tag : { rot: 'Sem acesso', cls: 'agente' }, coordId: c.id, coord: c.nome, coordManual: p.coord_id_manual || '', cargo: p.cargo_headcount || '',
+  const mapa = coordenacoes_(), hoje = hojeIso_(), fotos = usrFotos_(), fotosLista = {};
+  const lista = [];
+  tabela_('Pessoas').linhas.forEach(function (p) {
+    if (/^vaga/i.test(String(p.status_headcount || ''))) return;
+    const email = String(p.email).toLowerCase(), u = us[email];
+    const desl = usrIso_(p.desligado_em), mov = usrIso_(p.movimentado_em);
+    const comAcesso = !!u && p.ativo === 'SIM' && (u.perfil === 'AGENTE' || u.perfil === 'GESTAO');
+    let sit = '';
+    if (mov && (hoje >= mov || !comAcesso)) sit = 'MOVIMENTADO';
+    else if (desl && (hoje > desl || !comAcesso)) sit = 'DESLIGADO';
+    else if (comAcesso) sit = 'ATIVO';
+    if (!sit) return;
+    const c = coordDe_(p, mapa);
+    if (fotos[email]) fotosLista[email] = fotos[email];
+    lista.push({
+      email: email, nome: nomeCurto_(p.nome), nomeCompleto: String(p.nome || '').trim(), perfil: u ? u.perfil : '', papel: u ? u.papel_gestao || '' : '', ph: !!u && u.acesso_ph === 'SIM',
+      tag: papelPainel_(email, u, p), coordId: c.id, coord: c.nome, coordManual: p.coord_id_manual || '', cargo: p.cargo_headcount || '',
       sit: sit, desligadoEm: desl, movimentadoEm: mov, senha: !!cred[email], fixo: usrFixo_(email), eu: email === ctx.email,
       painel: p.status_headcount === 'Cadastrado pelo painel'
-    };
-  }).sort(function (a, b) { return a.nome.localeCompare(b.nome, 'pt-BR'); });
+    });
+  });
+  lista.sort(function (a, b) { return a.nome.localeCompare(b.nome, 'pt-BR'); });
   const coords = tabela_('Coordenacoes').linhas.filter(function (c) { return c.ativo === 'SIM'; }).map(function (c) { return { id: c.coord_id, nome: c.nome_exibicao }; })
     .sort(function (a, b) { return a.nome.localeCompare(b.nome, 'pt-BR'); });
-  return { usuarios: lista, papeis: USR_PAPEIS, coordenacoes: coords, hoje: hoje };
+  return { usuarios: lista, papeis: USR_PAPEIS, coordenacoes: coords, hoje: hoje, fotos: fotosLista };
+}
+
+/** Janela de cadastro: foto do Slack e nome que o painel já conhece para o e-mail digitado. */
+function apiUsuarioConsulta(token, email) {
+  const ctx = sessao_(token); exigirPlanejamento_(ctx);
+  email = normalizar_(email);
+  if (!USR_EMAIL_RE.test(email)) return { email: email, foto: '', nome: '' };
+  const p = tabela_('Pessoas').linhas.filter(function (x) { return String(x.email).toLowerCase() === email; })[0];
+  return { email: email, foto: usrFotos_()[email] || '', nome: p && !/^vaga/i.test(String(p.status_headcount || '')) ? String(p.nome || '').trim() : '' };
 }
 
 /** Cadastra (d.novo) ou atualiza um usuário. d = {novo, email, nome, perfil, papel, coordId, convite} */
@@ -108,7 +146,7 @@ function apiUsuarioSalvar(token, d) {
     const tp = tabela_('Pessoas'), tu = tabela_('Usuarios'), agora = agoraIso_();
     const p = tp.linhas.filter(function (x) { return String(x.email).toLowerCase() === email; })[0];
     const u = tu.linhas.filter(function (x) { return String(x.email).toLowerCase() === email; })[0];
-    const desl = p ? String(p.desligado_em || '').slice(0, 10) : '', mov = p ? String(p.movimentado_em || '').slice(0, 10) : '';
+    const desl = p ? usrIso_(p.desligado_em) : '', mov = p ? usrIso_(p.movimentado_em) : '';
     // travado: lista fixa ou a própria pessoa. manter: a tela avisa que o acesso não foi mexido (papéis antigos, como "COO", ficam como estão)
     const travado = !novo && (usrFixo_(email) || email === ctx.email) || (!novo && !!d.manterAcesso && !!u && u.perfil === perfil);
     if (travado) { perfil = u ? u.perfil : perfil; }
@@ -154,5 +192,7 @@ function apiUsuarioSalvar(token, d) {
   } finally { lock.releaseLock(); }
   // convite para criar a senha (o mesmo e-mail do "criar senha" da tela de entrada), fora da trava
   if (convidar) { try { apiSolicitarLink(email); res.convite = true; } catch (e) { res.convite = false; } }
+  // foto do Slack pelo e-mail, para a pessoa já aparecer com ela na lista
+  try { MEMO_.__usrFotos = null; res.foto = usrFotos_()[email] || ''; } catch (e) { res.foto = ''; }
   return res;
 }
