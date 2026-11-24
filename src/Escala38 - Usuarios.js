@@ -5,7 +5,8 @@
  *  · atualizar o cadastro (nome, acesso, tag e coordenação);
  *  · a movimentação e o desligamento usam as mesmas regras do Planejamento (Escala30 e Escala36).
  * A tag de gestão fica em Usuarios.papel_gestao (o mesmo campo que o painel já usa para os selos).
- * WFM e People dão o acesso do WFM: além da lista fixa SUPERADMINS, vale quem
+ * WFM e People dão TODOS os acessos do WFM (Planejamento, Feriados, Usuários,
+ * aprovação das Solicitações e o que mais usar ehSuperadmin_): além da lista fixa SUPERADMINS, vale quem
  * foi cadastrado aqui com essas tags (coluna acesso_ph = SIM, criada na primeira gravação). Quem está
  * na lista fixa não tem o acesso alterado por esta tela, e ninguém altera o próprio acesso.
  * Tudo vai para o Histórico (Usuário Cadastrado e Cadastro Atualizado).
@@ -36,6 +37,15 @@ function usrPhDinamicos_() {
     if (_eh.apply(this, arguments)) return true;
     try { return !!usrPhDinamicos_()[String(email || '').toLowerCase()]; } catch (e) { return false; }
   };
+  // Solicitações: quem tem a tag do WFM também aprova e recebe os avisos (a lista fixa continua com a regra dela)
+  if (typeof solAprovadores_ === 'function') {
+    const _sa = solAprovadores_;
+    solAprovadores_ = function () {
+      const l = _sa.apply(this, arguments).slice(), hoje = hojeIso_();
+      try { Object.keys(usrPhDinamicos_()).forEach(function (e) { const d = typeof desligDe_ === 'function' ? desligDe_(e) : ''; if (l.indexOf(e) < 0 && (!d || hoje <= d)) l.push(e); }); } catch (e) { }
+      return l;
+    };
+  }
   const _pp = papelPainel_;
   papelPainel_ = function (email, u, p) {
     if (u && u.perfil === 'GESTAO' && u.acesso_ph === 'SIM' && u.papel_gestao === 'People') return { rot: 'People', cls: 'people' };
