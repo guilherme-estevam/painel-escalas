@@ -403,13 +403,12 @@ function solEventos(s) {
 }
 function solLinhaTempo(s) {
   var ev = solEventos(s), aberta = SOL_ABERTOS.indexOf(s.status) >= 0, ini = ev.length ? new Date(ev[0].em) : null, fimEv = ev[ev.length - 1];
-  var topo = ini ? (aberta ? 'Aberta há <b>' + solDur(Date.now() - ini) + '</b>' : s.status === 'EXPIRADA' ? 'Ficou aberta por <b>' + solDur(new Date(s.primeiroDia + 'T00:00:00') - ini) + '</b> até expirar' : 'Do pedido ao encerramento: <b>' + solDur(new Date(fimEv.em) - ini) + '</b>') : '';
+  var topo = ini ? (aberta ? 'Aberta há <b>' + solDur(Date.now() - ini) + '</b>' : 'Do pedido ao encerramento: <b>' + solDur(new Date(fimEv.em) - ini) + '</b>') : '';
   var itens = ev.map(function (e, i) { var c = SOL_EV[e.acao] || [e.acao, '#8C8A99', '<circle cx="12" cy="12" r="4"/>'], gap = i ? solDur(new Date(e.em) - new Date(ev[i - 1].em)) + ' depois' : '';
     return '<li class="sol-ev" style="--k:' + c[1] + ';--i:' + i + '"><span class="sol-ev-ic">' + solSvg(c[2], 2.4) + '</span><div class="sol-ev-c"><div class="sol-ev-t"><b>' + esc(c[0]) + '</b>' + (e.por ? '<span>por <b>' + esc(solNome(e.por)) + '</b></span>' : '') + '</div>' +
       '<div class="sol-ev-q"><time>' + esc(solDH(e.em)) + '</time>' + (gap ? '<em>' + esc(gap) + '</em>' : '') + '</div>' + (e.txt ? '<p class="sol-ev-x">' + esc(e.txt) + '</p>' : '') + '</div></li>'; }).join('');
   if (aberta) { var desde = fimEv ? fimEv.em : s.criadaEm, msg = s.status === 'AGUARDANDO_GESTAO' ? 'Aguardando a aprovação de ' + (estado.sol.gestao || []).filter(function (e) { return e !== s.criadaPor; }).map(function (e) { return solCurto(e); }).join(' ou ') : s.status === 'PENDENTE' ? 'Aguardando o WFM colocar em análise' : s.status === 'EM_ANALISE' ? 'Em análise com ' + solCurto(s.analisePor || '') : 'Aguardando a resposta de ' + solCurto(s.criadaPor);
     itens += '<li class="sol-ev agora" style="--k:' + SOL_STK[s.status] + ';--i:' + ev.length + '"><span class="sol-ev-ic"><i></i></span><div class="sol-ev-c"><div class="sol-ev-t"><b>Agora: ' + esc(msg) + '</b></div><div class="sol-ev-q"><em>há ' + esc(solDur(Date.now() - new Date(desde))) + '</em></div></div></li>'; }
-  else if (s.status === 'EXPIRADA') itens += '<li class="sol-ev" style="--k:#8C8A99;--i:' + ev.length + '"><span class="sol-ev-ic">' + solSvg('<circle cx="12" cy="12" r="9"/><polyline points="12 7 12 12 15 14"/>', 2.4) + '</span><div class="sol-ev-c"><div class="sol-ev-t"><b>Expirou sem decisão</b></div><div class="sol-ev-q"><time>' + esc(solBr(s.primeiroDia)) + '</time></div><p class="sol-ev-x">O primeiro dia do pedido (' + esc(solBr(s.primeiroDia)) + ') chegou e o pedido ainda estava ' + esc((SOL_ST[s.statusGravado] || '').toLowerCase()) + '. Ninguém aprovou nem recusou a tempo, então a escala não mudou.</p></div></li>';
   return '<div class="sol-tl2">' + (topo ? '<div class="sol-tl2-cab">' + solSvg('<circle cx="12" cy="12" r="9"/><polyline points="12 7 12 12 15 14"/>', 2.2) + '<span>' + topo + '</span></div>' : '') + '<ol>' + itens + '</ol></div>';
 }
 function solTempo(min) { if (min == null) return '—'; min = Math.round(min); if (min < 60) return Math.max(1, min) + ' min'; if (min < 1440) { var h = Math.floor(min / 60), m = min % 60; return h + 'h' + (m ? ' ' + m + 'min' : ''); } var d = Math.floor(min / 1440), hr = Math.floor((min % 1440) / 60); return d + 'd' + (hr ? ' ' + hr + 'h' : ''); }
@@ -459,14 +458,14 @@ function solAviso() {
 /* ---------- tela ---------- */
 function telaSolicitacoes(manter) {
   if (!manter) gCarregando();
-  estado.solF = estado.solF || { grupo: 'ABERTAS', tipo: '', pri: '', q: '' }; if (estado.solF.grupo === 'FECHADAS') estado.solF.grupo = 'CANCELADA';
+  estado.solF = estado.solF || { grupo: 'ABERTAS', tipo: '', pri: '', q: '' }; if (estado.solF.grupo === 'FECHADAS') estado.solF.grupo = 'CANCELADA'; if (estado.solF.grupo === 'EXPIRADA') estado.solF.grupo = 'ABERTAS';
   return chamar('apiSolicitacoes', estado.token).then(function (r) { estado.sol = r; solPendAplicar(r.minhas || { n: 0 }); solDesenhar(); return r; })
     .catch(function (e) { gc().innerHTML = '<div class="sol-vazio">' + solSvg('<circle cx="12" cy="12" r="10"/><path d="M12 8v4M12 16h.01"/>') + '<b>Não foi possível carregar as solicitações</b><span>' + esc(e && e.message || e) + '</span></div>'; });
 }
 function solFiltro(s, F) {
   if (F.grupo === 'ABERTAS' && SOL_ABERTOS.indexOf(s.status) < 0) return false;
   if (F.grupo === 'APROVADA' && s.status !== 'APROVADA') return false; if (F.grupo === 'RECUSADA' && s.status !== 'RECUSADA') return false;
-  if (F.grupo === 'CANCELADA' && s.status !== 'CANCELADA') return false; if (F.grupo === 'EXPIRADA' && s.status !== 'EXPIRADA') return false;
+  if (F.grupo === 'CANCELADA' && s.status !== 'CANCELADA') return false;
   if (F.tipo && s.tipo !== F.tipo) return false; if (F.pri && s.prioridade !== F.pri) return false;
   if (F.q) { var q = F.q.toLowerCase(), alvo = (s.resumo + ' ' + s.tipoNome + ' ' + s.comentario + ' ' + s.agentes.map(solNome).join(' ') + ' ' + solNome(s.criadaPor)).toLowerCase(); if (alvo.indexOf(q) < 0) return false; }
   return true;
@@ -483,7 +482,7 @@ function solPessoasCard(s) {
 }
 function solCard(s, r) {
   var stTxt = SOL_ST[s.status] + (s.status === 'EM_ANALISE' && s.analisePor ? ' · ' + solPrim(s.analisePor) : '');
-  var fim = s.status === 'EXPIRADA' ? '<span class="sol-fim exp">· expirou sem decisão: ' + esc(solBr(s.primeiroDia)) + ' chegou com o pedido ainda ' + esc((SOL_ST[s.statusGravado] || 'aberto').toLowerCase()) + '</span>' : s.decisaoPor ? '<span class="sol-fim">· ' + (s.status === 'CANCELADA' ? 'cancelada antes da decisão' : s.status === 'APROVADA' ? 'aprovada' : (s.gestaoPor && s.decisaoPor === s.gestaoPor ? 'recusada na gestão' : 'recusada')) + ' por <b>' + esc(solCurto(s.decisaoPor)) + '</b> ' + solQuando(s.decisaoEm) + '</span>' : '';
+  var fim = s.decisaoPor ? '<span class="sol-fim">· ' + (s.status === 'CANCELADA' ? 'cancelada antes da decisão' : s.status === 'APROVADA' ? 'aprovada' : (s.gestaoPor && s.decisaoPor === s.gestaoPor ? 'recusada na gestão' : 'recusada')) + ' por <b>' + esc(solCurto(s.decisaoPor)) + '</b> ' + solQuando(s.decisaoEm) + '</span>' : '';
   return '<button type="button" class="sol-card sol-rv p-' + s.prioridade + '" data-sol="' + esc(s.id) + '" style="--tk:' + (SOL_COR[s.tipo] || '#4F3F91') + '"><span class="sx-ic">' + solIc(s.tipo) + '</span>' +
     '<span class="sx-tx"><span class="sx-t1"><b>' + esc(s.tipoNome) + '</b><span class="sol-pri p-' + s.prioridade + '">' + esc((r.prioridades || {})[s.prioridade] || s.prioridade) + '</span><span class="sol-st s-' + s.status + '">' + esc(stTxt) + '</span>' + ((s.conversa || []).length ? '<span class="sol-st s-AGUARDANDO_INFO">' + solSvg('<path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/>').replace('<svg ', '<svg width="12" height="12" ') + (s.conversa || []).length + '</span>' : '') + '</span>' +
     '<p class="sx-rs">' + esc(s.resumo) + '</p><span class="sx-meta">' + solPessoasCard(s) + '<i class="sx-sep" aria-hidden="true"></i>' +
@@ -491,8 +490,8 @@ function solCard(s, r) {
     solSvg('<polyline points="9 18 15 12 9 6"/>', 2.4).replace('<svg ', '<svg class="sx-seta" ') + '</button>';
 }
 function solDesenhar() {
-  var r = estado.sol, F = estado.solF, R = r.resumo, cont = { ABERTAS: 0, APROVADA: 0, RECUSADA: 0, CANCELADA: 0, EXPIRADA: 0 };
-  r.lista.forEach(function (s) { if (SOL_ABERTOS.indexOf(s.status) >= 0) cont.ABERTAS++; else if (s.status === 'APROVADA') cont.APROVADA++; else if (s.status === 'RECUSADA') cont.RECUSADA++; else if (s.status === 'EXPIRADA') cont.EXPIRADA++; else cont.CANCELADA++; });
+  var r = estado.sol, F = estado.solF, R = r.resumo, cont = { ABERTAS: 0, APROVADA: 0, RECUSADA: 0, CANCELADA: 0 };
+  r.lista.forEach(function (s) { if (SOL_ABERTOS.indexOf(s.status) >= 0) cont.ABERTAS++; else if (s.status === 'APROVADA') cont.APROVADA++; else if (s.status === 'RECUSADA') cont.RECUSADA++; else cont.CANCELADA++; });
   var ap = (r.aprovadores || []).map(function (e) { return avatarHtml(e, solNome(e), ''); }).join(''), apG = (r.gestao || []).map(function (e) { return avatarHtml(e, solNome(e), ''); }).join('');
   var kpi = function (k, n, rot, sub) { var num = typeof n === 'number'; return '<div class="sol-kpi sol-rv' + (num && !n ? ' zero' : '') + '" style="--k:' + k + '"><b data-n="' + (num ? n : '') + '">' + (num ? 0 : n) + '</b><span>' + rot + '</span><small>' + sub + '</small></div>'; };
   var ordP = { URGENTE: 0, ALTA: 1, MEDIA: 2, BAIXA: 3 }, lista = r.lista.filter(function (s) { return solFiltro(s, F); });
@@ -512,12 +511,11 @@ function solDesenhar() {
     (r.semAvisos ? '<div class="sol-erros" style="background:#EEF3FF;border-color:#C9D7FF;color:#2E4A8A"><b>Ambiente de teste:</b> nenhuma solicitação gera aviso, e-mail ou notificação para ninguém.</div>' : '') +
     '<div class="sol-kpis">' + kpi(SOL_STK.AGUARDANDO_GESTAO, R.aguardandoGestao || 0, 'Aguardando a Gestão', 'os gerentes da operação aprovam') + kpi(SOL_STK.PENDENTE, R.aguardando, 'Aguardando Análise', 'já aprovadas pela gestão') + kpi(SOL_STK.EM_ANALISE, R.emAnalise, 'Em Análise', 'com o WFM') +
       kpi(SOL_STK.AGUARDANDO_INFO, R.aguardandoInfo, 'Aguardando Informações', 'esperando quem pediu') + kpi(SOL_STK.APROVADA, R.aprovadasMes, 'Aprovadas no Mês', 'já aplicadas na escala') + kpi('#4F3F91', solTempo(R.tempoMedioMin), 'Tempo Médio de Resposta', 'do pedido até a decisão') + '</div>' +
-    '<div class="sol-bar"><div class="sol-seg" role="tablist">' + [['ABERTAS', 'Abertas'], ['APROVADA', 'Aprovadas'], ['RECUSADA', 'Recusadas'], ['CANCELADA', 'Canceladas'], ['EXPIRADA', 'Expiradas'], ['', 'Todas']].map(function (x) { var n = x[0] ? cont[x[0]] : r.lista.length; return '<button type="button" role="tab" data-gr="' + x[0] + '" class="' + (F.grupo === x[0] ? 'on' : '') + '">' + x[1] + (n ? '<i>' + n + '</i>' : '') + '</button>'; }).join('') + '</div>' +
+    '<div class="sol-bar"><div class="sol-seg" role="tablist">' + [['ABERTAS', 'Abertas'], ['APROVADA', 'Aprovadas'], ['RECUSADA', 'Recusadas'], ['CANCELADA', 'Canceladas'], ['', 'Todas']].map(function (x) { var n = x[0] ? cont[x[0]] : r.lista.length; return '<button type="button" role="tab" data-gr="' + x[0] + '" class="' + (F.grupo === x[0] ? 'on' : '') + '">' + x[1] + (n ? '<i>' + n + '</i>' : '') + '</button>'; }).join('') + '</div>' +
       '<div class="sol-fs"><select id="solFt" aria-label="Tipo"><option value="">Todos os Tipos</option>' + SOL_ORDEM_TIPOS.concat(['INCLUSAO']).map(function (k) { return '<option value="' + k + '"' + (F.tipo === k ? ' selected' : '') + '>' + esc(r.tipos[k]) + '</option>'; }).join('') + '</select>' +
       '<select id="solFp" aria-label="Prioridade"><option value="">Todas as Prioridades</option>' + Object.keys(r.prioridades).map(function (k) { return '<option value="' + k + '"' + (F.pri === k ? ' selected' : '') + '>' + esc(r.prioridades[k]) + '</option>'; }).join('') + '</select>' +
       '<input id="solFq" type="search" placeholder="Buscar pessoa, tipo ou comentário" value="' + esc(F.q) + '"></div></div>' +
-    (F.grupo === 'CANCELADA' ? '<div class="sol-expl" style="--k:#8C8A99">' + solSvg('<circle cx="12" cy="12" r="9"/><line x1="8" y1="12" x2="16" y2="12"/>', 2.2) + '<div><b>Canceladas</b><span>Pedidos encerrados <b>antes de uma decisão</b>, por quem pediu ou pelo WFM. A escala não mudou.</span></div></div>' :
-     F.grupo === 'EXPIRADA' ? '<div class="sol-expl" style="--k:#B07A12">' + solSvg('<circle cx="12" cy="12" r="9"/><polyline points="12 7 12 12 15 14"/>', 2.2) + '<div><b>Expiradas</b><span>Pedidos que <b>ninguém aprovou nem recusou a tempo</b>: o primeiro dia do pedido chegou e eles ainda estavam abertos. A escala não mudou. Se ainda for necessário, abra um pedido novo com datas futuras.</span></div></div>' : '') +
+    (F.grupo === 'CANCELADA' ? '<div class="sol-expl" style="--k:#8C8A99">' + solSvg('<circle cx="12" cy="12" r="9"/><line x1="8" y1="12" x2="16" y2="12"/>', 2.2) + '<div><b>Canceladas</b><span>Pedidos encerrados <b>antes de uma decisão</b>, por quem pediu ou pelo WFM. A escala não mudou.</span></div></div>' : '') +
     '<div class="sol-lista">' + corpo + '</div></div>';
   var raiz = gc();
   raiz.querySelectorAll('[data-gr]').forEach(function (b) { b.onclick = function () { F.grupo = b.getAttribute('data-gr'); solDesenhar(); }; });
@@ -600,7 +598,7 @@ function solDetalhe(id) {
       '<button type="button" class="sol-bt no" id="solRec">' + solSvg('<line x1="6" y1="6" x2="18" y2="18"/><line x1="18" y1="6" x2="6" y2="18"/>') + 'Recusar</button><button type="button" class="sol-bt ok" id="solApr">' + solSvg('<polyline points="20 6 9 17 4 12"/>', 2.6) + 'Aprovar e Aplicar na Escala</button></div></div>';
   else if (aberta && meu && s.status === 'AGUARDANDO_INFO') acoes = '<div class="sol-acoes"><div class="sx-cx on"><label for="solTxResp">Sua resposta ao WFM</label><textarea id="solTxResp" placeholder="Responda a pergunta acima."></textarea></div><div id="solDecErro"></div><div class="sx-lin"><button type="button" class="sol-bt" id="solCanc">Cancelar Solicitação</button><button type="button" class="sol-bt sx-pri" id="solResp">' + solSvg('<path d="M22 2 11 13"/><path d="M22 2 15 22l-4-9-9-4 20-7z"/>') + 'Enviar Resposta</button></div></div>';
   else if (aberta && meu) acoes = '<div class="sol-acoes"><div class="sx-lin"><span class="sx-esq">O WFM vai analisar e responder por aqui.</span><button type="button" class="sol-bt" id="solCanc">Cancelar Solicitação</button></div></div>';
-  else acoes = '<div class="sol-acoes"><div class="sx-lin">' + (s.status === 'EXPIRADA' ? '<span class="sx-esq">Expirou sem decisão: a escala não mudou. Se ainda for necessário, abra um pedido novo com datas futuras.</span>' : s.status === 'CANCELADA' ? '<span class="sx-esq">Cancelada antes de uma decisão: a escala não mudou.</span>' : '') + '<button type="button" class="sol-bt" data-fechar>Fechar</button></div></div>';
+  else acoes = '<div class="sol-acoes"><div class="sx-lin">' + (s.status === 'CANCELADA' ? '<span class="sx-esq">Cancelada antes de uma decisão: a escala não mudou.</span>' : '') + '<button type="button" class="sol-bt" data-fechar>Fechar</button></div></div>';
   var w = solJanela('<div class="solm-cab" style="--tk:' + (SOL_COR[s.tipo] || '#4F3F91') + '"><span class="sx-ic">' + solIc(s.tipo) + '</span><div><h2>' + esc(s.tipoNome) + '</h2><p>Pedida por ' + esc(solCurto(s.criadaPor)) + ' · ' + solQuando(s.criadaEm) + '</p></div>' + SOL_X + '</div>' +
     '<div class="solm-corpo"><div class="sol-det-top"><span class="sol-pri p-' + s.prioridade + '">' + esc((r.prioridades || {})[s.prioridade] || '') + '</span><span class="sol-st s-' + s.status + '">' + esc(SOL_ST[s.status]) + '</span></div>' +
     '<p class="sol-res">' + esc(s.resumo) + '</p><h3 class="sol-h3">Motivo do Pedido</h3><div class="sol-com">' + esc(s.comentario) + '<small>' + esc(solNome(s.criadaPor)) + ' · ' + solQuando(s.criadaEm) + '</small></div>' + conv +
@@ -665,7 +663,7 @@ function solAjustesLigar(w, s) {
     var novo = document.createElement('div'); novo.innerHTML = solAjustesHtml(s); var h = caixa.previousElementSibling; caixa.replaceWith(novo.querySelector('.sol-aj')); solAjustesLigar(w, s);
     var alvo = w.querySelector('#solDetPrev'); alvo.innerHTML = '<div class="sol-carrega"><div class="giro"></div> Recalculando…</div>';
     var dd = Object.assign({}, s.dados); Object.keys(estado.solAj).forEach(function (x) { if (estado.solAj[x]) dd[x] = estado.solAj[x]; else delete dd[x]; });
-    chamar('apiSolicitacaoPrevia', estado.token, { tipo: s.tipo, dados: dd }).then(function (x) { alvo.innerHTML = x.ok ? solPrevHtml(x.previa) : '<div class="sol-erros">' + x.erros.map(esc).join('<br>') + '</div>'; if (typeof atualizarAvatares === 'function') atualizarAvatares(); }).catch(function (e) { alvo.innerHTML = '<div class="sol-erros">' + esc(String(e && e.message || e)) + '</div>'; });
+    chamar('apiSolicitacaoPrevia', estado.token, { tipo: s.tipo, dados: dd, decisao: true }).then(function (x) { alvo.innerHTML = x.ok ? solPrevHtml(x.previa) : '<div class="sol-erros">' + x.erros.map(esc).join('<br>') + '</div>'; if (typeof atualizarAvatares === 'function') atualizarAvatares(); }).catch(function (e) { alvo.innerHTML = '<div class="sol-erros">' + esc(String(e && e.message || e)) + '</div>'; });
   }; });
 }
 

@@ -228,7 +228,8 @@ function solAplicarVersao_(dias, atu, t) {
 
 /* ---------------- servidor (Apps Script) ---------------- */
 /* Andamento: AGUARDANDO_GESTAO (os gerentes da operação aprovam) → PENDENTE (Aguardando Análise) → EM_ANALISE → AGUARDANDO_INFO ⇄ EM_ANALISE → APROVADA | RECUSADA | CANCELADA.
- * EXPIRADA é calculada na leitura: solicitação aberta cujo primeiro dia já passou.
+ * Sem prazo (25/11/2026): a solicitação fica aberta até alguém decidir, mesmo depois do primeiro dia do pedido.
+ * Na aprovação, o WFM pode aplicar dias que já passaram (a abertura continua só com dias de hoje em diante).
  * Histórico: só abertura, aprovação, recusa e cancelamento (análise e conversa não entram). */
 var SOL_ABA = 'Solicitacoes';
 var SOL_CAB = ['sol_id', 'mes', 'tipo', 'status', 'prioridade', 'agentes', 'dados', 'resumo', 'comentario', 'criada_em', 'criada_por', 'decisao_por', 'decisao_em', 'decisao_obs', 'previa', 'aplicada_em', 'analise_por', 'analise_em', 'conversa', 'gestao_por', 'gestao_em', 'eventos'];
@@ -258,9 +259,10 @@ function solCtx_(mes) {
 }
 function solMesDe_(tipo, D) { const d = D.dA || D.dTrab || D.de || ''; return String(d).slice(0, 7); }
 /** Calcula no mês da solicitação e, com "Sem Data Fim", também nos meses seguintes que já têm escala publicada. */
-function solCalcularTudo_(tipo, D) {
+function solCalcularTudo_(tipo, D, naDecisao) {
   const mes = solMesDe_(tipo, D || {}); if (!/^\d{4}-\d{2}$/.test(mes)) return { erros: ['Escolha os dias da solicitação.'], porMes: {}, previa: [], resumo: '' };
-  const r0 = solCalcular_(tipo, D, solCtx_(mes)), out = { erros: r0.erros, porMes: {}, previa: r0.previa, resumo: r0.resumo, mes: mes };
+  const c0 = solCtx_(mes); if (naDecisao) c0.hoje = '';
+  const r0 = solCalcular_(tipo, D, c0), out = { erros: r0.erros, porMes: {}, previa: r0.previa, resumo: r0.resumo, mes: mes };
   if (r0.erros.length) return out; out.porMes[mes] = r0.set;
   if (D.semFim && (/^(HORARIO|ALMOCO|JANELA_0800|ATUACAO)$/.test(tipo) || (tipo === 'TROCA_CASADA' && D.modo === 'HORARIO'))) {
     const seguintes = {}; tabela_('Escalas').linhas.forEach(function (l) { if (l.mes > mes && (l.email === D.a || l.email === D.b) && l.dias_publicados) seguintes[l.mes] = 1; });
@@ -288,9 +290,9 @@ function solEventos_(l) {
 function solEv_(l, por, acao, txt) { const ev = solEventos_(l); ev.push({ em: agoraIso_(), por: por, acao: acao, txt: txt || '' }); return JSON.stringify(ev); }
 function solObj_(l) {
   const js = function (x, d) { try { return JSON.parse(x || ''); } catch (e) { return d; } };
-  const previa = js(l.previa, []), dados = js(l.dados, {}), hoje = hojeIso_();
+  const previa = js(l.previa, []), dados = js(l.dados, {});
   let primeiro = ''; previa.forEach(function (p) { (p.dias || []).forEach(function (d) { const iso = l.mes + '-' + ('0' + d.d).slice(-2); if (!primeiro || iso < primeiro) primeiro = iso; }); });
-  const status = SOL_ABERTOS.indexOf(l.status) >= 0 && primeiro && primeiro < hoje ? 'EXPIRADA' : l.status;
+  const status = l.status;
   return { id: l.sol_id, mes: l.mes, tipo: l.tipo, tipoNome: SOL_TIPOS[l.tipo] || l.tipo, status: status, statusGravado: l.status, prioridade: l.prioridade, agentes: String(l.agentes || '').split(',').filter(String),
     dados: dados, resumo: l.resumo, comentario: l.comentario, criadaEm: l.criada_em, criadaPor: l.criada_por, decisaoPor: l.decisao_por, decisaoEm: l.decisao_em, decisaoObs: l.decisao_obs,
     previa: previa, aplicadaEm: l.aplicada_em, analisePor: l.analise_por, analiseEm: l.analise_em, conversa: js(l.conversa, []), primeiroDia: primeiro, gestaoPor: l.gestao_por || '', gestaoEm: l.gestao_em || '', eventos: solEventos_(l) };
@@ -350,7 +352,7 @@ function apiSolicitacoesPendentes(token) { const ctx = sessao_(token); if (ctx.p
 /** Como a escala vai ficar, sem gravar nada. */
 function apiSolicitacaoPrevia(token, sol) {
   const ctx = sessao_(token); exigirGestao_(ctx);
-  const r = solCalcularTudo_(sol.tipo, sol.dados || {});
+  const r = solCalcularTudo_(sol.tipo, sol.dados || {}, !!sol.decisao && solPodeDecidir_(ctx.email));
   return { ok: !r.erros.length, erros: r.erros, previa: r.previa, resumo: r.resumo, mes: r.mes };
 }
 function apiSolicitacaoCriar(token, sol) {
@@ -473,7 +475,7 @@ function apiSolicitacaoDecidir(token, id, aprovar, obs, ajustes) {
     }
     if (ajustes && /^(HORARIO|ATUACAO)$/.test(l.tipo)) { ['almocoPH', 'janelaPH'].forEach(function (k) { if (ajustes[k] && /^\d{2}:\d{2}$/.test(ajustes[k])) dados[k] = ajustes[k]; else delete dados[k]; }); atualizarLinha_(t, l, { dados: JSON.stringify(dados) }); }
     /* recalcula sobre a escala de agora: se algo mudou desde o pedido, avisa em vez de gravar errado */
-    const r = solCalcularTudo_(l.tipo, dados);
+    const r = solCalcularTudo_(l.tipo, dados, true);
     if (r.erros.length) return { ok: false, erros: ['A escala mudou desde o pedido e a solicitação não pode ser aplicada como está:'].concat(r.erros) };
     const te = tabela_('Escalas'), logs = [], op = novoId_('op');
     Object.keys(r.porMes).forEach(function (mes) {
