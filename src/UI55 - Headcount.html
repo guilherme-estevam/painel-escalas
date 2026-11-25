@@ -40,12 +40,32 @@ html[data-tema="escuro"] .hcx{--hc-roxo:#7b68dd;--hc-borda:#33303d;--hc-sup:#1f1
 @keyframes hcxGrad{from{background-position:0% 30%}to{background-position:100% 70%}}
 /* faixa de números */
 .hcx-faixa{display:grid;grid-template-columns:repeat(6,minmax(0,1fr));gap:12px}
-.hcx-kpi{position:relative;padding:13px 14px 12px 16px;border-radius:14px;border:1px solid var(--hc-borda);background:var(--hc-sup);overflow:hidden;min-width:0}
+.hcx-kpi{position:relative;display:flex;flex-direction:column;border-radius:14px;border:1px solid var(--hc-borda);background:var(--hc-sup);overflow:hidden;min-width:0;transition:border-color .15s,transform .18s var(--hc-e)}
 .hcx-kpi::before{content:"";position:absolute;left:0;top:0;bottom:0;width:4px;background:var(--k,var(--hc-rosa))}
-.hcx-kpi b{display:block;font-family:'IBM Plex Mono',ui-monospace,monospace;font-size:24px;line-height:1.1;font-weight:700;color:var(--hc-tx);font-variant-numeric:tabular-nums}
-.hcx-kpi span{display:block;margin-top:3px;font-size:12px;font-weight:700;color:var(--hc-tx)}
-.hcx-kpi small{display:block;margin-top:1px;font-size:11.5px;color:var(--hc-tx2);line-height:1.35}
-button.hcx-kpi{font:inherit;text-align:left;cursor:pointer;transition:border-color .15s,transform .18s var(--hc-e)}
+.hcx-kb{display:block;flex:1;width:100%;padding:13px 14px 10px 16px;border:0;background:transparent;color:inherit;font:inherit;text-align:left}
+button.hcx-kb{cursor:pointer}
+.hcx-kb b{display:block;font-family:'IBM Plex Mono',ui-monospace,monospace;font-size:24px;line-height:1.1;font-weight:700;color:var(--hc-tx);font-variant-numeric:tabular-nums}
+.hcx-kb span{display:block;margin-top:3px;font-size:12px;font-weight:700;color:var(--hc-tx)}
+.hcx-kb small{display:block;margin-top:1px;font-size:11.5px;color:var(--hc-tx2);line-height:1.35}
+/* atendimento dentro de cada número */
+.hcx-ka{display:flex;flex-direction:column;gap:6px;width:100%;padding:8px 14px 10px 16px;border:0;border-top:1px dashed var(--hc-borda);background:color-mix(in srgb,#0E7C66 5%,transparent);color:var(--hc-tx2);font:inherit;font-size:11.5px;text-align:left;cursor:pointer;transition:background-color .15s}
+.hcx-ka .br{display:block;height:4px;border-radius:999px;background:color-mix(in srgb,var(--hc-borda) 70%,transparent);overflow:hidden}
+.hcx-ka .br i{display:block;height:100%;border-radius:999px;background:#0E7C66;transform:scaleX(0);transform-origin:left;transition:transform .7s var(--hc-e)}
+.hcx-on .hcx-ka .br i,.hcx-in .hcx-ka .br i{transform:none}
+.hcx-ka .tx{display:flex;align-items:center;gap:6px;font-weight:700;white-space:nowrap}
+.hcx-ka .tx > i{width:7px;height:7px;flex:none;border-radius:50%;background:#0E7C66}
+.hcx-ka .tx b{font-family:'IBM Plex Mono',ui-monospace,monospace;font-size:13.5px;color:#0E7C66;font-variant-numeric:tabular-nums}
+.hcx-ka .tx em{margin-left:auto;font-style:normal;font-weight:600;color:var(--hc-tx2)}
+html[data-tema="escuro"] .hcx-ka{background:color-mix(in srgb,#3fc2a2 7%,transparent)}
+html[data-tema="escuro"] .hcx-ka .tx b{color:#5fd3b5}html[data-tema="escuro"] .hcx-ka .tx > i,html[data-tema="escuro"] .hcx-ka .br i{background:#3fc2a2}
+.hcx-fbloco{display:flex;flex-direction:column;gap:10px}
+.hcx-atcab{display:flex;align-items:center;gap:10px;flex-wrap:wrap;font-size:12.5px;color:var(--hc-tx2)}
+.hcx-atcab b{color:var(--hc-tx)}
+.hcx-atdot{width:9px;height:9px;flex:none;border-radius:50%;background:#0E7C66;box-shadow:0 0 0 4px color-mix(in srgb,#0E7C66 16%,transparent)}
+.hcx-atcab button{display:inline-flex;align-items:center;gap:4px;margin-left:auto;padding:4px 10px;border-radius:999px;border:1px solid color-mix(in srgb,#0E7C66 40%,transparent);background:transparent;color:#0E7C66;font:inherit;font-size:12px;font-weight:800;cursor:pointer}
+.hcx-atcab button svg{width:13px;height:13px}
+html[data-tema="escuro"] .hcx-atcab button{color:#5fd3b5;border-color:color-mix(in srgb,#3fc2a2 45%,transparent)}
+.hcx-ka:focus-visible,.hcx-kb:focus-visible,.hcx-atcab button:focus-visible{outline:2px solid var(--hc-rosa);outline-offset:-2px}
 /* blocos */
 .hcx-g2{display:grid;grid-template-columns:minmax(0,1.5fr) minmax(0,1fr);gap:14px;align-items:stretch}
 .hcx-g3{display:grid;grid-template-columns:minmax(0,1.15fr) minmax(0,1fr);gap:14px;align-items:stretch}
@@ -95,8 +115,10 @@ html[data-tema="escuro"] .hcx-lin .fora{color:#f2cf8a;background:#3a2c12}
 .hcx-vazio{padding:28px 18px;text-align:center;color:var(--hc-tx2);font-size:13px}
 @media (hover:hover) and (pointer:fine){
   .hcx-time:hover{transform:translateY(-2px)}
-  .hcx-bt:hover,button.hcx-kpi:hover{border-color:var(--hc-rosa)}
-  button.hcx-kpi:hover{transform:translateY(-1px)}
+  .hcx-bt:hover,.hcx-kpi:hover{border-color:var(--hc-rosa)}
+  .hcx-kpi:hover{transform:translateY(-1px)}
+  .hcx-ka:hover{background:color-mix(in srgb,#0E7C66 11%,transparent)}
+  .hcx-atcab button:hover{background:color-mix(in srgb,#0E7C66 8%,transparent)}
   .hcx-lin:hover{background:color-mix(in srgb,var(--hc-rosa) 6%,transparent)}
   .hcx-col:hover .br{filter:brightness(1.12)}
 }
@@ -268,6 +290,10 @@ function hcMeses(adm) { var m = String(adm || '').match(/(\d{2})\/(\d{2})\/(\d{4
 function hcPct(n, d) { return d ? (Math.round(n * 1000 / d) / 10).toLocaleString('pt-BR', { minimumFractionDigits: 1, maximumFractionDigits: 1 }) + '%' : '—'; }
 var HC_UNIFICA = { 'IA & Automação': 'Gerente Um', 'Engajamento': 'Gerente Executiva' };
 function hcUnificar() { var H = estado.hc; if (!H || H.__uni) return; (H.pessoas || []).forEach(function (p) { var u = HC_UNIFICA[String(p.coord || '').trim()]; if (u) { p.coordOriginal = p.coord; p.coord = u; } }); H.__uni = 1; }
+/* Atendimento (25/11/2026): quem está nas coordenações Manuela, Neyane, Winnie, Cibelly e Willian, sem os analistas */
+var HC_ATEND = ['manuela', 'neyane', 'winnie', 'cibelly', 'willian'];
+function hcSemAcento(s) { return String(s || '').normalize('NFD').replace(/[̀-ͯ]/g, '').toLowerCase().trim(); }
+function hcAtende(p) { var c = hcSemAcento(p.coord).split(/\s+/)[0]; return HC_ATEND.indexOf(c) >= 0 && !/^analista/i.test(String(p.funcao || '').trim()); }
 function hcSel() { hcUnificar(); var a = (estado.hcF && estado.hcF.area) || ''; return (estado.hc.pessoas || []).filter(function (p) { return !a || p.area === a; }); }
 /* situação da sincronização com a planilha (19/11/2026): erro e leitura ignorada têm mensagem própria; o WFM vê o detalhe ao passar o mouse */
 function hcHora(iso) { return iso ? String(iso).slice(8, 10) + '/' + String(iso).slice(5, 7) + ' às ' + String(iso).slice(11, 16) : ''; }
@@ -313,7 +339,7 @@ function hcBotaoAba() {
   if (typeof apBotaoAba === 'function') { var _ap = apBotaoAba; apBotaoAba = function () { var r = _ap.apply(this, arguments); try { hcBotaoAba(); } catch (e) { } return r; }; }
 })();
 function hcTela() {
-  var main = $('conteudo'); main.className = 'largo'; estado.hcSub = estado.hcSub || 'geral';
+  var main = $('conteudo'); main.className = ''; estado.hcSub = estado.hcSub || 'geral'; /* 25/11/2026: mesma largura centralizada do resto do painel */
   var subs = [['geral', 'Customer Geral', 'geral'], ['ferias', 'Férias e Licenças', 'ferias']];
   main.innerHTML = '<div class="subnav" id="subnav" role="tablist">' + subs.map(function (s) { return '<button role="tab" data-hcsub="' + s[0] + '" class="' + (estado.hcSub === s[0] ? 'ativa' : '') + '" aria-selected="' + (estado.hcSub === s[0]) + '">' + hcSvg(s[2]) + '<span>' + s[1] + '</span></button>'; }).join('') + '</div><div id="gConteudo"></div>';
   main.querySelectorAll('[data-hcsub]').forEach(function (b) { b.onclick = function () { var s = b.getAttribute('data-hcsub'); if (s === estado.hcSub) return; estado.hcSub = s; hcTela(); }; });
@@ -338,11 +364,22 @@ function hcDesenhar(animar) {
   }).join('');
   // faixa de números
   var ms = P.map(function (p) { return hcMeses(p.admissao); }).filter(function (x) { return x !== null; }), med = ms.length ? ms.reduce(function (a, b) { return a + b; }, 0) / ms.length : 0;
-  var kpi = function (k, v, rot, sub, filtro) { return '<button type="button" class="hcx-kpi" style="--k:' + k + '" data-lista="' + filtro + '"><b' + (typeof v === 'number' ? ' data-n="' + v + '"' : '') + '>' + v + '</b><span>' + rot + '</span><small>' + sub + '</small></button>'; };
-  var faixa = kpi('#1E9E58', ativos, 'Ativos', hcPct(ativos, n) + ' do total', 'st:Ativo') + kpi('#D80073', ferias, 'Em Férias', hcPct(ferias, n) + ' do total', 'st:Férias') + kpi('#C98A00', lic, 'Em Licença', hcPct(lic, n) + ' do total', 'st:Licença') +
-    kpi('#D80073', conta(P, function (p) { return hcGrupo(p.funcao) === 'Agentes'; }), 'Agentes', 'N1, N2 e N3', 'gr:Agentes') +
-    kpi('#4F3F91', (function () { var L = hcLideres(P); return L.com.length + L.sem.length; })(), 'Coordenações', 'e gerências · ver os times', 'lideres') +
-    '<div class="hcx-kpi" style="--k:#0E8A8A"><b>' + (med >= 12 ? (Math.floor(med / 12) + 'a ' + Math.round(med % 12) + 'm') : Math.round(med) + 'm') + '</b><span>Tempo Médio de Casa</span><small>média de quem está na seleção</small></div>';
+  /* cada número mostra embaixo quantos são do atendimento (coordenações Manuela, Neyane, Winnie, Cibelly e Willian, sem analistas) */
+  var PA = P.filter(hcAtende), nA = PA.length, tmc = function (m) { return m >= 12 ? (Math.floor(m / 12) + 'a ' + Math.round(m % 12) + 'm') : Math.round(m) + 'm'; };
+  var kpi = function (k, v, rot, sub, filtro, va, filtroA, txtA) {
+    var num = typeof v === 'number', pa = num && v ? Math.round(va / v * 100) : 0;
+    return '<div class="hcx-kpi" style="--k:' + k + '">' + (filtro ? '<button type="button" class="hcx-kb" data-lista="' + filtro + '">' : '<div class="hcx-kb">') + '<b' + (num ? ' data-n="' + v + '"' : '') + '>' + v + '</b><span>' + rot + '</span><small>' + sub + '</small>' + (filtro ? '</button>' : '</div>') +
+      '<button type="button" class="hcx-ka" data-lista="' + (filtroA || 'at') + '" title="' + esc(txtA || ('Ver quem é do atendimento')) + '">' + (num ? '<span class="br"><i style="width:' + pa + '%"></i></span>' : '') + '<span class="tx"><i></i>Atendimento <b' + (typeof va === 'number' ? ' data-n="' + va + '"' : '') + '>' + va + '</b>' + (num && v ? '<em>' + pa + '%</em>' : '') + '</span></button></div>';
+  };
+  var agentes = function (l) { return conta(l, function (p) { return hcGrupo(p.funcao) === 'Agentes'; }); };
+  var msA = PA.map(function (p) { return hcMeses(p.admissao); }).filter(function (x) { return x !== null; }), medA = msA.length ? msA.reduce(function (a, b) { return a + b; }, 0) / msA.length : 0;
+  var coordA = {}; PA.forEach(function (p) { coordA[hcSemAcento(p.coord).split(/\s+/)[0]] = 1; });
+  var est = function (s) { return conta(PA, function (p) { return p.status === s; }); };
+  var faixa = kpi('#1E9E58', ativos, 'Ativos', hcPct(ativos, n) + ' do total', 'st:Ativo', est('Ativo'), 'at|st:Ativo') + kpi('#D80073', ferias, 'Em Férias', hcPct(ferias, n) + ' do total', 'st:Férias', est('Férias'), 'at|st:Férias') + kpi('#C98A00', lic, 'Em Licença', hcPct(lic, n) + ' do total', 'st:Licença', nA - est('Ativo') - est('Férias'), 'at|st:Licença') +
+    kpi('#D80073', agentes(P), 'Agentes', 'N1, N2 e N3', 'gr:Agentes', agentes(PA), 'at|gr:Agentes') +
+    kpi('#4F3F91', (function () { var L = hcLideres(P); return L.com.length + L.sem.length; })(), 'Coordenações', 'e gerências · ver os times', 'lideres', Object.keys(coordA).length, 'at', 'As coordenações do atendimento: Manuela, Neyane, Winnie, Cibelly e Willian') +
+    kpi('#0E8A8A', tmc(med), 'Tempo Médio de Casa', 'média de quem está na seleção', '', nA ? tmc(medA) : '—', 'at', 'Tempo médio de casa de quem é do atendimento');
+  var faixaCab = '<div class="hcx-atcab"><span class="hcx-atdot"></span><span><b>Atendimento</b> em cada número: pessoas das coordenações Manuela, Neyane, Winnie, Cibelly e Willian, sem os analistas.</span><button type="button" data-lista="at">' + nA + ' pessoa' + (nA === 1 ? '' : 's') + ' · ' + hcPct(nA, n) + ' da seleção' + hcSvg('seta') + '</button></div>';
   // coordenações
   var cs = {}; P.forEach(function (p) { var c = cs[p.coord] || (cs[p.coord] = { c: p.coord, n: 0, ag: 0, an: 0, ap: 0, ou: 0, fora: 0, area: p.area }); c.n++; var gr = hcGrupo(p.funcao); if (gr === 'Agentes') c.ag++; else if (gr === 'Analistas e Assistentes') c.an++; else if (gr === 'Aprendizes') c.ap++; else c.ou++; if (p.status !== 'Ativo') c.fora++; });
   var cl = Object.keys(cs).map(function (k) { return cs[k]; }).sort(function (a, b) { return b.n - a.n; }), cmax = cl.length ? cl[0].n : 1;
@@ -371,7 +408,7 @@ function hcDesenhar(animar) {
   g.innerHTML = '<div class="hcx' + (animar ? ' hcx-anim' : '') + '" id="hcx">' +
     '<div class="hcx-topo"><div><h2>Headcount · Customer</h2><p>As mesmas informações da planilha Headcount. Clique em um time para filtrar e em qualquer número para ver as pessoas.</p></div>' +
     '<div class="hcx-sinc"' + hcSincTitulo(H) + '><span class="pt' + (H.pendente || H.aviso || H.erro ? ' esp' : '') + '"></span><span>' + esc(hcSincTexto(H)) + (quando ? ' · atualizado em ' + quando : '') + '</span>' + '' + '</div></div>' +
-    '<div class="hcx-times">' + times + '</div><div class="hcx-faixa">' + faixa + '</div>' +
+    '<div class="hcx-times">' + times + '</div><div class="hcx-fbloco">' + faixaCab + '<div class="hcx-faixa">' + faixa + '</div></div>' +
     '<div class="hcx-g2">' + card('coord', 'Pessoas por Coordenação', nomeSel + ' · ' + n + ' pessoas, pela coordenação ou gerência de cada uma', '<div class="cp">' + (coords || '<div class="hcx-vazio">Ninguém na seleção.</div>') + '</div>', '<div class="hcx-leg"><span style="--k:#D80073"><i></i>Agentes</span><span style="--k:#4F3F91"><i></i>Analistas e Assistentes</span><span style="--k:#E0A12D"><i></i>Aprendizes</span><span style="--k:#9AA4B2"><i></i>Gestão</span></div>') +
       '<div class="hcx-pilha">' + card('cargo', 'Volumes por Cargo', 'Quantas pessoas em cada grupo', '<div class="cp">' + cargos + '</div>') + card('turno', 'Turnos', 'Distribuição da seleção', '<div class="cp"><div class="hcx-turno">' + turnoBar + '</div>' + turnos + '</div>') + '</div></div>' +
     '<div class="hcx-g3">' + card('nivel', 'Níveis', 'Total por nível e o quanto cada um representa do total', '<div class="cp">' + niveis + '</div>', '<div class="hcx-leg"><span style="--k:#D80073"><i></i>Ativos</span><span style="--k:#F2B6D6"><i></i>Férias ou Licença</span></div>') +
@@ -412,6 +449,8 @@ function hcLideres(P) {
 }
 /* ---------- janela de pessoas: filtros e navegação (gerência → coordenação → time) ---------- */
 function hcVista(chave, P) {
+  if (chave.slice(0, 3) === 'at|') { var va = hcVista(chave.slice(3), P.filter(hcAtende)); if (va.l) va.tit = (va.tit || 'Pessoas') + ' · Atendimento'; return va; }
+  if (chave === 'at') return { l: P.filter(hcAtende).sort(function (a, b) { return a.nome.localeCompare(b.nome, 'pt-BR'); }), tit: 'Atendimento', chefe: null };
   var t = chave.slice(0, 2), v = chave.slice(3), l = P, tit = '', chefe = null;
   if (chave === 'lideres') return { lideres: true, tit: 'Coordenações e Gerências', sub: 'Quem lidera cada time. Clique em uma pessoa para ver o time e ir descendo até os agentes.' };
   if (t === 'pe') { var pe = estado.hc.mapa[v] || null; return { ficha: pe, tit: pe ? hcNome(pe.nome) : v }; }
