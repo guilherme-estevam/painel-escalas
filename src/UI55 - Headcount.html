@@ -299,7 +299,7 @@ function hcPct(n, d) { return d ? (Math.round(n * 1000 / d) / 10).toLocaleString
 var HC_UNIFICA = { 'IA & Automação': 'Gerente Um', 'Engajamento': 'Gerente Executiva' };
 /* 26/11/2026: área mostrada ao lado da coordenação quando a da planilha não é a que vale no painel */
 var HC_AREA_COORD = { 'Diretoria': 'Customer' };
-/* 26/11/2026: áreas que formam uma gerência própria (o gerente é quem tem função Gerente nessa área). Vazio: o Marcus (Conta Digital) responde ao Marcelo e não tem liderados, então fica no time do Marcelo, como na planilha */
+/* 26/11/2026: áreas que formam uma gerência própria (o gerente é quem tem função Gerente nessa área). Vazio: o gerente de Conta Digital responde à diretoria e não tem liderados, então fica no time da diretoria, como na planilha */
 var HC_GER_AREA = {};
 function hcRespArea(rot) { var a = Object.keys(HC_GER_AREA).filter(function (k) { return HC_GER_AREA[k] === rot; })[0]; if (!a || !estado.hc) return ''; var g = (estado.hc.pessoas || []).filter(function (p) { return p.area === a && /^gerente/i.test(String(p.funcao || '')); })[0]; return g ? g.email : ''; }
 function hcUnificar() { var H = estado.hc; if (!H || H.__uni) return; (H.pessoas || []).forEach(function (p) { var u = HC_UNIFICA[String(p.coord || '').trim()]; if (u) { p.coordOriginal = p.coord; p.coord = u; } }); H.__uni = 1; }
