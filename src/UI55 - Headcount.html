@@ -13,7 +13,7 @@ html[data-tema="escuro"] .hcx{--hc-roxo:#7b68dd;--hc-borda:#33303d;--hc-sup:#1f1
 .hcx-bt:active{transform:scale(.97)}
 .hcx-bt:focus-visible,.hcx-time:focus-visible,.hcx-lin:focus-visible,.hcx-col:focus-visible{outline:2px solid var(--hc-rosa);outline-offset:2px}
 /* times */
-.hcx-times{display:grid;grid-template-columns:minmax(0,1.25fr) repeat(3,minmax(0,1fr));gap:14px}
+.hcx-times{display:grid;grid-template-columns:minmax(0,1.25fr) repeat(4,minmax(0,1fr));gap:14px}
 .hcx-time{position:relative;display:flex;flex-direction:column;gap:10px;min-width:0;padding:18px 18px 16px;border-radius:18px;border:1.5px solid var(--hc-borda);background:var(--hc-sup);color:var(--hc-tx);font:inherit;text-align:left;cursor:pointer;overflow:hidden;transition:border-color .18s,box-shadow .18s,transform .18s var(--hc-e)}
 .hcx-time .rot{display:flex;align-items:center;gap:8px;font-size:11.5px;font-weight:800;letter-spacing:.07em;text-transform:uppercase;color:var(--hc-tx2)}
 .hcx-time .rot i{width:9px;height:9px;border-radius:3px;background:var(--k,var(--hc-rosa))}
@@ -286,7 +286,7 @@ var HC_IC = {
   sync: '<polyline points="23 4 23 10 17 10"/><polyline points="1 20 1 14 7 14"/><path d="M3.500 9a9 9 0 0 1 14.850-3.360L23 10M1 14l4.640 4.360A9 9 0 0 0 20.490 15"/>',
   ok: '<polyline points="20 6 9 17 4 12"/>', seta: '<polyline points="9 18 15 12 9 6"/>', busca: '<circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.650" y2="16.650"/>' };
 function hcSvg(k) { return '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">' + HC_IC[k] + '</svg>'; }
-var HC_TIMES = [['', 'Total Customer', '#D80073'], ['Customer Service', 'Customer Service', '#D80073'], ['Experiência', 'Experiência', '#4F3F91'], ['Engajamento', 'Engajamento', '#0E8A8A']];
+var HC_TIMES = [['', 'Total Customer', '#D80073'], ['Customer Service', 'Customer Service', '#D80073'], ['Experiência', 'Experiência', '#4F3F91'], ['Engajamento', 'Engajamento', '#0E8A8A'], ['Conta Digital', 'Conta Digital', '#E0A12D']];
 var HC_GRUPOS = [['Agentes', /^agente/i, '#D80073'], ['Analistas e Assistentes', /^(analista|assistente)/i, '#4F3F91'], ['Aprendizes', /^aprendiz/i, '#E0A12D'], ['Líderes', /^l[ií]der/i, '#0E8A8A'], ['Coordenadores', /^coordenador/i, '#7E57C2'], ['Gerentes', /^gerente(?! exec)/i, '#3D7BE0'], ['Gerência Executiva', /^gerente exec/i, '#1c1823']];
 var HC_FAIXAS = [['0 a 3 meses', 0, 3], ['3 meses a 1 ano', 3, 12], ['1 a 2 anos', 12, 24], ['2 a 3 anos', 24, 36], ['3 a 4 anos', 36, 48], ['4 a 5 anos', 48, 60], ['Acima de 5 anos', 60, 1e9]];
 var HC_TURNOS = [['Manhã', '#E0A12D'], ['Tarde', '#D80073'], ['Intermediario', '#0E8A8A'], ['Integral', '#4F3F91']];
@@ -297,6 +297,8 @@ function hcGrupo(f) { for (var i = 0; i < HC_GRUPOS.length; i++) if (HC_GRUPOS[i
 function hcMeses(adm) { var m = String(adm || '').match(/(\d{2})\/(\d{2})\/(\d{4})/); if (!m) return null; var h = new Date(); return (h.getFullYear() - (+m[3])) * 12 + (h.getMonth() + 1 - (+m[2])) - (h.getDate() < (+m[1]) ? 1 : 0); }
 function hcPct(n, d) { return d ? (Math.round(n * 1000 / d) / 10).toLocaleString('pt-BR', { minimumFractionDigits: 1, maximumFractionDigits: 1 }) + '%' : '—'; }
 var HC_UNIFICA = { 'IA & Automação': 'Gerente Um', 'Engajamento': 'Gerente Executiva' };
+/* 26/11/2026: área mostrada ao lado da coordenação quando a da planilha não é a que vale no painel */
+var HC_AREA_COORD = { 'Diretoria': 'Customer' };
 function hcUnificar() { var H = estado.hc; if (!H || H.__uni) return; (H.pessoas || []).forEach(function (p) { var u = HC_UNIFICA[String(p.coord || '').trim()]; if (u) { p.coordOriginal = p.coord; p.coord = u; } }); H.__uni = 1; }
 /* Atendimento (25/11/2026): quem está nas coordenações Manuela, Neyane, Winnie, Cibelly e Willian, sem os analistas */
 var HC_ATEND = ['manuela', 'neyane', 'winnie', 'cibelly', 'willian'];
@@ -367,7 +369,7 @@ function hcDesenhar(animar) {
   var times = HC_TIMES.map(function (t, i) {
     var l = t[0] ? todos.filter(function (p) { return p.area === t[0]; }) : todos, at = conta(l, function (p) { return p.status === 'Ativo'; });
     var ger = l.filter(function (p) { return /^gerente/i.test(p.funcao); }).map(function (p) { var w = hcNome(p.nome).split(' ').filter(Boolean); return w.length > 1 ? w[0] + ' ' + w[w.length - 1] : w[0] || ''; }).sort(function (a, b) { return a.localeCompare(b, 'pt-BR'); });
-    var sub = i === 0 ? (H.empresa ? '<b>' + hcPct(l.length, H.empresa) + '</b> da empresa (' + H.empresa + ' pessoas)' : 'pessoas na área') : (ger.length ? 'Gestão: <b>' + esc(ger.join(' e ')) + '</b>' : hcPct(l.length, todos.length) + ' do Customer');
+    var sub = i === 0 ? 'pessoas no Customer' : (ger.length ? 'Gestão: <b>' + esc(ger.join(' e ')) + '</b>' : hcPct(l.length, todos.length) + ' do Customer');
     return '<button type="button" class="hcx-time' + (i === 0 ? ' tot' : '') + '" style="--k:' + t[2] + '" data-area="' + esc(t[0]) + '" aria-pressed="' + (F.area === t[0]) + '"><span class="sel">' + hcSvg('ok') + '</span>' +
       '<span class="rot"><i></i>' + esc(t[1]) + '</span><span class="num" data-n="' + l.length + '">' + l.length + '</span><span class="sub">' + sub + '</span>' +
       '<span class="mini" title="' + at + ' ativos · ' + (l.length - at) + ' em férias ou licença"><i style="width:' + (l.length ? at / l.length * 100 : 0) + '%"></i><i style="width:' + (l.length ? (l.length - at) / l.length * 100 : 0) + '%"></i></span></button>';
@@ -395,7 +397,7 @@ function hcDesenhar(animar) {
   var cs = {}; P.forEach(function (p) { var c = cs[p.coord] || (cs[p.coord] = { c: p.coord, n: 0, ag: 0, an: 0, ap: 0, ou: 0, fora: 0, area: p.area }); c.n++; var gr = hcGrupo(p.funcao); if (gr === 'Agentes') c.ag++; else if (gr === 'Analistas e Assistentes') c.an++; else if (gr === 'Aprendizes') c.ap++; else c.ou++; if (p.status !== 'Ativo') c.fora++; });
   var cl = Object.keys(cs).map(function (k) { return cs[k]; }).sort(function (a, b) { return b.n - a.n; }), cmax = cl.length ? cl[0].n : 1;
   var coords = cl.map(function (c) { var w = function (v) { return (v / cmax * 100).toFixed(2); };
-    return '<button type="button" class="hcx-lin hcx-lc" data-lista="co:' + esc(c.c) + '" title="Ver o time de ' + esc(c.c) + '">' + hcFotoRot(c.c) + '<span class="nm">' + esc(c.c) + (F.area ? '' : '<small>' + esc(c.area) + '</small>') + '</span>' +
+    return '<button type="button" class="hcx-lin hcx-lc" data-lista="co:' + esc(c.c) + '" title="Ver o time de ' + esc(c.c) + '">' + hcFotoRot(c.c) + '<span class="nm">' + esc(c.c) + (F.area ? '' : '<small>' + esc(HC_AREA_COORD[c.c] || c.area) + '</small>') + '</span>' +
       '<span class="tr"><i style="width:' + w(c.ag) + '%;--k:#D80073"></i><i style="width:' + w(c.an) + '%;--k:#4F3F91"></i><i style="width:' + w(c.ap) + '%;--k:#E0A12D"></i><i style="width:' + w(c.ou) + '%;--k:#9AA4B2"></i></span>' +
       '<span class="v">' + c.n + '</span><span class="p">' + hcPct(c.n, n) + '</span></button>'; }).join('');
   // cargos

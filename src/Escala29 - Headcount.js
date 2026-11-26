@@ -11,7 +11,8 @@
  *  · o WFM pode forçar pelo botão "Atualizar Agora".
  * ===================================================================== */
 const HC_PLANILHA_ID = 'ID_DA_PLANILHA_DE_HEADCOUNT';
-const HC_ABAS = [['Customer_Service', 'Customer Service'], ['Customer_Experience', 'Experiência'], ['Engajamento', 'Engajamento']];
+/* 26/11/2026: inclui a aba Conta_Digital (área própria no painel, ao lado de Engajamento) */
+const HC_ABAS = [['Customer_Service', 'Customer Service'], ['Customer_Experience', 'Experiência'], ['Engajamento', 'Engajamento'], ['Conta_Digital', 'Conta Digital']];
 const HC_CAMPOS = ['id', 'nome', 'status', 'email', 'funcao', 'squad', 'lider', 'convenio', 'turno', 'fila', 'segmento', 'entrada', 'saida', 'ferramenta', 'time', 'admissao', 'tempo', 'coord'];
 const ABA_HC_BASE = 'HeadcountBase', HC_ESPERA_MS = 9 * 60 * 1000;
 /* 19/11/2026: o painel ficava preso em "aguardando a edição terminar" quando algum valor da planilha mudava
