@@ -325,6 +325,21 @@ function hcSincTitulo(H) {
 function hcBuscar(forcar) {
   return chamar(forcar ? 'apiHeadcountAtualizar' : 'apiHeadcount', estado.token).then(function (r) { r.pessoas = r.pessoas || []; r.mapa = {}; r.pessoas.forEach(function (p) { r.mapa[p.email] = p; }); estado.hc = r; estado.hcEm = Date.now(); return r; });
 }
+/* 26/11/2026: com a aba Headcount aberta e visível, confere a cada 1 minuto se a cópia mudou e redesenha sozinho (sem F5), mantendo filtro e rolagem */
+(function () {
+  setInterval(function () {
+    try {
+      if (document.hidden || !estado.hc || estado.aba !== 'headcount' || estado.hcSub !== 'geral' || estado.hcBuscando) return;
+      if (typeof ehGestao === 'function' && !ehGestao()) return;
+      var antes = estado.hc.atualizadoEm; estado.hcBuscando = 1;
+      hcBuscar(false).then(function (r) {
+        estado.hcBuscando = 0;
+        if (r.atualizadoEm === antes || estado.aba !== 'headcount' || estado.hcSub !== 'geral') return;
+        var y = window.scrollY; hcDesenhar(false); window.scrollTo(0, y);
+      }).catch(function () { estado.hcBuscando = 0; });
+    } catch (e) { estado.hcBuscando = 0; }
+  }, 60000);
+})();
 function hcCarregar(forcar) {
   if (forcar || !estado.hc) return hcBuscar(forcar);
   if (Date.now() - (estado.hcEm || 0) > 120000) {

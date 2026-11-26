@@ -5,7 +5,7 @@
  * mesmas que alimentam a aba "Customer Geral", e guarda uma cópia interna na
  * aba HeadcountBase do banco, para a tela abrir na hora.
  * Atualização, sem pesar a ferramenta:
- *  · confere no máximo a cada 10 minutos, e só com o painel em uso;
+ *  · confere no máximo a cada 2 minutos, e só com o painel em uso;
  *  · se a planilha mudou, NÃO aplica na hora: espera ela ficar igual em duas
  *    conferências seguidas (a pessoa pode estar mexendo em várias linhas);
  *  · o WFM pode forçar pelo botão "Atualizar Agora".
@@ -14,7 +14,8 @@ const HC_PLANILHA_ID = 'ID_DA_PLANILHA_DE_HEADCOUNT';
 /* 26/11/2026: inclui a aba Conta_Digital (área própria no painel, ao lado de Engajamento) */
 const HC_ABAS = [['Customer_Service', 'Customer Service'], ['Customer_Experience', 'Experiência'], ['Engajamento', 'Engajamento'], ['Conta_Digital', 'Conta Digital']];
 const HC_CAMPOS = ['id', 'nome', 'status', 'email', 'funcao', 'squad', 'lider', 'convenio', 'turno', 'fila', 'segmento', 'entrada', 'saida', 'ferramenta', 'time', 'admissao', 'tempo', 'coord'];
-const ABA_HC_BASE = 'HeadcountBase', HC_ESPERA_MS = 9 * 60 * 1000;
+/* 26/11/2026: confere a cada 2 minutos; aplica quando duas leituras seguidas batem (2 a 4 min) e, no máximo, em 5 minutos */
+const ABA_HC_BASE = 'HeadcountBase', HC_ESPERA_MS = 100 * 1000;
 /* 19/11/2026: o painel ficava preso em "aguardando a edição terminar" quando algum valor da planilha mudava
  * entre duas leituras sem ninguém editar (fórmula que recalcula sozinha). Agora:
  *  · a comparação ignora o que a planilha recalcula sozinha (tempo de casa e total da empresa), que é
@@ -22,7 +23,7 @@ const ABA_HC_BASE = 'HeadcountBase', HC_ESPERA_MS = 9 * 60 * 1000;
  *  · com diferença há HC_ESPERA_MAX_MS, aplica mesmo sem duas leituras iguais (nunca fica preso);
  *  · leitura ignorada (bem menos gente) e erro de leitura aparecem na tela com mensagem própria;
  *  · cada conferência registra quais campos mudaram (hc_diag), para achar a causa sem rodar nada à mão. */
-const HC_VOLATEIS = ['tempo'], HC_ESPERA_MAX_MS = 30 * 60 * 1000, HC_RECALC_MS = 6 * 3600 * 1000;
+const HC_VOLATEIS = ['tempo'], HC_ESPERA_MAX_MS = 5 * 60 * 1000, HC_RECALC_MS = 6 * 3600 * 1000;
 
 /** Lê a planilha do Headcount (só leitura). */
 function hcLerPlanilha_() {
@@ -98,12 +99,12 @@ function hcConferir_(forcar) {
   pr.deleteProperty('hc_aviso');
   return reg('aguardando', extra);
 }
-/** Chamado pelo movimento do painel: no máximo uma conferência a cada 10 minutos. Erro de leitura fica registrado para a tela. */
+/** Chamado pelo movimento do painel: no máximo uma conferência a cada 2 minutos. Erro de leitura fica registrado para a tela. */
 function hcTalvez_() {
   const cache = CacheService.getScriptCache(); if (cache.get('hc_chk')) return;
   const lock = LockService.getScriptLock(); if (!lock.tryLock(100)) return;
   try {
-    if (cache.get('hc_chk')) return; cache.put('hc_chk', '1', 600);
+    if (cache.get('hc_chk')) return; cache.put('hc_chk', '1', 120);
     try { hcConferir_(false); } catch (e) { PropertiesService.getScriptProperties().setProperties({ hc_erro: String((e && e.message) || e).slice(0, 300), hc_conferido_em: agoraIso_() }); }
   } finally { lock.releaseLock(); }
 }
