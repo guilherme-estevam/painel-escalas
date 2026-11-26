@@ -38,34 +38,40 @@ html[data-tema="escuro"] .hcx{--hc-roxo:#7b68dd;--hc-borda:#33303d;--hc-sup:#1f1
 .hcx-time[aria-pressed="true"] .sel{opacity:1;transform:none}
 .hcx-time .sel svg{width:13px;height:13px}
 @keyframes hcxGrad{from{background-position:0% 30%}to{background-position:100% 70%}}
-/* faixa de números */
-.hcx-faixa{display:grid;grid-template-columns:repeat(6,minmax(0,1fr));gap:12px}
-.hcx-kpi{position:relative;display:flex;flex-direction:column;border-radius:14px;border:1px solid var(--hc-borda);background:var(--hc-sup);overflow:hidden;min-width:0;transition:border-color .15s,transform .18s var(--hc-e)}
-.hcx-kpi::before{content:"";position:absolute;left:0;top:0;bottom:0;width:4px;background:var(--k,var(--hc-rosa))}
-.hcx-kb{display:block;flex:1;width:100%;padding:13px 14px 10px 16px;border:0;background:transparent;color:inherit;font:inherit;text-align:left}
-button.hcx-kb{cursor:pointer}
-.hcx-kb b{display:block;font-family:'IBM Plex Mono',ui-monospace,monospace;font-size:24px;line-height:1.1;font-weight:700;color:var(--hc-tx);font-variant-numeric:tabular-nums}
-.hcx-kb span{display:block;margin-top:3px;font-size:12px;font-weight:700;color:var(--hc-tx)}
-.hcx-kb small{display:block;margin-top:1px;font-size:11.5px;color:var(--hc-tx2);line-height:1.35}
-/* atendimento dentro de cada número */
-.hcx-ka{display:flex;flex-direction:column;gap:6px;width:100%;padding:8px 14px 10px 16px;border:0;border-top:1px dashed var(--hc-borda);background:color-mix(in srgb,#0E7C66 5%,transparent);color:var(--hc-tx2);font:inherit;font-size:11.5px;text-align:left;cursor:pointer;transition:background-color .15s}
-.hcx-ka .br{display:block;height:4px;border-radius:999px;background:color-mix(in srgb,var(--hc-borda) 70%,transparent);overflow:hidden}
-.hcx-ka .br i{display:block;height:100%;border-radius:999px;background:#0E7C66;transform:scaleX(0);transform-origin:left;transition:transform .7s var(--hc-e)}
-.hcx-on .hcx-ka .br i,.hcx-in .hcx-ka .br i{transform:none}
-.hcx-ka .tx{display:flex;align-items:center;gap:6px;font-weight:700;white-space:nowrap}
-.hcx-ka .tx > i{width:7px;height:7px;flex:none;border-radius:50%;background:#0E7C66}
-.hcx-ka .tx b{font-family:'IBM Plex Mono',ui-monospace,monospace;font-size:13.5px;color:#0E7C66;font-variant-numeric:tabular-nums}
-.hcx-ka .tx em{margin-left:auto;font-style:normal;font-weight:600;color:var(--hc-tx2)}
-html[data-tema="escuro"] .hcx-ka{background:color-mix(in srgb,#3fc2a2 7%,transparent)}
-html[data-tema="escuro"] .hcx-ka .tx b{color:#5fd3b5}html[data-tema="escuro"] .hcx-ka .tx > i,html[data-tema="escuro"] .hcx-ka .br i{background:#3fc2a2}
-.hcx-fbloco{display:flex;flex-direction:column;gap:10px}
-.hcx-atcab{display:flex;align-items:center;gap:10px;flex-wrap:wrap;font-size:12.5px;color:var(--hc-tx2)}
-.hcx-atcab b{color:var(--hc-tx)}
-.hcx-atdot{width:9px;height:9px;flex:none;border-radius:50%;background:#0E7C66;box-shadow:0 0 0 4px color-mix(in srgb,#0E7C66 16%,transparent)}
-.hcx-atcab button{display:inline-flex;align-items:center;gap:4px;margin-left:auto;padding:4px 10px;border-radius:999px;border:1px solid color-mix(in srgb,#0E7C66 40%,transparent);background:transparent;color:#0E7C66;font:inherit;font-size:12px;font-weight:800;cursor:pointer}
-.hcx-atcab button svg{width:13px;height:13px}
-html[data-tema="escuro"] .hcx-atcab button{color:#5fd3b5;border-color:color-mix(in srgb,#3fc2a2 45%,transparent)}
-.hcx-ka:focus-visible,.hcx-kb:focus-visible,.hcx-atcab button:focus-visible{outline:2px solid var(--hc-rosa);outline-offset:-2px}
+/* resumo (26/11/2026): situação da seleção | atendimento, num bloco só dividido ao meio */
+.hcx-res{--hc-at:#0E7C66;display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);border-radius:18px;border:1px solid var(--hc-borda);background:var(--hc-sup);overflow:hidden}
+html[data-tema="escuro"] .hcx-res{--hc-at:#3fc2a2}
+.hcx-rp{display:flex;flex-direction:column;gap:14px;min-width:0;padding:16px 18px 18px}
+.hcx-rp + .hcx-rp{border-left:1px solid var(--hc-borda)}
+.hcx-rp.at{background:linear-gradient(160deg,color-mix(in srgb,var(--hc-at) 9%,transparent),color-mix(in srgb,var(--hc-at) 2%,transparent) 70%)}
+.hcx-rh{display:flex;align-items:flex-start;justify-content:space-between;gap:6px 14px}
+.hcx-rh > div{flex:1;min-width:0}
+.hcx-rh h3{display:flex;align-items:center;gap:8px;margin:0;font-size:11.5px;font-weight:800;letter-spacing:.07em;text-transform:uppercase;color:var(--hc-tx2)}
+.hcx-rh h3 i{width:9px;height:9px;border-radius:3px;background:var(--k,var(--hc-rosa))}
+.hcx-rh p{margin:4px 0 0;font-size:12px;line-height:1.4;color:var(--hc-tx2)}
+.hcx-rh .eq{font-size:12px;color:var(--hc-tx2);white-space:nowrap;padding-top:1px}
+.hcx-rh .eq b{font-family:'IBM Plex Mono',ui-monospace,monospace;font-size:13px;color:var(--hc-tx);font-variant-numeric:tabular-nums}
+.hcx-rh .ver{display:inline-flex;align-items:center;gap:3px;padding:4px 6px 4px 11px;border-radius:999px;border:1px solid color-mix(in srgb,var(--hc-at) 40%,transparent);background:transparent;color:var(--hc-at);font:inherit;font-size:12px;font-weight:800;cursor:pointer;white-space:nowrap;transition:background-color .15s}
+.hcx-rh .ver svg{width:13px;height:13px}
+.hcx-rs{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:6px}
+.hcx-st{display:flex;flex-direction:column;gap:3px;min-width:0;margin:0;padding:8px 10px;border:0;border-radius:12px;background:transparent;color:var(--hc-tx);font:inherit;text-align:left;cursor:pointer;transition:background-color .15s}
+.hcx-st b{font-family:'IBM Plex Mono',ui-monospace,monospace;font-size:30px;line-height:1.05;font-weight:700;letter-spacing:-.02em;font-variant-numeric:tabular-nums}
+.hcx-st span{display:flex;align-items:center;gap:6px;font-size:12.5px;font-weight:700;white-space:nowrap}
+.hcx-st span i{width:8px;height:8px;flex:none;border-radius:50%;background:var(--k)}
+.hcx-st small{font-size:11.5px;line-height:1.35;color:var(--hc-tx2)}
+.hcx-rb{display:flex;gap:3px;height:8px;margin-top:auto;transform:scaleX(0);transform-origin:left;transition:transform .9s var(--hc-e)}
+.hcx-rb i{display:block;height:100%;min-width:4px;border-radius:999px;background:var(--k)}
+.hcx-in .hcx-rb{transform:none}
+.hcx-rv0{font-size:12px;color:var(--hc-tx2);margin-top:auto}
+.hcx-st:focus-visible,.hcx-rh .ver:focus-visible,.hcx-lk:focus-visible{outline:2px solid var(--hc-rosa);outline-offset:1px}
+/* ações no cabeçalho dos cartões */
+.hcx-lk{flex:none;display:inline-flex;align-items:center;gap:3px;padding:5px 7px 5px 12px;border-radius:999px;border:1px solid var(--hc-borda);background:transparent;color:var(--hc-rosa);font:inherit;font-size:12px;font-weight:800;cursor:pointer;white-space:nowrap;transition:border-color .15s,background-color .15s}
+.hcx-lk svg{width:13px;height:13px}
+.hcx-tm{flex:none;display:flex;flex-direction:column;align-items:flex-end;gap:1px;padding:7px 12px;border-radius:12px;background:color-mix(in srgb,var(--hc-rosa) 7%,transparent);text-align:right}
+.hcx-tm span{font-size:10.5px;font-weight:800;letter-spacing:.06em;text-transform:uppercase;color:var(--hc-tx2)}
+.hcx-tm b{font-family:'IBM Plex Mono',ui-monospace,monospace;font-size:17px;line-height:1.15;font-weight:700;color:var(--hc-tx);font-variant-numeric:tabular-nums}
+.hcx-tm small{font-size:11px;font-weight:700;color:#0E7C66}
+html[data-tema="escuro"] .hcx-tm small{color:#5fd3b5}
 /* blocos */
 .hcx-g2{display:grid;grid-template-columns:minmax(0,1.5fr) minmax(0,1fr);gap:14px;align-items:stretch}
 .hcx-g3{display:grid;grid-template-columns:minmax(0,1.15fr) minmax(0,1fr);gap:14px;align-items:stretch}
@@ -115,10 +121,11 @@ html[data-tema="escuro"] .hcx-lin .fora{color:#f2cf8a;background:#3a2c12}
 .hcx-vazio{padding:28px 18px;text-align:center;color:var(--hc-tx2);font-size:13px}
 @media (hover:hover) and (pointer:fine){
   .hcx-time:hover{transform:translateY(-2px)}
-  .hcx-bt:hover,.hcx-kpi:hover{border-color:var(--hc-rosa)}
-  .hcx-kpi:hover{transform:translateY(-1px)}
-  .hcx-ka:hover{background:color-mix(in srgb,#0E7C66 11%,transparent)}
-  .hcx-atcab button:hover{background:color-mix(in srgb,#0E7C66 8%,transparent)}
+  .hcx-bt:hover{border-color:var(--hc-rosa)}
+  .hcx-st:hover{background:color-mix(in srgb,var(--hc-tx) 5%,transparent)}
+  .hcx-rp.at .hcx-st:hover{background:color-mix(in srgb,var(--hc-at) 10%,transparent)}
+  .hcx-rh .ver:hover{background:color-mix(in srgb,var(--hc-at) 10%,transparent)}
+  .hcx-lk:hover{border-color:var(--hc-rosa);background:color-mix(in srgb,var(--hc-rosa) 6%,transparent)}
   .hcx-lin:hover{background:color-mix(in srgb,var(--hc-rosa) 6%,transparent)}
   .hcx-col:hover .br{filter:brightness(1.12)}
 }
@@ -248,11 +255,12 @@ html[data-tema="escuro"] .hcf-c{background:#26262f}
 .hc-pop dt{color:var(--c4,#6d6679)}
 .hc-pop dd{margin:0;font-weight:700;color:var(--preto);text-align:right;overflow-wrap:anywhere}
 .hc-pop .rd{margin-top:10px;padding-top:9px;border-top:1px solid var(--c2,#E6DFEE);font-size:11px;color:var(--c4,#6d6679)}
-@media (max-width:1100px){ .hcx-times{grid-template-columns:repeat(2,minmax(0,1fr))} .hcx-faixa{grid-template-columns:repeat(3,minmax(0,1fr))} .hcx-g2,.hcx-g3{grid-template-columns:minmax(0,1fr)} }
-@media (max-width:620px){ .hcx-times{grid-template-columns:minmax(0,1fr)} .hcx-faixa{grid-template-columns:repeat(2,minmax(0,1fr))} .hcx-time .num{font-size:38px} .hcx-time.tot .num{font-size:46px}
+@media (max-width:1100px){ .hcx-times{grid-template-columns:repeat(2,minmax(0,1fr))} .hcx-g2,.hcx-g3{grid-template-columns:minmax(0,1fr)} }
+@media (max-width:1000px){ .hcx-res{grid-template-columns:minmax(0,1fr)} .hcx-rp + .hcx-rp{border-left:0;border-top:1px solid var(--hc-borda)} }
+@media (max-width:620px){ .hcx-times{grid-template-columns:minmax(0,1fr)} .hcx-time .num{font-size:38px} .hcx-time.tot .num{font-size:46px} .hcx-rp{padding:14px 12px 16px} .hcx-st{padding:8px 6px} .hcx-st b{font-size:24px} .hcx-st span{font-size:11.5px;white-space:normal}
   .hcx-lin{grid-template-columns:minmax(0,1fr) 40px 50px} .hcx-lin .tr{grid-column:1 / -1;order:9} .hcx-lin.t{grid-template-columns:14px minmax(0,1fr) 40px 50px}
   .hcp-cab{display:none} .hcp-it{grid-template-columns:minmax(0,1fr) auto} .hcp-it > :nth-child(2),.hcp-it > :nth-child(3),.hcp-it > :nth-child(4){display:none} }
-@media (prefers-reduced-motion:reduce){ .hcx-anim > *,.hcx-time.tot,.sn-ajp{animation:none} .hcx *, .hc-pop{transition:none!important} .hcx-lin .tr i,.hcx-time .mini i,.hcx-turno i,.hcx-col .br{transform:none} }
+@media (prefers-reduced-motion:reduce){ .hcx-anim > *,.hcx-time.tot,.sn-ajp{animation:none} .hcx *, .hc-pop{transition:none!important} .hcx-lin .tr i,.hcx-time .mini i,.hcx-turno i,.hcx-col .br,.hcx-rb{transform:none} }
 </style>
 <script>
 /* ===================== Headcount no painel (15/11/2026) =====================
@@ -294,6 +302,8 @@ function hcUnificar() { var H = estado.hc; if (!H || H.__uni) return; (H.pessoas
 var HC_ATEND = ['manuela', 'neyane', 'winnie', 'cibelly', 'willian'];
 function hcSemAcento(s) { return String(s || '').normalize('NFD').replace(/[̀-ͯ]/g, '').toLowerCase().trim(); }
 function hcAtende(p) { var c = hcSemAcento(p.coord).split(/\s+/)[0]; return HC_ATEND.indexOf(c) >= 0 && !/^analista/i.test(String(p.funcao || '').trim()); }
+/* papel de quem está no atendimento: Agentes, Assistentes ou Outros (aprendizes e líderes) */
+function hcCatAt(p) { var f = String(p.funcao || '').trim(); return hcGrupo(f) === 'Agentes' ? 'Agentes' : /^assistente/i.test(f) ? 'Assistentes' : 'Outros'; }
 function hcSel() { hcUnificar(); var a = (estado.hcF && estado.hcF.area) || ''; return (estado.hc.pessoas || []).filter(function (p) { return !a || p.area === a; }); }
 /* situação da sincronização com a planilha (19/11/2026): erro e leitura ignorada têm mensagem própria; o WFM vê o detalhe ao passar o mouse */
 function hcHora(iso) { return iso ? String(iso).slice(8, 10) + '/' + String(iso).slice(5, 7) + ' às ' + String(iso).slice(11, 16) : ''; }
@@ -363,23 +373,24 @@ function hcDesenhar(animar) {
       '<span class="mini" title="' + at + ' ativos · ' + (l.length - at) + ' em férias ou licença"><i style="width:' + (l.length ? at / l.length * 100 : 0) + '%"></i><i style="width:' + (l.length ? (l.length - at) / l.length * 100 : 0) + '%"></i></span></button>';
   }).join('');
   // faixa de números
+  var nomeSel = F.area || 'Customer';
   var ms = P.map(function (p) { return hcMeses(p.admissao); }).filter(function (x) { return x !== null; }), med = ms.length ? ms.reduce(function (a, b) { return a + b; }, 0) / ms.length : 0;
-  /* cada número mostra embaixo quantos são do atendimento (coordenações Manuela, Neyane, Winnie, Cibelly e Willian, sem analistas) */
+  /* resumo (26/11/2026): à esquerda a situação da seleção (os três somam o total); à direita só quem atua no atendimento */
   var PA = P.filter(hcAtende), nA = PA.length, tmc = function (m) { return m >= 12 ? (Math.floor(m / 12) + 'a ' + Math.round(m % 12) + 'm') : Math.round(m) + 'm'; };
-  var kpi = function (k, v, rot, sub, filtro, va, filtroA, txtA) {
-    var num = typeof v === 'number', pa = num && v ? Math.round(va / v * 100) : 0;
-    return '<div class="hcx-kpi" style="--k:' + k + '">' + (filtro ? '<button type="button" class="hcx-kb" data-lista="' + filtro + '">' : '<div class="hcx-kb">') + '<b' + (num ? ' data-n="' + v + '"' : '') + '>' + v + '</b><span>' + rot + '</span><small>' + sub + '</small>' + (filtro ? '</button>' : '</div>') +
-      '<button type="button" class="hcx-ka" data-lista="' + (filtroA || 'at') + '" title="' + esc(txtA || ('Ver quem é do atendimento')) + '">' + (num ? '<span class="br"><i style="width:' + pa + '%"></i></span>' : '') + '<span class="tx"><i></i>Atendimento <b' + (typeof va === 'number' ? ' data-n="' + va + '"' : '') + '>' + va + '</b>' + (num && v ? '<em>' + pa + '%</em>' : '') + '</span></button></div>';
-  };
-  var agentes = function (l) { return conta(l, function (p) { return hcGrupo(p.funcao) === 'Agentes'; }); };
   var msA = PA.map(function (p) { return hcMeses(p.admissao); }).filter(function (x) { return x !== null; }), medA = msA.length ? msA.reduce(function (a, b) { return a + b; }, 0) / msA.length : 0;
-  var coordA = {}; PA.forEach(function (p) { coordA[hcSemAcento(p.coord).split(/\s+/)[0]] = 1; });
-  var est = function (s) { return conta(PA, function (p) { return p.status === s; }); };
-  var faixa = kpi('#1E9E58', ativos, 'Ativos', hcPct(ativos, n) + ' do total', 'st:Ativo', est('Ativo'), 'at|st:Ativo') + kpi('#D80073', ferias, 'Em Férias', hcPct(ferias, n) + ' do total', 'st:Férias', est('Férias'), 'at|st:Férias') + kpi('#C98A00', lic, 'Em Licença', hcPct(lic, n) + ' do total', 'st:Licença', nA - est('Ativo') - est('Férias'), 'at|st:Licença') +
-    kpi('#D80073', agentes(P), 'Agentes', 'N1, N2 e N3', 'gr:Agentes', agentes(PA), 'at|gr:Agentes') +
-    kpi('#4F3F91', (function () { var L = hcLideres(P); return L.com.length + L.sem.length; })(), 'Coordenações', 'e gerências · ver os times', 'lideres', Object.keys(coordA).length, 'at', 'As coordenações do atendimento: Manuela, Neyane, Winnie, Cibelly e Willian') +
-    kpi('#0E8A8A', tmc(med), 'Tempo Médio de Casa', 'média de quem está na seleção', '', nA ? tmc(medA) : '—', 'at', 'Tempo médio de casa de quem é do atendimento');
-  var faixaCab = '<div class="hcx-atcab"><span class="hcx-atdot"></span><span><b>Atendimento</b> em cada número: pessoas das coordenações Manuela, Neyane, Winnie, Cibelly e Willian, sem os analistas.</span><button type="button" data-lista="at">' + nA + ' pessoa' + (nA === 1 ? '' : 's') + ' · ' + hcPct(nA, n) + ' da seleção' + hcSvg('seta') + '</button></div>';
+  var ativosDe = function (l) { return conta(l, function (p) { return p.status === 'Ativo'; }); };
+  var aAg = PA.filter(function (p) { return hcCatAt(p) === 'Agentes'; }), aAs = PA.filter(function (p) { return hcCatAt(p) === 'Assistentes'; }), aOu = PA.filter(function (p) { return hcCatAt(p) === 'Outros'; });
+  var stat = function (k, v, rot, sub, filtro, tit) { return '<button type="button" class="hcx-st" style="--k:' + k + '" data-lista="' + filtro + '"' + (tit ? ' title="' + esc(tit) + '"' : '') + '><b data-n="' + v + '">' + v + '</b><span><i></i>' + rot + '</span><small>' + sub + '</small></button>'; };
+  var barra = function (seg, tot) { return '<div class="hcx-rb">' + seg.filter(function (s) { return s[0] > 0; }).map(function (s) { return '<i style="flex:' + s[0] + ' 1 0;--k:' + s[1] + '" title="' + esc(s[2]) + ': ' + s[0] + ' (' + hcPct(s[0], tot) + ')"></i>'; }).join('') + '</div>'; };
+  var ouTxt = (function () { var ap = conta(aOu, function (p) { return hcGrupo(p.funcao) === 'Aprendizes'; }), li = aOu.length - ap, t = []; if (ap) t.push(ap + ' aprendiz' + (ap === 1 ? '' : 'es')); if (li) t.push(li + ' líder' + (li === 1 ? '' : 'es')); return t.join(' e '); })();
+  var resumo = '<div class="hcx-res">' +
+    '<section class="hcx-rp"><div class="hcx-rh"><div><h3 style="--k:var(--hc-rosa)"><i></i>Situação · ' + esc(nomeSel) + '</h3><p>Quem está trabalhando e quem está fora</p></div><span class="eq">Ativos + Férias + Licença = <b>' + n + '</b></span></div>' +
+      '<div class="hcx-rs">' + stat('#1E9E58', ativos, 'Ativos', hcPct(ativos, n) + ' do total', 'st:Ativo') + stat('#D80073', ferias, 'Em Férias', hcPct(ferias, n) + ' do total', 'st:Férias') + stat('#C98A00', lic, 'Em Licença', hcPct(lic, n) + ' do total', 'st:Licença') + '</div>' +
+      barra([[ativos, '#1E9E58', 'Ativos'], [ferias, '#D80073', 'Em Férias'], [lic, '#C98A00', 'Em Licença']], n) + '</section>' +
+    '<section class="hcx-rp at"><div class="hcx-rh"><div><h3 style="--k:var(--hc-at)"><i></i>Atendimento</h3><p>Coordenações Manuela, Neyane, Winnie, Cibelly e Willian, sem os analistas</p></div><button type="button" class="ver" data-lista="at">Ver todos' + hcSvg('seta') + '</button></div>' +
+      '<div class="hcx-rs">' + stat('var(--hc-at)', nA, 'No atendimento', hcPct(nA, n) + ' da seleção · ' + ativosDe(PA) + ' ativos' + (ouTxt ? '<br>inclui ' + ouTxt : ''), 'at') +
+        stat('#D80073', aAg.length, 'Agentes', 'N1, N2 e N3 · ' + ativosDe(aAg) + ' ativos', 'at|cg:Agentes') + stat('#4F3F91', aAs.length, 'Assistentes', ativosDe(aAs) + ' ativos', 'at|cg:Assistentes') + '</div>' +
+      (nA ? barra([[aAg.length, '#D80073', 'Agentes'], [aAs.length, '#4F3F91', 'Assistentes'], [aOu.length, '#9AA4B2', 'Aprendizes e líderes']], nA) : '<div class="hcx-rv0">Ninguém do atendimento em ' + esc(nomeSel) + '.</div>') + '</section></div>';
   // coordenações
   var cs = {}; P.forEach(function (p) { var c = cs[p.coord] || (cs[p.coord] = { c: p.coord, n: 0, ag: 0, an: 0, ap: 0, ou: 0, fora: 0, area: p.area }); c.n++; var gr = hcGrupo(p.funcao); if (gr === 'Agentes') c.ag++; else if (gr === 'Analistas e Assistentes') c.an++; else if (gr === 'Aprendizes') c.ap++; else c.ou++; if (p.status !== 'Ativo') c.fora++; });
   var cl = Object.keys(cs).map(function (k) { return cs[k]; }).sort(function (a, b) { return b.n - a.n; }), cmax = cl.length ? cl[0].n : 1;
@@ -403,21 +414,21 @@ function hcDesenhar(animar) {
   var turnoBar = tl.map(function (t) { return '<i style="width:' + (n ? t[1] / n * 100 : 0).toFixed(2) + '%;--k:' + t[2] + '" title="' + t[0] + ': ' + t[1] + '"></i>'; }).join('');
   var turnos = tl.map(function (t) { return '<button type="button" class="hcx-lin t" data-lista="tu:' + t[0] + '" style="--k:' + t[2] + '"><i></i><span class="nm">' + (t[0] === 'Intermediario' ? 'Intermediário' : t[0]) + '</span><span class="v">' + t[1] + '</span><span class="p">' + hcPct(t[1], n) + '</span></button>'; }).join('');
   var quando = H.atualizadoEm ? String(H.atualizadoEm).slice(8, 10) + '/' + String(H.atualizadoEm).slice(5, 7) + ' às ' + String(H.atualizadoEm).slice(11, 16) : '';
-  var nomeSel = F.area || 'Customer';
-  var card = function (ic, tit, sub, corpo, extra) { return '<section class="hcx-card"><header><div><h3>' + tit + '</h3><p>' + sub + '</p></div><span class="ic">' + hcSvg(ic) + '</span></header>' + (extra || '') + corpo + '</section>'; };
+  var card = function (ic, tit, sub, corpo, extra, acao) { return '<section class="hcx-card"><header><div><h3>' + tit + '</h3><p>' + sub + '</p></div>' + (acao || '<span class="ic">' + hcSvg(ic) + '</span>') + '</header>' + (extra || '') + corpo + '</section>'; };
+  var tmInfo = '<div class="hcx-tm" title="Média de tempo de casa de quem está na seleção' + (nA ? '; no atendimento, ' + tmc(medA) : '') + '"><span>Média de casa</span><b>' + (ms.length ? tmc(med) : '—') + '</b>' + (nA ? '<small>Atendimento ' + tmc(medA) + '</small>' : '') + '</div>';
   g.innerHTML = '<div class="hcx' + (animar ? ' hcx-anim' : '') + '" id="hcx">' +
     '<div class="hcx-topo"><div><h2>Headcount · Customer</h2><p>As mesmas informações da planilha Headcount. Clique em um time para filtrar e em qualquer número para ver as pessoas.</p></div>' +
     '<div class="hcx-sinc"' + hcSincTitulo(H) + '><span class="pt' + (H.pendente || H.aviso || H.erro ? ' esp' : '') + '"></span><span>' + esc(hcSincTexto(H)) + (quando ? ' · atualizado em ' + quando : '') + '</span>' + '' + '</div></div>' +
-    '<div class="hcx-times">' + times + '</div><div class="hcx-fbloco">' + faixaCab + '<div class="hcx-faixa">' + faixa + '</div></div>' +
-    '<div class="hcx-g2">' + card('coord', 'Pessoas por Coordenação', nomeSel + ' · ' + n + ' pessoas, pela coordenação ou gerência de cada uma', '<div class="cp">' + (coords || '<div class="hcx-vazio">Ninguém na seleção.</div>') + '</div>', '<div class="hcx-leg"><span style="--k:#D80073"><i></i>Agentes</span><span style="--k:#4F3F91"><i></i>Analistas e Assistentes</span><span style="--k:#E0A12D"><i></i>Aprendizes</span><span style="--k:#9AA4B2"><i></i>Gestão</span></div>') +
+    '<div class="hcx-times">' + times + '</div>' + resumo +
+    '<div class="hcx-g2">' + card('coord', 'Pessoas por Coordenação', esc(nomeSel) + ' · ' + n + ' pessoas, pela coordenação ou gerência de cada uma', '<div class="cp">' + (coords || '<div class="hcx-vazio">Ninguém na seleção.</div>') + '</div>', '<div class="hcx-leg"><span style="--k:#D80073"><i></i>Agentes</span><span style="--k:#4F3F91"><i></i>Analistas e Assistentes</span><span style="--k:#E0A12D"><i></i>Aprendizes</span><span style="--k:#9AA4B2"><i></i>Gestão</span></div>', '<button type="button" class="hcx-lk" data-lista="lideres" title="Quem lidera cada coordenação e gerência">Líderes e times' + hcSvg('seta') + '</button>') +
       '<div class="hcx-pilha">' + card('cargo', 'Volumes por Cargo', 'Quantas pessoas em cada grupo', '<div class="cp">' + cargos + '</div>') + card('turno', 'Turnos', 'Distribuição da seleção', '<div class="cp"><div class="hcx-turno">' + turnoBar + '</div>' + turnos + '</div>') + '</div></div>' +
     '<div class="hcx-g3">' + card('nivel', 'Níveis', 'Total por nível e o quanto cada um representa do total', '<div class="cp">' + niveis + '</div>', '<div class="hcx-leg"><span style="--k:#D80073"><i></i>Ativos</span><span style="--k:#F2B6D6"><i></i>Férias ou Licença</span></div>') +
-      card('tempo', 'Tempo de Casa', 'Pessoas por faixa, pela data de admissão', '<div class="hcx-hist">' + hist + '</div><div class="hcx-histx">' + fx.map(function (x) { return '<span>' + x[0] + '</span>'; }).join('') + '</div>') + '</div></div>';
+      card('tempo', 'Tempo de Casa', 'Pessoas por faixa, pela data de admissão', '<div class="hcx-hist">' + hist + '</div><div class="hcx-histx">' + fx.map(function (x) { return '<span>' + x[0] + '</span>'; }).join('') + '</div>', '', tmInfo) + '</div></div>';
   var raiz = $('hcx'), reduz = window.matchMedia && matchMedia('(prefers-reduced-motion: reduce)').matches;
   requestAnimationFrame(function () { requestAnimationFrame(function () { raiz.classList.add('hcx-on'); }); });
   if (animar && !reduz) raiz.querySelectorAll('[data-n]').forEach(function (el) { var alvo = +el.getAttribute('data-n'), t0 = performance.now(), d = 700; (function passo(t) { var p = Math.min(1, (t - t0) / d), e = 1 - Math.pow(1 - p, 3); el.textContent = Math.round(alvo * e); if (p < 1 && document.body.contains(el)) requestAnimationFrame(passo); })(t0); });
   if (animar) setTimeout(function () { raiz.classList.remove('hcx-anim'); }, 1100);
-  var blocos = raiz.querySelectorAll('.hcx-card, .hcx-kpi');
+  var blocos = raiz.querySelectorAll('.hcx-card, .hcx-res');
   if (!animar || reduz || !('IntersectionObserver' in window)) blocos.forEach(function (c) { c.classList.add('hcx-in'); });
   else { blocos.forEach(function (c) { c.classList.add('hcx-rv'); }); var vez = 0, io = new IntersectionObserver(function (es) { es.forEach(function (e) { if (!e.isIntersecting) return; e.target.style.transitionDelay = (Math.min(vez++, 6) * 70) + 'ms'; e.target.classList.add('hcx-in'); io.unobserve(e.target); setTimeout(function () { vez = 0; }, 200); }); }, { rootMargin: '0px 0px -6% 0px' }); blocos.forEach(function (c) { io.observe(c); }); }
   raiz.querySelectorAll('.hcx-time').forEach(function (b) { b.onclick = function () { var a = b.getAttribute('data-area'); if (F.area === a) return; F.area = a; hcDesenhar(false); }; });
@@ -449,8 +460,9 @@ function hcLideres(P) {
 }
 /* ---------- janela de pessoas: filtros e navegação (gerência → coordenação → time) ---------- */
 function hcVista(chave, P) {
-  if (chave.slice(0, 3) === 'at|') { var va = hcVista(chave.slice(3), P.filter(hcAtende)); if (va.l) va.tit = (va.tit || 'Pessoas') + ' · Atendimento'; return va; }
-  if (chave === 'at') return { l: P.filter(hcAtende).sort(function (a, b) { return a.nome.localeCompare(b.nome, 'pt-BR'); }), tit: 'Atendimento', chefe: null };
+  if (chave.slice(0, 3) === 'at|') { var va = hcVista(chave.slice(3), P.filter(hcAtende)); if (va.l) va.tit = (va.tit || 'Pessoas') + ' no atendimento'; return va; }
+  if (chave === 'at') return { l: P.filter(hcAtende).sort(function (a, b) { return a.nome.localeCompare(b.nome, 'pt-BR'); }), tit: 'Pessoas no atendimento', chefe: null };
+  if (chave.slice(0, 3) === 'cg:') { var cg = chave.slice(3); return { l: P.filter(function (p) { return hcCatAt(p) === cg; }).sort(function (a, b) { return a.nome.localeCompare(b.nome, 'pt-BR'); }), tit: cg, chefe: null }; }
   var t = chave.slice(0, 2), v = chave.slice(3), l = P, tit = '', chefe = null;
   if (chave === 'lideres') return { lideres: true, tit: 'Coordenações e Gerências', sub: 'Quem lidera cada time. Clique em uma pessoa para ver o time e ir descendo até os agentes.' };
   if (t === 'pe') { var pe = estado.hc.mapa[v] || null; return { ficha: pe, tit: pe ? hcNome(pe.nome) : v }; }
