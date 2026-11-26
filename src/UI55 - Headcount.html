@@ -299,7 +299,10 @@ function hcPct(n, d) { return d ? (Math.round(n * 1000 / d) / 10).toLocaleString
 var HC_UNIFICA = { 'IA & Automação': 'Gerente Um', 'Engajamento': 'Gerente Executiva' };
 /* 26/11/2026: área mostrada ao lado da coordenação quando a da planilha não é a que vale no painel */
 var HC_AREA_COORD = { 'Diretoria': 'Customer' };
-function hcUnificar() { var H = estado.hc; if (!H || H.__uni) return; (H.pessoas || []).forEach(function (p) { var u = HC_UNIFICA[String(p.coord || '').trim()]; if (u) { p.coordOriginal = p.coord; p.coord = u; } }); H.__uni = 1; }
+/* 26/11/2026: área que forma uma gerência própria no Headcount (aparece em Pessoas por Coordenação e em Coordenações e Gerências); o gerente é quem tem função Gerente nessa área */
+var HC_GER_AREA = { 'Conta Digital': 'Gerente Dois' };
+function hcRespArea(rot) { var a = Object.keys(HC_GER_AREA).filter(function (k) { return HC_GER_AREA[k] === rot; })[0]; if (!a || !estado.hc) return ''; var g = (estado.hc.pessoas || []).filter(function (p) { return p.area === a && /^gerente/i.test(String(p.funcao || '')); })[0]; return g ? g.email : ''; }
+function hcUnificar() { var H = estado.hc; if (!H || H.__uni) return; (H.pessoas || []).forEach(function (p) { var u = HC_UNIFICA[String(p.coord || '').trim()]; if (u) { p.coordOriginal = p.coord; p.coord = u; } var ga = HC_GER_AREA[p.area]; if (ga && !u) { p.coordOriginal = p.coordOriginal || p.coord; p.coord = ga; } }); H.__uni = 1; }
 /* Atendimento (25/11/2026): quem está nas coordenações Manuela, Neyane, Winnie, Cibelly e Willian, sem os analistas */
 var HC_ATEND = ['manuela', 'neyane', 'winnie', 'cibelly', 'willian'];
 function hcSemAcento(s) { return String(s || '').normalize('NFD').replace(/[̀-ͯ]/g, '').toLowerCase().trim(); }
@@ -466,7 +469,7 @@ function hcStatus(s) { return '<span class="hc-st" style="--k:' + (HC_ST_COR[s] 
 /* ---------- quem lidera cada coordenação (aba Coordenacoes do banco) ---------- */
 var HC_RESP_PADRAO = { 'Diretoria': 'diretoria@exemplo.com', 'IA & Automação': 'gerente.um@exemplo.com', 'Engajamento': 'gerente.executiva@exemplo.com' };
 var HC_PESSOA_EXTRA = { 'diretoria@exemplo.com': { email: 'diretoria@exemplo.com', nome: 'Diretoria', funcao: 'Diretor', coord: '', area: '' } };
-function hcRespDe(rot) { return (estado.hc && estado.hc.cr && estado.hc.cr[rot]) || HC_RESP_PADRAO[rot] || ''; }
+function hcRespDe(rot) { return (estado.hc && estado.hc.cr && estado.hc.cr[rot]) || HC_RESP_PADRAO[rot] || hcRespArea(rot) || ''; }
 function hcPessoaDe(email) { return (estado.hc && estado.hc.mapa && estado.hc.mapa[email]) || HC_PESSOA_EXTRA[email] || null; }
 function hcFotoRot(rot) { var e = hcRespDe(rot), p = e && hcPessoaDe(e); return '<span class="hcx-ft">' + (e ? avatarHtml(e, p ? hcNome(p.nome) : rot, '') : '<i>' + esc(String(rot || '?').charAt(0)) + '</i>') + '</span>'; }
 function hcTime(email, P) { return P.filter(function (p) { return hcRespDe(p.coord) === email && p.email !== email; }); }
@@ -485,7 +488,7 @@ function hcVista(chave, P) {
   if (t === 'pe') { var pe = estado.hc.mapa[v] || null; return { ficha: pe, tit: pe ? hcNome(pe.nome) : v }; }
   if (t === 'st') { l = P.filter(function (p) { return p.status === v; }); tit = v === 'Ativo' ? 'Ativos' : 'Em ' + v; }
   else if (t === 'gr') { l = P.filter(function (p) { return hcGrupo(p.funcao) === v; }); tit = v; }
-  else if (t === 'co') { var e = hcRespDe(v); if (e) return hcVista('tm:' + e, P); l = P.filter(function (p) { return p.coord === v; }); tit = 'Coordenação ' + v; }
+  else if (t === 'co') { var e = hcRespDe(v); if (e && hcTime(e, P).length) return hcVista('tm:' + e, P); l = P.filter(function (p) { return p.coord === v; }); tit = 'Coordenação ' + v; }
   else if (t === 'tm') { l = hcTime(v, P); chefe = hcPessoaDe(v) || { email: v, nome: v, funcao: '' }; tit = 'Time de ' + hcNome(chefe.nome).split(' ').filter(function (x, i) { return i === 0 || !/^(de|da|do|das|dos|e)$/i.test(x); }).slice(0, 2).join(' '); }
   else if (t === 'fu') { l = P.filter(function (p) { return String(p.funcao).trim() === v; }); tit = v; }
   else if (t === 'tc') { var f = HC_FAIXAS[+v]; l = P.filter(function (p) { var m = hcMeses(p.admissao); return m !== null && m >= f[1] && m < f[2]; }); tit = 'Tempo de Casa: ' + f[0]; }
