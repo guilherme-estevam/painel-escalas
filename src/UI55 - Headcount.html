@@ -299,10 +299,10 @@ function hcPct(n, d) { return d ? (Math.round(n * 1000 / d) / 10).toLocaleString
 var HC_UNIFICA = { 'IA & Automação': 'Gerente Um', 'Engajamento': 'Gerente Executiva' };
 /* 26/11/2026: área mostrada ao lado da coordenação quando a da planilha não é a que vale no painel */
 var HC_AREA_COORD = { 'Diretoria': 'Customer' };
-/* 26/11/2026: área que forma uma gerência própria no Headcount (aparece em Pessoas por Coordenação e em Coordenações e Gerências); o gerente é quem tem função Gerente nessa área */
-var HC_GER_AREA = { 'Conta Digital': 'Gerente Dois' };
+/* 26/11/2026: áreas que formam uma gerência própria (o gerente é quem tem função Gerente nessa área). Vazio: o Marcus (Conta Digital) responde ao Marcelo e não tem liderados, então fica no time do Marcelo, como na planilha */
+var HC_GER_AREA = {};
 function hcRespArea(rot) { var a = Object.keys(HC_GER_AREA).filter(function (k) { return HC_GER_AREA[k] === rot; })[0]; if (!a || !estado.hc) return ''; var g = (estado.hc.pessoas || []).filter(function (p) { return p.area === a && /^gerente/i.test(String(p.funcao || '')); })[0]; return g ? g.email : ''; }
-function hcUnificar() { var H = estado.hc; if (!H || H.__uni) return; (H.pessoas || []).forEach(function (p) { var u = HC_UNIFICA[String(p.coord || '').trim()]; if (u) { p.coordOriginal = p.coord; p.coord = u; } var ga = HC_GER_AREA[p.area]; if (ga && !u) { p.coordOriginal = p.coordOriginal || p.coord; p.coord = ga; } }); H.__uni = 1; }
+function hcUnificar() { var H = estado.hc; if (!H || H.__uni) return; (H.pessoas || []).forEach(function (p) { var u = HC_UNIFICA[String(p.coord || '').trim()]; if (u) { p.coordOriginal = p.coord; p.coord = u; } }); H.__uni = 1; }
 /* Atendimento (25/11/2026): quem está nas coordenações Manuela, Neyane, Winnie, Cibelly e Willian, sem os analistas */
 var HC_ATEND = ['manuela', 'neyane', 'winnie', 'cibelly', 'willian'];
 function hcSemAcento(s) { return String(s || '').normalize('NFD').replace(/[̀-ͯ]/g, '').toLowerCase().trim(); }
