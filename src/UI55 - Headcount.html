@@ -296,7 +296,19 @@ function hcUnificar() { var H = estado.hc; if (!H || H.__uni) return; (H.pessoas
 /* Atendimento (25/11/2026): quem está nas coordenações Manuela, Neyane, Winnie, Cibelly e Willian, sem os analistas */
 var HC_ATEND = ['manuela', 'neyane', 'winnie', 'cibelly', 'willian'];
 function hcSemAcento(s) { return String(s || '').normalize('NFD').replace(/[̀-ͯ]/g, '').toLowerCase().trim(); }
-function hcAtende(p) { var c = hcSemAcento(p.coord).split(/\s+/)[0]; return HC_ATEND.indexOf(c) >= 0 && !/^analista/i.test(String(p.funcao || '').trim()); }
+/* 27/11/2026: também contam os agentes e assistentes da gerência de glauber.costa: o time dele e os times abaixo, seguindo quem responde por cada coordenação */
+var HC_AT_GER = 'gerente.dois@exemplo.com';
+function hcAbaixoGer() {
+  var H = estado.hc; if (!H) return {}; if (H.__abG && H.__abGcr === H.cr) return H.__abG;
+  hcUnificar(); var P = H.pessoas || [], s = {}, vis = {}, fila = [HC_AT_GER];
+  while (fila.length) { var e = fila.shift(); if (vis[e]) continue; vis[e] = 1; hcTime(e, P).forEach(function (p) { if (!s[p.email]) { s[p.email] = 1; fila.push(p.email); } }); }
+  H.__abGcr = H.cr; return (H.__abG = s);
+}
+function hcAtende(p) {
+  var f = String(p.funcao || '').trim(); if (/^analista/i.test(f)) return false;
+  if (HC_ATEND.indexOf(hcSemAcento(p.coord).split(/\s+/)[0]) >= 0) return true;
+  return /^(agente|assistente)/i.test(f) && !!hcAbaixoGer()[p.email];
+}
 /* papel de quem está no atendimento: Agentes, Assistentes ou Outros (aprendizes e líderes) */
 function hcCatAt(p) { var f = String(p.funcao || '').trim(); return hcGrupo(f) === 'Agentes' ? 'Agentes' : /^assistente/i.test(f) ? 'Assistentes' : 'Outros'; }
 function hcSel() { hcUnificar(); var a = (estado.hcF && estado.hcF.area) || ''; return (estado.hc.pessoas || []).filter(function (p) { return !a || p.area === a; }); }
@@ -397,7 +409,7 @@ function hcDesenhar(animar) {
     '<section class="hcx-rp"><div class="hcx-rh"><div><h3 style="--k:var(--hc-rosa)"><i></i>Situação · ' + esc(nomeSel) + '</h3><p>Quem está trabalhando e quem está fora</p></div><span class="eq">Ativos + Férias + Licença = <b>' + n + '</b></span></div>' +
       '<div class="hcx-rs">' + stat('#1E9E58', ativos, 'Ativos', hcPct(ativos, n) + ' do total', 'st:Ativo') + stat('#D80073', ferias, 'Em Férias', hcPct(ferias, n) + ' do total', 'st:Férias') + stat('#C98A00', lic, 'Em Licença', hcPct(lic, n) + ' do total', 'st:Licença') + '</div>' +
       barra([[ativos, '#1E9E58', 'Ativos'], [ferias, '#D80073', 'Em Férias'], [lic, '#C98A00', 'Em Licença']], n) + '</section>' +
-    '<section class="hcx-rp at"><div class="hcx-rh"><div><h3 style="--k:var(--hc-at)"><i></i>Atendimento</h3><p>Coordenações Manuela, Neyane, Winnie, Cibelly e Willian, sem os analistas</p></div><button type="button" class="ver" data-lista="at">Ver todos' + hcSvg('seta') + '</button></div>' +
+    '<section class="hcx-rp at"><div class="hcx-rh"><div><h3 style="--k:var(--hc-at)"><i></i>Atendimento</h3><p>Coordenações Manuela, Neyane, Winnie, Cibelly e Willian, sem os analistas, e os agentes e assistentes da gerência da operação</p></div><button type="button" class="ver" data-lista="at">Ver todos' + hcSvg('seta') + '</button></div>' +
       '<div class="hcx-rs">' + stat('var(--hc-at)', nA, 'No atendimento', hcPct(nA, n) + ' da seleção · ' + ativosDe(PA) + ' ativos' + (ouTxt ? '<br>inclui ' + ouTxt : ''), 'at') +
         stat('#D80073', aAg.length, 'Agentes', 'N1, N2 e N3 · ' + ativosDe(aAg) + ' ativos', 'at|cg:Agentes') + stat('#4F3F91', aAs.length, 'Assistentes', ativosDe(aAs) + ' ativos', 'at|cg:Assistentes') + '</div>' +
       (nA ? barra([[aAg.length, '#D80073', 'Agentes'], [aAs.length, '#4F3F91', 'Assistentes'], [aOu.length, '#9AA4B2', 'Aprendizes e líderes']], nA) : '<div class="hcx-rv0">Ninguém do atendimento em ' + esc(nomeSel) + '.</div>') + '</section></div>';
