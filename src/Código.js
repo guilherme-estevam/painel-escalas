@@ -27,7 +27,6 @@ const ACESSO_INICIAL = {
     'Analista': ['analista.um', 'analista.dois']
   },
   agenteTemporario: ['conta.teste1', 'conta.teste2'],
-  excluidos: [],
   pendentes: [],
   seg_a_sex: ['gerente.um', 'gerente.dois']
 };
