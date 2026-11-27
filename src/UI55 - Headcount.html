@@ -245,22 +245,12 @@ html[data-tema="escuro"] .hcf-c{background:#26262f}
 .sn-ajp button.at{background:color-mix(in srgb,var(--rosa,#D80073) 9%,transparent)}
 .sn-ajp button span{display:block;font-size:11.5px;font-weight:500;color:var(--c4,#6d6679)}
 @media (hover:hover){ .sn-ajp button:hover{background:color-mix(in srgb,var(--rosa,#D80073) 7%,transparent)} }
-/* cartão do colaborador */
-.hc-pop{position:fixed;z-index:80;width:290px;padding:14px;border-radius:16px;border:1px solid var(--c2,#E6DFEE);background:var(--sup,#fff);box-shadow:0 22px 44px -18px rgba(40,20,60,.45);pointer-events:none;opacity:0;transform:translateY(4px) scale(.98);transition:opacity .14s,transform .16s cubic-bezier(.23,1,.32,1)}
-.hc-pop.on{opacity:1;transform:none}
-.hc-pop .q{display:flex;align-items:center;gap:10px;margin-bottom:10px}
-.hc-pop .q b{display:block;font-size:14px;color:var(--preto);line-height:1.25}
-.hc-pop .q small{display:block;font-size:12px;color:var(--c4,#6d6679)}
-.hc-pop dl{display:grid;grid-template-columns:auto minmax(0,1fr);gap:5px 12px;margin:0;font-size:12.5px}
-.hc-pop dt{color:var(--c4,#6d6679)}
-.hc-pop dd{margin:0;font-weight:700;color:var(--preto);text-align:right;overflow-wrap:anywhere}
-.hc-pop .rd{margin-top:10px;padding-top:9px;border-top:1px solid var(--c2,#E6DFEE);font-size:11px;color:var(--c4,#6d6679)}
 @media (max-width:1100px){ .hcx-times{grid-template-columns:repeat(2,minmax(0,1fr))} .hcx-g2,.hcx-g3{grid-template-columns:minmax(0,1fr)} }
 @media (max-width:1000px){ .hcx-res{grid-template-columns:minmax(0,1fr)} .hcx-rp + .hcx-rp{border-left:0;border-top:1px solid var(--hc-borda)} }
 @media (max-width:620px){ .hcx-times{grid-template-columns:minmax(0,1fr)} .hcx-time .num{font-size:38px} .hcx-time.tot .num{font-size:46px} .hcx-rp{padding:14px 12px 16px} .hcx-st{padding:8px 6px} .hcx-st b{font-size:24px} .hcx-st span{font-size:11.5px;white-space:normal}
   .hcx-lin{grid-template-columns:minmax(0,1fr) 40px 50px} .hcx-lin .tr{grid-column:1 / -1;order:9} .hcx-lin.t{grid-template-columns:14px minmax(0,1fr) 40px 50px}
   .hcp-cab{display:none} .hcp-it{grid-template-columns:minmax(0,1fr) auto} .hcp-it > :nth-child(2),.hcp-it > :nth-child(3),.hcp-it > :nth-child(4){display:none} }
-@media (prefers-reduced-motion:reduce){ .hcx-anim > *,.hcx-time.tot,.sn-ajp{animation:none} .hcx *, .hc-pop{transition:none!important} .hcx-lin .tr i,.hcx-time .mini i,.hcx-turno i,.hcx-col .br,.hcx-rb{transform:none} }
+@media (prefers-reduced-motion:reduce){ .hcx-anim > *,.hcx-time.tot,.sn-ajp{animation:none} .hcx *{transition:none!important} .hcx-lin .tr i,.hcx-time .mini i,.hcx-turno i,.hcx-col .br,.hcx-rb{transform:none} }
 </style>
 <script>
 /* ===================== Headcount no painel (15/11/2026) =====================
@@ -269,7 +259,7 @@ html[data-tema="escuro"] .hcf-c{background:#26262f}
    · Customer Geral: os mesmos blocos da aba da planilha (total, times, coordenações, níveis, tempo de casa,
      turnos e cargos), calculados a partir das pessoas, para que cada número abra a lista de quem está nele.
    · Gestão de Escalas: Planejamento e Feriados saem da barra e ficam no botão "Ajustes" (só WFM).
-   · Cartão do Colaborador: ao passar o mouse num agente em qualquer aba, mostra os dados do Headcount. */
+   · (O Cartão do Colaborador, que mostrava o Headcount ao passar o mouse num agente, saiu em 27/11/2026.) */
 var HC_IC = {
   hc: '<path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/>',
   geral: '<rect x="3" y="3" width="7" height="9" rx="1.5"/><rect x="14" y="3" width="7" height="5" rx="1.5"/><rect x="14" y="12" width="7" height="9" rx="1.5"/><rect x="3" y="16" width="7" height="5" rx="1.5"/>',
@@ -615,27 +605,5 @@ function hcPessoas(chave) { hcNav([chave]); }
   }
 })();
 
-/* ---------- Cartão do Colaborador: ao passar o mouse num agente, em qualquer aba ---------- */
-(function () {
-  var pop = null, t = 0, alvo = null;
-  function fechar() { clearTimeout(t); alvo = null; if (pop) pop.classList.remove('on'); }
-  function abrir(el, p) {
-    if (!pop) { pop = document.createElement('div'); pop.className = 'hc-pop'; pop.setAttribute('role', 'tooltip'); document.body.appendChild(pop); }
-    var l = function (a, b) { return b ? '<dt>' + a + '</dt><dd>' + esc(b) + '</dd>' : ''; };
-    pop.innerHTML = '<div class="q">' + avatarHtml(p.email, hcNome(p.nome), '') + '<div style="min-width:0"><b>' + esc(hcNome(p.nome)) + '</b><small>' + esc(p.funcao) + '</small></div></div><dl>' +
-      l('Coordenação', p.coord) + l('Squad', p.squad !== p.coord ? p.squad : '') + l('Líder', p.lider && p.lider !== '-' ? p.lider : '') + l('Turno', (p.turno === 'Intermediario' ? 'Intermediário' : p.turno) + ' · ' + p.entrada + ' às ' + p.saida) + l('Convênio', p.convenio) + l('Segmento', p.segmento) + l('Tempo de Casa', p.tempo) + '</dl>' +
-      '<div class="rd">' + hcStatus(p.status) + ' &nbsp;Dados do Headcount</div>';
-    if (typeof atualizarAvatares === 'function') atualizarAvatares();
-    var r = el.getBoundingClientRect(), w = 290, h = pop.offsetHeight || 220, x = Math.min(window.innerWidth - w - 10, Math.max(10, r.left)), y = r.bottom + 8; if (y + h > window.innerHeight - 10) y = Math.max(10, r.top - h - 8);
-    pop.style.left = x + 'px'; pop.style.top = y + 'px'; requestAnimationFrame(function () { pop.classList.add('on'); });
-  }
-  document.addEventListener('mouseover', function (ev) {
-    if (!estado.hc || !ehGestao() || estado.aba === 'headcount' || !ev.target.closest) return;
-    var el = ev.target.closest('[data-ag],tr[data-em]'); if (!el || el === alvo) return; if (el.closest('.modal-fundo .hcp')) return;
-    var em = String(el.getAttribute('data-ag') || el.getAttribute('data-em') || '').toLowerCase(), p = estado.hc.mapa[em]; if (!p) return;
-    fechar(); alvo = el; t = setTimeout(function () { if (alvo === el && document.body.contains(el)) abrir(el, p); }, 420);
-  });
-  document.addEventListener('mouseout', function (ev) { if (!alvo) return; var para = ev.relatedTarget; if (para && alvo.contains(para)) return; fechar(); });
-  window.addEventListener('scroll', fechar, true); document.addEventListener('click', fechar, true);
-})();
+/* 27/11/2026: o Cartão do Colaborador (dados do Headcount ao passar o mouse num agente) foi retirado de todas as telas */
 </script>
