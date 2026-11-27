@@ -296,7 +296,7 @@ function hcUnificar() { var H = estado.hc; if (!H || H.__uni) return; (H.pessoas
 /* Atendimento (25/11/2026): quem está nas coordenações Manuela, Neyane, Winnie, Cibelly e Willian, sem os analistas */
 var HC_ATEND = ['manuela', 'neyane', 'winnie', 'cibelly', 'willian'];
 function hcSemAcento(s) { return String(s || '').normalize('NFD').replace(/[̀-ͯ]/g, '').toLowerCase().trim(); }
-/* 27/11/2026: também contam os agentes e assistentes da gerência de glauber.costa: o time dele e os times abaixo, seguindo quem responde por cada coordenação */
+/* 27/11/2026: também contam os agentes e assistentes da gerência da operação (HC_AT_GER): o time do gerente e os times abaixo, seguindo quem responde por cada coordenação */
 var HC_AT_GER = 'gerente.dois@exemplo.com';
 function hcAbaixoGer() {
   var H = estado.hc; if (!H) return {}; if (H.__abG && H.__abGcr === H.cr) return H.__abG;
