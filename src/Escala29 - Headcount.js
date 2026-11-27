@@ -63,6 +63,24 @@ function hcGuardar_(d, hash) {
   const pr = PropertiesService.getScriptProperties();
   pr.setProperties({ hc_hash: hash, hc_hash_full: hcHash_(d), hc_campos_aplicados: JSON.stringify(hcCamposHash_(d)), hc_empresa: String(d.empresa || 0), hc_atualizado_em: agoraIso_(), hc_aplicado_ms: String(Date.now()) });
   ['hc_pend_hash', 'hc_pend_desde', 'hc_dif_desde', 'hc_aviso'].forEach(function (k) { pr.deleteProperty(k); });
+  hcSincCargos_(d);
+}
+/* 27/11/2026: o cargo exibido no painel (Controle de Logados, Visão do Dia, trocas...) vem da tabela Pessoas, que só
+ * mudava pela importação antiga ou pela tela de Usuários; agora, toda vez que o Headcount é aplicado, a Função da
+ * planilha passa para o cargo de quem já está cadastrado (só quem mudou, registrado nos Logs). */
+function hcSincCargos_(d) {
+  try {
+    const fn = {}; d.pessoas.forEach(function (p) { if (p.funcao && !fn[p.email]) fn[p.email] = p.funcao; });
+    const tp = tabela_('Pessoas'); let n = 0;
+    tp.linhas.forEach(function (l) {
+      const e = String(l.email || '').trim().toLowerCase(), novo = fn[e], antes = String(l.cargo_headcount || '').trim();
+      if (!novo || novo === antes) return;
+      atualizarLinha_(tp, l, { cargo_headcount: novo, atualizado_em: agoraIso_() }); n++;
+      log_('sistema', 'HEADCOUNT_CARGO', 'Pessoa', e, e, { cargo: antes }, { cargo: novo });
+    });
+    PropertiesService.getScriptProperties().setProperty('hc_cargos_v', '1');
+    return n;
+  } catch (e) { return -1; }
 }
 function hcBase_() {
   const sh = hcAba_(), pr = PropertiesService.getScriptProperties(), pessoas = [];
@@ -87,6 +105,7 @@ function hcConferir_(forcar) {
     // só mudou o que a planilha recalcula sozinha: renova a cópia sem esperar, no máximo a cada 6 h
     if (hcHash_(d) !== pr.getProperty('hc_hash_full') && agora - Number(pr.getProperty('hc_aplicado_ms') || 0) >= HC_RECALC_MS) { hcGuardar_(d, h); return reg('aplicado'); }
     if (d.empresa && String(d.empresa) !== pr.getProperty('hc_empresa')) pr.setProperty('hc_empresa', String(d.empresa));
+    if (pr.getProperty('hc_cargos_v') !== '1') hcSincCargos_(d); // primeira conferência depois da mudança: acerta os cargos que já estavam defasados
     return reg('igual');
   }
   // proteção: uma leitura com muito menos gente (aba sendo refeita, filtro, erro) não substitui a base sozinha
