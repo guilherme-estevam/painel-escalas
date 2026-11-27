@@ -228,13 +228,12 @@ function importarHeadcountCsv_(csvTexto, ator, inicial) {
     const temUsuario = {}; tu.linhas.forEach(function (u) { temUsuario[u.email] = true; });
     const papel = {}; Object.keys(ACESSO_INICIAL.gestao).forEach(function (p) { ACESSO_INICIAL.gestao[p].forEach(function (x) { papel[x + '@exemplo.com'] = p; }); });
     const lista = function (arr) { return arr.map(function (x) { return x + '@exemplo.com'; }); };
-    const temp = lista(ACESSO_INICIAL.agenteTemporario), exc = lista(ACESSO_INICIAL.excluidos), pend = lista(ACESSO_INICIAL.pendentes);
+    const temp = lista(ACESSO_INICIAL.agenteTemporario), pend = lista(ACESSO_INICIAL.pendentes);
     const novosUsuarios = [];
     novos.forEach(function (d) {
       if (temUsuario[d.email]) return;
       let perfil, obs = '';
       if (!inicial) { perfil = 'PENDENTE'; obs = 'Entrou no headcount em ' + agoraIso_().slice(0, 10) + '; aguarda liberação da gestão'; }
-      else if (exc.indexOf(d.email) >= 0) { perfil = 'BLOQUEADO'; obs = 'Excluído explicitamente do acesso'; }
       else if (temp.indexOf(d.email) >= 0) { perfil = 'AGENTE'; obs = 'Temporário para testes; perfil previsto: GESTAO (' + papel[d.email] + ')'; }
       else if (papel[d.email]) { perfil = 'GESTAO'; }
       else if (pend.indexOf(d.email) >= 0) { perfil = 'PENDENTE'; obs = 'Não está na lista de gestão; aguarda decisão'; }
